@@ -20,14 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY", "test")
 # SECURITY WARNING: don't run with debug turned on in production!
 
 DEBUG = int(os.environ.get("DEBUG", default=0))
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
-
-
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", '').split("127.0.0.1")
 # Application definition
 
 INSTALLED_APPS = [
@@ -75,12 +73,15 @@ WSGI_APPLICATION = 'main.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("SQL_DATABASE", BASE_DIR / "db.sqlite3"),
-        "USER": os.environ.get("SQL_USER", "user"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "password"),
-        "HOST": os.environ.get("SQL_HOST", "localhost"),
+        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.environ.get("SQL_DATABASE", "sisyphus"),
+        "USER": os.environ.get("SQL_USER", "hello_django"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD", "hello_django"),
+        "HOST": os.environ.get("SQL_HOST", "0.0.0.0"),
         "PORT": os.environ.get("SQL_PORT", "5432"),
+        'OPTIONS': {
+            'options': '-c search_path=assets,employees,finances,master,operations,sys,public'
+        },
     }
 }
 
