@@ -1,15 +1,5 @@
 from django.db import models
-from rest_framework import serializers, viewsets, permissions
-
-
-class EmployeeTypes(models.Model):
-    id_employee_type = models.AutoField(primary_key=True)
-    employee_type_description = models.CharField()
-
-    class Meta:
-        managed = False
-        db_table = 'employee_types'
-
+from . import EmployeeTypes
 
 
 class Employees(models.Model):
@@ -31,18 +21,4 @@ class Employees(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'companies'
-
-class CompanySerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model=Company
-        fiels = [__all__]
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = Company.objects.all().order_by('id_company')
-    serializer_class = CompanySerializer
-    permission_classes = [permissions.IsAuthenticated]
+        db_table = 'employees'
