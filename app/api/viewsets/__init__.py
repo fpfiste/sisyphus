@@ -8,6 +8,13 @@ from .employee_absence_code_viewset import EmployeeAbsenceCodesViewSet
 from .employee_absence_viewset import EmployeeAbsenceViewSet
 from .employee_type_viewset import EmployeeTypesViewSet
 from .employee_viewset import EmployeeViewSet
+from .invoice_state_viewset import InvoiceStateViewSet
+from .invoice_text_viewset import InvoiceTextViewSet
+from .invoice_viewset import InvoiceViewSet
+from .payment_condition_viewset import PaymentConditionViewSet
+from .project_viewset import ProjectViewSet
+from .sales_viewset import SalesViewSet
+from .sys_rec_state_viewset import SysRecStateViewSet
 __all__ = ['CompanyViewSet',
            'CurrencyViewSet',
            'AssetAbsenceCodesViewSet',
@@ -17,5 +24,12 @@ __all__ = ['CompanyViewSet',
            'EmployeeAbsenceCodesViewSet',
            'EmployeeAbsenceViewSet',
            'EmployeeTypesViewSet',
-           'EmployeeViewSet'
+           'EmployeeViewSet',
+           'InvoiceStateViewSet',
+           'InvoiceTextViewSet',
+           'InvoiceViewSet',
+           'PaymentConditionViewSet',
+           'ProjectViewSet',
+           'SalesViewSet',
+           'SysRecStateViewSet'
            ]

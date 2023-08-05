@@ -8,6 +8,13 @@ from .employee_absence_codes import EmployeeAbsenceCodes
 from .employee_absences import EmployeeAbsences
 from .employee_types import EmployeeTypes
 from .employees import Employees
+from .invoice_states import InvoiceStates
+from .invoice_texts import InvoiceTexts
+from .invoices import Invoices
+from .invoice_payment_conditions import PaymentConditions
+from .projects import Projects
+from .sales import Sales
+from .sys_rec_state import SysRecStates
 __all__ = [
     'Companies',
     'Currencies',
@@ -18,6 +25,13 @@ __all__ = [
     'EmployeeAbsenceCodes',
     'EmployeeAbsences',
     'EmployeeTypes',
-    'Employees'
+    'Employees',
+    'InvoiceStates',
+    'InvoiceTexts',
+    'Invoices',
+    'PaymentConditions',
+    'Projects',
+    'Sales',
+    'SysRecStates'
 
 ]

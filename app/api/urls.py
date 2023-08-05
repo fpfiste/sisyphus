@@ -14,6 +14,13 @@ router.register(r'employee/absence/code',  EmployeeAbsenceCodesViewSet)
 router.register(r'employee/absence',  EmployeeAbsenceViewSet)
 router.register(r'employee/types',  EmployeeTypesViewSet)
 router.register(r'employee',  EmployeeViewSet)
+router.register(r'invoice/states',  InvoiceStateViewSet)
+router.register(r'invoice/texts',  InvoiceStateViewSet)
+router.register(r'invoice',  InvoiceViewSet)
+router.register(r'invoice/paymentcondition',  PaymentConditionViewSet)
+router.register(r'projects',  ProjectViewSet)
+router.register(r'sales',  SalesViewSet)
+router.register(r'sysrecstate',  SysRecStateViewSet)
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
