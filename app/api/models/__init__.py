@@ -15,6 +15,10 @@ from .invoice_payment_conditions import PaymentConditions
 from .projects import Projects
 from .sales import Sales
 from .sys_rec_state import SysRecStates
+from .task_states import TaskStates
+from .task_templates import TaskTemplates
+from .tasks import Tasks
+from .units import Units
 __all__ = [
     'Companies',
     'Currencies',
@@ -32,6 +36,10 @@ __all__ = [
     'PaymentConditions',
     'Projects',
     'Sales',
-    'SysRecStates'
+    'SysRecStates',
+    'TaskStates',
+    'TaskTemplates',
+    'Tasks',
+    'Units'
 
 ]

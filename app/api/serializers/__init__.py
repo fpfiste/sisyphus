@@ -15,6 +15,10 @@ from .payment_condition_serializer import PaymentConditionSerializer
 from .project_serializer import ProjectsSerializer
 from .sales_serializer import SalesSerializer
 from .sys_rec_state_serializer import SysRecStatesSerializer
+from .task_state_serializer import TaskStateSerializer
+from .task_template_serializer import TaskTemplateSerializer
+from .task_serializer import TaskSerializer
+from .unit_serializer import UnitSerializer
 __all__ = ['CompanySerializer',
            'CurrencySerializer',
            'AssetAbsenceCodeSerializer',
@@ -31,5 +35,9 @@ __all__ = ['CompanySerializer',
            'PaymentConditionSerializer',
            'ProjectsSerializer',
            'SalesSerializer',
-           'SysRecStatesSerializer'
+           'SysRecStatesSerializer',
+           'TaskStateSerializer',
+           'TaskTemplateSerializer',
+           'TaskSerializer',
+           'UnitSerializer'
            ]

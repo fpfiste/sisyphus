@@ -15,6 +15,10 @@ from .payment_condition_viewset import PaymentConditionViewSet
 from .project_viewset import ProjectViewSet
 from .sales_viewset import SalesViewSet
 from .sys_rec_state_viewset import SysRecStateViewSet
+from .task_state_viewset import TaskStateViewSet
+from .task_template_viewset import TaskTemplateViewSet
+from .task_viewset import TaskViewSet
+from .unit_viewset import UnitViewSet
 __all__ = ['CompanyViewSet',
            'CurrencyViewSet',
            'AssetAbsenceCodesViewSet',
@@ -31,5 +35,9 @@ __all__ = ['CompanyViewSet',
            'PaymentConditionViewSet',
            'ProjectViewSet',
            'SalesViewSet',
-           'SysRecStateViewSet'
+           'SysRecStateViewSet',
+           'TaskStateViewSet',
+           'TaskTemplateViewSet',
+           'TaskViewSet',
+           'UnitViewSet'
            ]

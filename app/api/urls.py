@@ -19,8 +19,12 @@ router.register(r'invoice/texts',  InvoiceStateViewSet)
 router.register(r'invoice',  InvoiceViewSet)
 router.register(r'invoice/paymentcondition',  PaymentConditionViewSet)
 router.register(r'projects',  ProjectViewSet)
-router.register(r'sales',  SalesViewSet)
+router.register(r'project/sales',  SalesViewSet)
 router.register(r'sysrecstate',  SysRecStateViewSet)
+router.register(r'project/task/state',  SysRecStateViewSet)
+router.register(r'project/task/template',  TaskTemplateViewSet)
+router.register(r'project/task',  TaskViewSet)
+router.register(r'units',  UnitViewSet)
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [

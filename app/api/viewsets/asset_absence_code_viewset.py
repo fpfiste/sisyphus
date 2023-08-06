@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 
 from api.models import AssetAbsenceCodes
 from api.serializers import AssetAbsenceCodeSerializer
@@ -10,3 +10,4 @@ class AssetAbsenceCodesViewSet(viewsets.ModelViewSet):
     """
     queryset = AssetAbsenceCodes.objects.all()
     serializer_class = AssetAbsenceCodeSerializer
+    permission_classes = [permissions.IsAuthenticated]
