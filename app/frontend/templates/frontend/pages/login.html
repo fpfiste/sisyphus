@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+        {% load static %}
+    {%load crispy_forms_tags %}
+
+        <link href="{% static '/css/lib/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static '/css/lib/themify-icons.css' %}" rel="stylesheet">
+    <link href="{% static '/css/lib/menubar/sidebar.css' %}" rel="stylesheet">
+    <link href="{% static '/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static '/css/lib/helper.css' %}" rel="stylesheet">
+    <link href="{% static '/css/lib/line-progress/jquery.lineProgressbar.css' %}" rel="stylesheet">
+    <link href="{% static '/css/style.css' %}" rel="stylesheet">
+    <link href="{% static '/css/lib/datatable/DataTable.css' %}" rel="stylesheet" />
+    <link href="{% static '/css/lib/scheduler/timetablejs.css' %}" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{% static '/images/favicon.ico' %}">
+</head>
+<body>
+         <div class="content-wrap">
+            <div class="modal-dialog modal-dialog-centered" role="document" id="div_modal_login">
+
+                <div class="modal-content" id="modal-login">
+                    <img id="id_login_logo" src="{% static '/images/logo_small.png' %}">
+                    <form class="form_login" id="id_form_login" method="post" action="">
+                        <div class="modal-body" id="body_modal_login">
+
+                            {% csrf_token %}
+                            {% load crispy_forms_tags %}
+                            {{ login_form|crispy}}
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" name="btn_login" type="submit">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+         </div>
+</body>
+</html>

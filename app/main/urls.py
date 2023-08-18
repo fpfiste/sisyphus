@@ -1,5 +1,5 @@
 """
-URL configuration for main project.
+URL configuration for frontend project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -16,11 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from rest_framework.authtoken.views import obtain_auth_token
+from api import urls as api_urls
 
 urlpatterns = [
+
+    path('api/', include('api.urls')),
+    path('', include('frontend.urls')),
+    path('auth/', obtain_auth_token),
     path('admin/', admin.site.urls),
-    path('api/', include('api.urls'))
 
 
 ]
