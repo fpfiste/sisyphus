@@ -1,11 +1,11 @@
 {% extends 'frontend/base.html' %}
 
-{% block title%}{{page}}{% endblock %}
+{% block title%}{{page_config.title}}{% endblock %}
 
 {% block content %}
 
 
-				<h1 class="h3 mb-3">{{page}}</h1>
+				<h1 class="h3 mb-3">{{page_config.title.de}}</h1>
 
 				<div class="row">
                     <div class="col-3">
@@ -14,10 +14,19 @@
 								<div class="card-body">
 									<div class="card-header">
 									      {% csrf_token %}
-                                              {% load crispy_forms_tags %}
-                                             {{form|crispy}}
+                                              <form>
+												  {% for key, value in page_config.fields.items %}
+												  <div class="form-group">
+													<label>{{value.de}}</label>
+													{{value.input  | safe }}
+												  </div>
 
-								</div>
+
+												  {% endfor %}
+
+
+												</form>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -34,41 +43,29 @@
 
 
 		<script>
-			var tabledata = [
-				{id:1, name:"Oli Bob", progress:12, gender:"male", rating:1, col:"red", dob:"19/02/1984", car:1},
-				{id:2, name:"Mary May", progress:1, gender:"female", rating:2, col:"blue", dob:"14/05/1982", car:true},
-				{id:3, name:"Christine Lobowski", progress:42, gender:"female", rating:0, col:"green", dob:"22/05/1982", car:"true"},
-				{id:4, name:"Brendon Philips", progress:100, gender:"male", rating:1, col:"orange", dob:"01/08/1980"},
-				{id:5, name:"Margret Marmajuke", progress:16, gender:"female", rating:5, col:"yellow", dob:"31/01/1999"},
-				{id:6, name:"Frank Harbours", progress:38, gender:"male", rating:4, col:"red", dob:"12/05/1966", car:1},
-			];
+
 			var table = new Tabulator("#overview-table", {
 
 				layout:"fitColumns",      //fit columns to width of table
-				ajaxURL:"/api/{{url}}",
+				ajaxURL:"/api/{{page_config.url}}",
 				responsiveLayout:"hide",  //hide columns that don't fit on the table
-				addRowPos:"top",          //when adding a new row, add it to the top of the table
-				history:true,             //allow undo and redo actions on the table
-				movableColumns:true,      //allow column order to be changed
 				initialSort:[             //set the initial sort order of the data
-					{column:"id", dir:"desc"},
+					{column:"{{page_config.pk}}", dir:"desc"},
 				],
 				columnDefaults:{
 					tooltip:true,         //show tool tips on cells
 				},
 				columns:[                 //define the table columns
-					{title:"ID", field:"id_company"},
-					{title:"Alias", field:"company_internal_alias"},
-					{title:"Name", field:"company_name"},
-					{title:"Street", field:"company_street"},
-					{title:"Zipcode", field:"company_zipcode"},
-					{title:"City", field : "company_city"},
-					{title:"Country", field:"comapny_country"},
-					{title:"Actions", formatter:"link", formatterParams:{
-    					label:"edit",
 
-    					url:"/",
-					}}
+				{% for key, value in page_config.fields.items %}
+					{title:"{{value.de}}", field:"{{key}}"},
+				{% endfor %}
+
+				{title:"Actions", formatter:"link", formatterParams:{
+					label:"edit",
+
+					url:function(cell){return window.location.href + "/" + cell.getData().{{page_config.pk}}}
+				}}
 
 				],
 			});

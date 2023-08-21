@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 import datetime as dt
 from .forms import *
+from .config import pages
 
 
 # Create your views here.
@@ -39,14 +40,25 @@ def login_view(request):
 
 def organizations(request):
     form = CompanyForm()
-    data = {'title': 'Companies', 'url':'company', 'form':form}
+    data = {'form':form, 'page_config': pages['comapanies']}
     return render(request, 'frontend/pages/overview_table.html', data)
 
+def organization_detail(request, id_company):
+    print(request)
+    form = CompanyForm()
+    data = {'title': 'Companies', 'url':'company', 'form':form, 'id_company':id_company}
+    return render(request, 'frontend/pages/organization_profile.html', data)
 
 def projects(request):
     form = ProjectForm()
-    data = {'title': 'Projects', 'url':'projects', 'form':form}
+    data = {'form':form, 'page_config': pages['projects']}
     return render(request, 'frontend/pages/overview_table.html', data)
+
+def project_detail(request, id_project):
+    print(request)
+    form = ProjectForm()
+    data = {'title': 'Companies', 'url':'project', 'form':form, 'id_project':id_project}
+    return render(request, 'frontend/pages/project_profile.html', data)
 
 
 def tasks(request):
