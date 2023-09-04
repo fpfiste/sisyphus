@@ -12,27 +12,36 @@
 							<div class="card">
 
 								<div class="card-body">
-									<div class="card-header">
+									<div id="form_filter_container"></div>
+
 									      {% csrf_token %}
-                                              <form>
-												  {% for key, value in page_config.fields.items %}
+									<!--
+                                              <form id="filter_form">
+												  {% for value in page_config.fields.form %}
 												  <div class="form-group">
-													<label>{{value.de}}</label>
-													{{value.input  | safe }}
+
+													{{value.input | safe}}
 												  </div>
 
 
 												  {% endfor %}
 
 
-												</form>
-									</div>
+												</form>-->
+
 								</div>
+								<div class="card-footer">
+									<button type="button" id="btn_form_reset" class="btn btn-secondary">Reset</button>
+									<button type="button" id="btn_filter" class="btn btn-danger">Filter</button>
+
+								</div>
+
 							</div>
 						</div>
                     <div class="col-9">
 							<div class="card">
 								<div class="card-header">
+									<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#create_modal">Add</button>
 								</div>
 								<div class="card-body">
 									<div id="overview-table"></div>
@@ -41,8 +50,73 @@
 						</div>
                 </div>
 
+		<div class="modal fade" id="create_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="create_modal_label">Add</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			  </div>
+			  <div class="modal-body">
+				  <div id="create_form_container">
+							      {% csrf_token %}<!--
+                                              <form id="add_form">
+												  {% for value in page_config.fields.form %}
+												  <div class="form-group">
 
-		<script>
+													{{value.input | safe}}
+												  </div>
+
+
+												  {% endfor %}
+
+
+												</form>-->
+					  </div>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" id="btn_add" class="btn btn-danger">Save</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		<div class="modal fade" id="update_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		  <div class="modal-dialog">
+			<div class="modal-content">
+			  <div class="modal-header">
+				<h5 class="modal-title" id="update_modal_label">Add</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			  </div>
+			  <div class="modal-body">
+				  <div id="update_form_container">
+							      {% csrf_token %}<!--
+                                              <form id="add_form">
+												  {% for value in page_config.fields.form %}
+												  <div class="form-group">
+
+													{{value.input | safe}}
+												  </div>
+
+
+												  {% endfor %}
+
+
+												</form>-->
+					  </div>
+			  </div>
+			  <div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" id="btn_save" class="btn btn-danger">Save</button>
+			  </div>
+			</div>
+		  </div>
+		</div>
+
+
+
+		<script src="{{page_config.js_path}}"/>
+		<!--<script>
 
 			var table = new Tabulator("#overview-table", {
 
@@ -57,8 +131,8 @@
 				},
 				columns:[                 //define the table columns
 
-				{% for key, value in page_config.fields.items %}
-					{title:"{{value.de}}", field:"{{key}}"},
+				{% for value in page_config.fields.table %}
+					{title:"{{value.title}}", field:"{{value.key}}"},
 				{% endfor %}
 
 				{title:"Actions", formatter:"link", formatterParams:{
@@ -70,7 +144,7 @@
 				],
 			});
 
-		</script>
+		</script>-->
 
 
 
