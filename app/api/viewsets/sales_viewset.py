@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
-from api.models import Sales
-from api.serializers import SalesSerializer
+from api.components import Sales, SalesSerializer
+
 
 
 class SalesViewSet(viewsets.ModelViewSet):

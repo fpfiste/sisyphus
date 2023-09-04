@@ -1,7 +1,6 @@
 from rest_framework import viewsets
+from api.components import Units, UnitSerializer
 
-from api.models import Units
-from api.serializers import UnitSerializer
 
 
 class UnitViewSet(viewsets.ModelViewSet):

@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
-from api.models import TaskStates
-from api.serializers import TaskStateSerializer
+from api.components import TaskStates, TaskStateSerializer
+
 
 
 class TaskStateViewSet(viewsets.ModelViewSet):

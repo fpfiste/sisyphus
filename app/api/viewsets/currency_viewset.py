@@ -1,7 +1,6 @@
 from rest_framework import viewsets
+from api.components import Currencies, CurrencySerializer
 
-from api.models import Currencies
-from api.serializers import CurrencySerializer
 
 
 class CurrencyViewSet(viewsets.ModelViewSet):

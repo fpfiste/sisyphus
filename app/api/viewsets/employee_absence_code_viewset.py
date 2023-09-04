@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
-from api.models import EmployeeAbsenceCodes
-from api.serializers import EmployeeAbsenceCodeSerializer
+from api.components import EmployeeAbsenceCodes, EmployeeAbsenceCodeSerializer
+
 
 
 class EmployeeAbsenceCodesViewSet(viewsets.ModelViewSet):

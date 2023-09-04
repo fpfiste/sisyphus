@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
-from api.models import InvoiceStates
-from api.serializers import InvoiceStateSerializer
+from api.components import InvoiceStates, InvoiceStateSerializer
+
 
 
 class InvoiceStateViewSet(viewsets.ModelViewSet):

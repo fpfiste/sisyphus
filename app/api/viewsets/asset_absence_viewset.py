@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
-from api.models import AssetAbsences
-from api.serializers import AssetAbsenceSerializer
+from api.components import AssetAbsences
+from api.components import AssetAbsenceSerializer
 
 
 class AssetAbsenceViewSet(viewsets.ModelViewSet):

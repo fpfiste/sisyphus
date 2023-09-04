@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
-from api.models import EmployeeTypes
-from api.serializers import EmployeeTypeSerializer
+from api.components import EmployeeTypes, EmployeeTypeSerializer
+
 
 
 class EmployeeTypesViewSet(viewsets.ModelViewSet):

@@ -1,7 +1,6 @@
 from rest_framework import viewsets
+from api.components import Assets, AssetSerializer
 
-from api.models import Assets
-from api.serializers import AssetSerializer
 
 
 class AssetViewSet(viewsets.ModelViewSet):

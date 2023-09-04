@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
 
-from api.models import AssetAbsenceCodes
-from api.serializers import AssetAbsenceCodeSerializer
+from api.components import AssetAbsenceCodes
+from api.components import AssetAbsenceCodeSerializer
 
 
 class AssetAbsenceCodesViewSet(viewsets.ModelViewSet):

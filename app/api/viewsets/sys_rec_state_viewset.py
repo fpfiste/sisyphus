@@ -1,7 +1,6 @@
 from rest_framework import viewsets
 
-from api.models import SysRecStates
-from api.serializers import SysRecStatesSerializer
+from api.components import SysRecStates, SysRecStatesSerializer
 
 
 class SysRecStateViewSet(viewsets.ModelViewSet):
