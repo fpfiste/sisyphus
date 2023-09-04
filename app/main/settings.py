@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'frontend.apps.FrontendConfig',
     'api.apps.ApiConfig',
-
     'rest_framework',
     'rest_framework.authtoken',
     'crispy_forms',
@@ -90,7 +89,7 @@ DATABASES = {
         "USER": os.environ.get("SQL_USER", "hello_django"),
         "PASSWORD": os.environ.get("SQL_PASSWORD", "hello_django"),
         "HOST": os.environ.get("SQL_HOST", "0.0.0.0"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
+        "PORT": os.environ.get("SQL_PORT", "5433"),
         'OPTIONS': {
             'options': '-c search_path=assets,employees,finances,master,operations,sys,public'
         },
