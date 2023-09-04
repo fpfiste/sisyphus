@@ -31,8 +31,8 @@ class AssetAbsences(models.Model):
 
 
 class AssetTaskAllocation(models.Model):
-    id_asset_task_allocation = models.AutoField()
-    fk_asset = models.IntegerField(primary_key=True)  # The composite primary key (fk_asset, fk_task) found, that is not supported. The first column is selected.
+    id_asset_allocation = models.AutoField(primary_key=True)
+    fk_asset = models.IntegerField()
     fk_task = models.ForeignKey('Tasks', models.DO_NOTHING, db_column='fk_task')
 
     class Meta:
@@ -55,8 +55,10 @@ class Assets(models.Model):
     id_asset = models.AutoField(primary_key=True)
     fk_asset_type = models.ForeignKey(AssetTypes, models.DO_NOTHING, db_column='fk_asset_type')
     asset_description = models.CharField()
+    fk_employee = models.IntegerField(blank=True, null=True)
     asset_internal_alias = models.CharField()
     year_of_production = models.IntegerField(blank=True, null=True)
+    asset_km_counter = models.CharField(blank=True, null=True)
     fk_sys_rec_state = models.IntegerField()
 
     class Meta:
@@ -105,8 +107,6 @@ class AuthUser(models.Model):
     is_staff = models.BooleanField()
     is_active = models.BooleanField()
     date_joined = models.DateTimeField()
-    fk_employee = models.IntegerField(blank=True, null=True)
-    fk_language = models.ForeignKey('SysLanguage', models.DO_NOTHING, db_column='fk_language', blank=True, null=True)
 
     class Meta:
         managed = False
@@ -153,7 +153,7 @@ class Companies(models.Model):
     company_country = models.CharField()
     company_city = models.CharField()
     company_internal_alias = models.CharField(unique=True)
-    fk_sys_rec_status = models.IntegerField()
+    fk_sys_rec_status = models.ForeignKey('SysRecStates', models.DO_NOTHING, db_column='fk_sys_rec_status')
     company_email = models.CharField(blank=True, null=True)
     is_customer = models.BooleanField(blank=True, null=True)
     is_supplier = models.BooleanField(blank=True, null=True)
@@ -243,14 +243,13 @@ class EmployeeAbsences(models.Model):
 
 
 class EmployeeTaskAllocation(models.Model):
-    id_employee_task_allocation = models.AutoField()
-    fk_employee = models.IntegerField(primary_key=True)  # The composite primary key (fk_employee, fk_task) found, that is not supported. The first column is selected.
+    id_employee_allocation = models.AutoField(primary_key=True)
     fk_task = models.ForeignKey('Tasks', models.DO_NOTHING, db_column='fk_task')
+    fk_employee = models.IntegerField()
 
     class Meta:
         managed = False
         db_table = 'employee_task_allocation'
-        unique_together = (('fk_employee', 'fk_task'),)
 
 
 class EmployeeTypes(models.Model):
@@ -357,16 +356,6 @@ class Sales(models.Model):
         db_table = 'sales'
 
 
-class SysLanguage(models.Model):
-    id_language = models.AutoField(primary_key=True)
-    language_abbreviation = models.CharField(max_length=3)
-    language = models.CharField(max_length=50)
-
-    class Meta:
-        managed = False
-        db_table = 'sys_language'
-
-
 class SysRecStates(models.Model):
     id_sys_rec_status = models.AutoField(primary_key=True)
     sys_rec_status = models.CharField()
@@ -409,9 +398,11 @@ class Tasks(models.Model):
     task_description = models.CharField()
     fk_invoice = models.IntegerField(blank=True, null=True)
     fk_unit = models.IntegerField(blank=True, null=True)
+    fk_asset_allocation = models.IntegerField(blank=True, null=True)
     internal_info = models.CharField(blank=True, null=True)
     customer_reference = models.CharField(blank=True, null=True)
     fk_subcontractor = models.IntegerField(blank=True, null=True)
+    brokerage_fee = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     fk_service_type = models.IntegerField()
 
     class Meta:

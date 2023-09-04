@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from . import *
+from .models import *
 
 
 class AssetAbsenceCodeSerializer(serializers.ModelSerializer):
@@ -11,6 +11,7 @@ class AssetAbsenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = AssetAbsences
         fields = '__all__'
+
 
 class AssetTaskAllocationSerializer(serializers.ModelSerializer):
 
@@ -29,10 +30,17 @@ class AssetSerializer(serializers.ModelSerializer):
         model = Assets
         fields = '__all__'
 
+class SysRecStatesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SysRecStates
+        fields = ('id_sys_rec_status', 'sys_rec_status')
+
 class CompanySerializer(serializers.ModelSerializer):
+    fk_sys_rec_status = SysRecStatesSerializer()
+
     class Meta:
         model = Companies
-        fields = '__all__'
+        fields = ['id_company', 'company_name', 'company_street', 'company_zipcode','company_country','company_city','company_internal_alias', 'fk_sys_rec_status', 'company_email', 'is_customer', 'is_supplier', 'is_subcontractor']
 
 class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
