@@ -6,21 +6,24 @@ $(document).ready(function(){
                         container:'#overview-table',
                         id:'table',
                         fields: {
-                            'id_company': {title: 'Nr'},
-                            'company_name': {title: 'Firma'},
-                            'company_internal_alias': {title: 'Alias'},
-                            'company_street' : {title: 'Strasse'},
-                            'company_zipcode': {title: 'PLZ' },
-                            'company_city' : {title: 'Stadt'},
-                            'company_country': {title: 'Land'},
-                            'fk_sys_rec_status': {path: 'fk_sys_rec_status.sys_rec_status', title: 'Status'},
-                            'company_email': {title: 'Email'},
-                            'is_customer': {title: 'Ist Kunde'},
-                            'is_supplier': {title: 'Ist Lieferant'},
-                            'is_subcontractor': {title: 'Ist Subunternehmer'}
+                            'id_company': {title: 'Nr', type: 'text'},
+                            'company_name': {title: 'Firma', type: 'text'},
+                            'company_internal_alias': {title: 'Alias', type: 'text'},
+                            'company_street' : {title: 'Strasse', type: 'text'},
+                            'company_zipcode': {title: 'PLZ', type: 'text'},
+                            'company_city' : {title: 'Stadt', type: 'text'},
+                            'company_country': {title: 'Land', type: 'text'},
+                            'fk_sys_rec_status': {title: 'Status', type:'fk_field', url_endpoint: 'sysrecstate', display_field:'sys_rec_status'},
+                            'company_email': {title: 'Email', type:'text'},
+                            'is_customer': {title: 'Kunde', type: 'checkbox'},
+                            'is_supplier': {title: 'Lieferant', type:'checkbox'},
+                            'is_subcontractor': {title: 'Subunternehmer', type:'checkbox'}
                         },
+                        ajax_url: url,
                         pk_field: 'id_company',
                     })
+
+
     let filter_form = new BootstrapForm({
             container: '#form_filter_container',
             id: 'filter_form',
@@ -82,14 +85,8 @@ $(document).ready(function(){
             }
 
     })
-    $.ajax({
-        url: url,
-        success: function (result) {
-            table.data = result
-            table.build()
-        }
-    });
 
+    table.build();
     filter_form.build();
     create_form.build();
     update_form.build();

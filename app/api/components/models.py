@@ -32,7 +32,7 @@ class AssetAbsences(models.Model):
 
 class AssetTaskAllocation(models.Model):
     id_asset_allocation = models.AutoField(primary_key=True)
-    fk_asset = models.IntegerField()
+    fk_asset = models.ForeignKey('Assets', models.DO_NOTHING, db_column='fk_asset')
     fk_task = models.ForeignKey('Tasks', models.DO_NOTHING, db_column='fk_task')
 
     class Meta:
@@ -59,7 +59,7 @@ class Assets(models.Model):
     asset_internal_alias = models.CharField()
     year_of_production = models.IntegerField(blank=True, null=True)
     asset_km_counter = models.CharField(blank=True, null=True)
-    fk_sys_rec_state = models.IntegerField()
+    fk_sys_rec_state = models.ForeignKey('SysRecStates', models.DO_NOTHING, db_column='fk_sys_rec_state')
 
     class Meta:
         managed = False
@@ -138,7 +138,7 @@ class AuthUserUserPermissions(models.Model):
 class AuthtokenToken(models.Model):
     key = models.CharField(primary_key=True, max_length=40)
     created = models.DateTimeField()
-    user_id = models.IntegerField(unique=True)
+    user = models.OneToOneField(AuthUser, models.DO_NOTHING)
 
     class Meta:
         managed = False
@@ -245,7 +245,7 @@ class EmployeeAbsences(models.Model):
 class EmployeeTaskAllocation(models.Model):
     id_employee_allocation = models.AutoField(primary_key=True)
     fk_task = models.ForeignKey('Tasks', models.DO_NOTHING, db_column='fk_task')
-    fk_employee = models.IntegerField()
+    fk_employee = models.ForeignKey('Employees', models.DO_NOTHING, db_column='fk_employee')
 
     class Meta:
         managed = False
@@ -275,7 +275,7 @@ class Employees(models.Model):
     fk_employee_type = models.ForeignKey(EmployeeTypes, models.DO_NOTHING, db_column='fk_employee_type')
     employee_fte = models.DecimalField(max_digits=65535, decimal_places=65535)
     employee_internal_alias = models.CharField(unique=True)
-    fk_sys_rec_status = models.IntegerField()
+    fk_sys_rec_status = models.ForeignKey('SysRecStates', models.DO_NOTHING, db_column='fk_sys_rec_status')
     employee_house_nr = models.CharField()
 
     class Meta:
@@ -296,7 +296,7 @@ class InvoiceStates(models.Model):
 class InvoiceTexts(models.Model):
     id_invoice_text = models.AutoField(primary_key=True)
     invoice_text = models.CharField()
-    fk_customer = models.IntegerField()
+    fk_customer = models.ForeignKey(Companies, models.DO_NOTHING, db_column='fk_customer')
 
     class Meta:
         managed = False
@@ -329,7 +329,7 @@ class PaymentConditions(models.Model):
 class Projects(models.Model):
     id_project = models.AutoField(primary_key=True)
     project_name = models.CharField()
-    fk_customer = models.IntegerField()
+    fk_customer = models.ForeignKey(Companies, models.DO_NOTHING, db_column='fk_customer')
     planned_start_date = models.DateField()
     planned_end_date = models.DateField()
     effective_start_date = models.DateField(blank=True, null=True)
@@ -347,9 +347,9 @@ class Sales(models.Model):
     sale_amount = models.DecimalField(max_digits=65535, decimal_places=65535)
     sale_unit_price = models.DecimalField(max_digits=65535, decimal_places=65535)
     sales_reference = models.CharField()
-    fk_unit = models.IntegerField()
+    fk_unit = models.ForeignKey('Units', models.DO_NOTHING, db_column='fk_unit')
     fk_product = models.IntegerField()
-    fk_invoice = models.IntegerField()
+    fk_invoice = models.ForeignKey(Invoices, models.DO_NOTHING, db_column='fk_invoice')
 
     class Meta:
         managed = False
@@ -376,8 +376,8 @@ class TaskStates(models.Model):
 
 class TaskTemplates(models.Model):
     id_task_template = models.AutoField(primary_key=True)
-    fk_customer = models.IntegerField()
-    fk_unit = models.IntegerField()
+    fk_customer = models.ForeignKey(Companies, models.DO_NOTHING, db_column='fk_customer')
+    fk_unit = models.ForeignKey('Units', models.DO_NOTHING, db_column='fk_unit')
     amount = models.DecimalField(max_digits=65535, decimal_places=65535)
     unit_price = models.DecimalField(max_digits=65535, decimal_places=65535)
     task_description = models.CharField()
@@ -396,8 +396,8 @@ class Tasks(models.Model):
     amount = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     unit_price = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     task_description = models.CharField()
-    fk_invoice = models.IntegerField(blank=True, null=True)
-    fk_unit = models.IntegerField(blank=True, null=True)
+    fk_invoice = models.ForeignKey(Invoices, models.DO_NOTHING, db_column='fk_invoice', blank=True, null=True)
+    fk_unit = models.ForeignKey('Units', models.DO_NOTHING, db_column='fk_unit', blank=True, null=True)
     fk_asset_allocation = models.IntegerField(blank=True, null=True)
     internal_info = models.CharField(blank=True, null=True)
     customer_reference = models.CharField(blank=True, null=True)

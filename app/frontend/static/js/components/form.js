@@ -126,8 +126,8 @@ class BootstrapForm{
         $.each(array, function () {
             json[this.name] = this.value || "";
         });
-        console.log(json);
 
+        console.log(pk)
         if (pk){
             let url = this.ajax_url + pk + '/';
             $.ajax({
@@ -135,8 +135,10 @@ class BootstrapForm{
                type: 'PUT',
                data:json,
                success: function(response) {
+                 console.log(response);
                  location.reload();
-               }
+               },
+
             });
         } else {
             $.ajax({
@@ -144,6 +146,7 @@ class BootstrapForm{
                type: 'POST',
                data:json,
                success: function(response) {
+                 console.log(response);
                  location.reload();
                }
             });

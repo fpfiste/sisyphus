@@ -24,3 +24,8 @@ class CompanyViewSet(viewsets.ModelViewSet):
         print(params)
         data = queryset.filter(**params)
         return data
+
+
+    @action(detail=True, methods=['PUT'])
+    def put(self):
+        print(self.request)
