@@ -5,7 +5,7 @@
 {% block content %}
 
 
-				<h1 class="h3 mb-3">{{page_config.title.de}}</h1>
+				<h1 class="h3 mb-3">{{page_config.title.en}}</h1>
 
 				<div class="row">
                     <div class="col-3">
@@ -115,36 +115,7 @@
 
 
 
-		<script src="{{page_config.js_path}}"/>
-		<!--<script>
 
-			var table = new Tabulator("#overview-table", {
-
-				layout:"fitColumns",      //fit columns to width of table
-				ajaxURL:"/api/{{page_config.url}}",
-				responsiveLayout:"hide",  //hide columns that don't fit on the table
-				initialSort:[             //set the initial sort order of the data
-					{column:"{{page_config.pk}}", dir:"desc"},
-				],
-				columnDefaults:{
-					tooltip:true,         //show tool tips on cells
-				},
-				columns:[                 //define the table columns
-
-				{% for value in page_config.fields.table %}
-					{title:"{{value.title}}", field:"{{value.key}}"},
-				{% endfor %}
-
-				{title:"Actions", formatter:"link", formatterParams:{
-					label:"edit",
-
-					url:function(cell){return window.location.href + "/" + cell.getData().{{page_config.pk}}}
-				}}
-
-				],
-			});
-
-		</script>-->
 
 
 

@@ -1,7 +1,7 @@
 
 $(document).ready(function(){
     let page_config
-    let url = '/companies'
+    let url = '/projects/sales'
 
 
 
@@ -42,8 +42,8 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            exclude: ['id_company'],
-            required : ['company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'fk_sys_rec_status' , 'company_email', 'is_customer', 'is_supplier', 'is_subcontractor']
+            exclude: ['id_sale', 'fk_invoice'],
+            required : ['sale_timestamp', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_reference', 'fk_unit']
 
     })
     let update_form = new BootstrapForm({
@@ -52,8 +52,8 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            disabled : ['id_company'],
-            required : ['id_company','company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'fk_sys_rec_status' , 'company_email', 'is_customer', 'is_supplier', 'is_subcontractor']
+            disabled : ['id_sale', 'fk_invoice'],
+            required : ['id_sale', 'sale_timestamp', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_reference', 'fk_unit']
 
     })
 
@@ -70,7 +70,6 @@ $(document).ready(function(){
       $.ajax({
         url: window.location.origin +page_config['ajax_url'] + '?' + query_params,
         success: function (result) {
-            console.log(result);
             table.data = result;
             table.build();
             $( "#"+page_config['table_id']+" tr" ).on( "dblclick", function() {
@@ -79,10 +78,8 @@ $(document).ready(function(){
         $.ajax({
             url: window.location.origin + page_config['ajax_url'] + '/' + record_id,
             success: function (result) {
-                console.log(result);
 
                 $.each(result, (key, value)=>{
-                    console.log(key)
                     if (value === true){
                         value = 1;
                     } else if (value === false){
@@ -117,10 +114,10 @@ $(document).ready(function(){
         $.ajax({
             url: window.location.origin + page_config['ajax_url'] + '/' + record_id,
             success: function (result) {
-                console.log(result);
+
 
                 $.each(result, (key, value)=>{
-                    console.log(key)
+
                     if (value === true){
                         value = 1;
                     } else if (value === false){
@@ -136,7 +133,7 @@ $(document).ready(function(){
 
 
     $( "#btn_save" ).on( "click", function() {
-        let pk = $('#update_form #id_company').val()
+        let pk = $('#update_form #' + page_config['pk']).val()
         update_form.submit(pk);
     });
 

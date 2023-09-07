@@ -9,7 +9,7 @@ class BootstrapDataTable{
           this.data = this.ajax_get(ajax_url);;
           this.pk_field = pk_field;
           this.ajax_url = ajax_url;
-
+          this.build_grid()
       }
 
       ajax_get(url){
@@ -57,8 +57,8 @@ class BootstrapDataTable{
 
       fk_field(url_endpoint, display_field, pk) {
             let data;
-            let url = window.location.origin + '/api/' + url_endpoint + '/' + pk
-            console.log(url)
+            let url = window.location.origin + url_endpoint + '/' + pk
+
             $.ajax({
                url: url,
                type: 'GET',
@@ -68,7 +68,7 @@ class BootstrapDataTable{
                  data =  response;
                }
             });
-            console.log(data)
+
 
             return '<td>'+data[display_field]+'</td>';
 
@@ -76,24 +76,31 @@ class BootstrapDataTable{
 
       }
 
+      build_grid() {
+          $(this.container).empty();
+
+
+            //* draw the grid of the new table object
+            let table_grid = '<div style="overflow:auto; white-space:nowrap;"><table class="table table-striped table-hover" id='+this.id+'><thead></thead><tbody></tbody></table></div>';
+            $(this.container).append(table_grid);
+
+            //* add header field to the grid from this.fields object
+            $.each(this.fields,(key,value) => {
+                $('#'+this.id + ' thead').append('<th>'+value.title.de+'</th>');
+            });
+
+      }
+
 
       build() {
         //* remove older renderings of the object
         //* load the data to populate the table
-        $(this.container).empty();
 
-
-        //* draw the grid of the new table object
-        let table_grid = '<div style="overflow:auto; white-space:nowrap;"><table class="table table-striped table-hover" id='+this.id+'><thead></thead><tbody></tbody></table></div>';
-        $(this.container).append(table_grid);
-
-        //* add header field to the grid from this.fields object
-        $.each(this.fields,(key,value) => {
-            $('#'+this.id + ' thead').append('<th>'+value.title+'</th>');
-        });
+        $('#'+this.id + ' tbody').empty()
 
         //* loop all the rows in this.data object and add it to the table
         $.each(this.data,(key,element) => {
+
 
             //* create the row wrapper for the current record
             let row = '<tr data-row-pk="'+element[this.pk_field]+'">';
@@ -106,12 +113,12 @@ class BootstrapDataTable{
 
 
 
-                if(config.type == 'text') {
+                if(config.display_type == 'text') {
                     row += this.text_field(element[field])
-                } else if (config.type == 'checkbox') {
+                } else if (config.display_type == 'checkbox') {
                     row += this.checkbox_field(element[field])
-                } else if (config.type == 'fk_field') {
-                    row += this.fk_field(config.url_endpoint, config.display_field, element[field])
+                } else if (config.display_type == 'fk_field') {
+                    row += this.fk_field(config.api_endpoint, config.display_field, element[field])
 
                 }
 

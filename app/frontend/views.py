@@ -1,10 +1,11 @@
+import json
 from http.client import HTTPResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import render, redirect
 from django.urls import reverse
 import datetime as dt
-
+import os
 import copy
 from .config import pages, fields
 
@@ -41,19 +42,16 @@ def render_template(request, pk=None):
     #language = user.fk_language.language_abbreviation.lower()
 
     url = request.path.split('/' + str(pk))[0]
-    page_config = copy.deepcopy(pages[url])
 
-    for component, value in page_config['fields'].items():
-        component_fields = []
-        for element in value:
-            component_fields.append(fields[element]['en'])
-        page_config['fields'][component] = component_fields
 
-    data = {'form': None, 'page_config':page_config}
+    with open('app/frontend/static/config.json') as cnf:
+        config = json.load(cnf)
 
-    if not pk:
-        return render(request, page_config['template'], data)
-    else:
-        return render(request, page_config['detail_template'], data)
+    page_config = config['pages'][url]
+    data = {'page_config':page_config}
+
+
+    return render(request, page_config['template'], data)
+
 
 

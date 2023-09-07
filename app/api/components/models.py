@@ -20,8 +20,8 @@ class AssetAbsenceCodes(models.Model):
 
 class AssetAbsences(models.Model):
     id_asset_absence = models.AutoField(primary_key=True)
-    from_field = models.DateTimeField(db_column='from')  # Field renamed because it was a Python reserved word.
-    to = models.DateTimeField()
+    asset_absence_from = models.DateTimeField()  # Field renamed because it was a Python reserved word.
+    asset_absence_to = models.DateTimeField()
     fk_asset = models.ForeignKey('Assets', models.DO_NOTHING, db_column='fk_asset')
     fk_asset_absence_code = models.ForeignKey(AssetAbsenceCodes, models.DO_NOTHING, db_column='fk_asset_absence_code')
 
@@ -55,11 +55,9 @@ class Assets(models.Model):
     id_asset = models.AutoField(primary_key=True)
     fk_asset_type = models.ForeignKey(AssetTypes, models.DO_NOTHING, db_column='fk_asset_type')
     asset_description = models.CharField()
-    fk_employee = models.IntegerField(blank=True, null=True)
     asset_internal_alias = models.CharField()
     year_of_production = models.IntegerField(blank=True, null=True)
-    asset_km_counter = models.CharField(blank=True, null=True)
-    fk_sys_rec_state = models.ForeignKey('SysRecStates', models.DO_NOTHING, db_column='fk_sys_rec_state')
+    fk_sys_rec_status = models.ForeignKey('SysRecStates', models.DO_NOTHING, db_column='fk_sys_rec_status')
 
     class Meta:
         managed = False
@@ -232,8 +230,8 @@ class EmployeeAbsenceCodes(models.Model):
 
 class EmployeeAbsences(models.Model):
     id_employee_absence = models.AutoField(primary_key=True)
-    from_field = models.DateTimeField(db_column='from')  # Field renamed because it was a Python reserved word.
-    to = models.DateTimeField()
+    employee_absence_from = models.DateTimeField(db_column='employee_absence_from')  # Field renamed because it was a Python reserved word.
+    employee_absence_to = models.DateTimeField()
     fk_employee = models.ForeignKey('Employees', models.DO_NOTHING, db_column='fk_employee')
     fk_employee_absence_code = models.ForeignKey(EmployeeAbsenceCodes, models.DO_NOTHING, db_column='fk_employee_absence_code')
 
@@ -268,15 +266,15 @@ class Employees(models.Model):
     employee_street = models.CharField()
     employee_zipcode = models.CharField()
     employee_city = models.CharField()
-    emplyee_email = models.CharField()
+    employee_email = models.CharField()
     employee_cell_phone = models.CharField()
-    emplyee_birthday = models.DateField()
-    emplyee_salary = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    employee_birthday = models.DateField()
+    employee_salary = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     fk_employee_type = models.ForeignKey(EmployeeTypes, models.DO_NOTHING, db_column='fk_employee_type')
-    employee_fte = models.DecimalField(max_digits=65535, decimal_places=65535)
-    employee_internal_alias = models.CharField(unique=True)
+    employee_fte = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True )
+    employee_internal_alias = models.CharField(unique=True, blank=True, null=True)
     fk_sys_rec_status = models.ForeignKey('SysRecStates', models.DO_NOTHING, db_column='fk_sys_rec_status')
-    employee_house_nr = models.CharField()
+
 
     class Meta:
         managed = False
@@ -346,7 +344,7 @@ class Sales(models.Model):
     fk_project = models.ForeignKey(Projects, models.DO_NOTHING, db_column='fk_project')
     sale_amount = models.DecimalField(max_digits=65535, decimal_places=65535)
     sale_unit_price = models.DecimalField(max_digits=65535, decimal_places=65535)
-    sales_reference = models.CharField()
+    sale_reference = models.CharField()
     fk_unit = models.ForeignKey('Units', models.DO_NOTHING, db_column='fk_unit')
     fk_product = models.IntegerField()
     fk_invoice = models.ForeignKey(Invoices, models.DO_NOTHING, db_column='fk_invoice')

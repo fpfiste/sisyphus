@@ -73,17 +73,30 @@
            					</a>
 						</li>
 						<li class="sidebar-header">
-							Resources
+							Employees
 						</li>
 						<li class="sidebar-item">
 							<a class="sidebar-link" href="{% url 'employees' %}">
 								<i class="fa-solid fa-person"></i> <span class="align-middle">Employees</span>
             				</a>
 						</li>
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{% url 'employee_absences' %}">
+								<i class="fa-solid fa-person"></i> <span class="align-middle">Employee Absences</span>
+            				</a>
+						</li>
 
+						<li class="sidebar-header">
+							Assets
+						</li>
 						<li class="sidebar-item">
 							<a class="sidebar-link" href="{% url 'assets' %}">
               					<i class="fa-solid fa-truck-plane"></i><span class="align-middle">Assets</span>
+            				</a>
+						</li>
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{% url 'asset_absences' %}">
+              					<i class="fa-solid fa-truck-plane"></i><span class="align-middle">Asset Absences</span>
             				</a>
 						</li>
 
@@ -214,7 +227,12 @@
 		</div>
 
 </div>
+
 <script src="/static/js/app.js"></script>
+		<script>
+			let page_config = {{page_config | safe}}
+		</script>
+<script src="{{page_config.js}}"></script>
 
 </body>
 

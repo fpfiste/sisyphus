@@ -23,6 +23,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
         params = dict([(key,value) for key, value in self.request.query_params.items() if value != ''])
         print(params)
         data = queryset.filter(**params)
+        print(data)
         return data
 
 

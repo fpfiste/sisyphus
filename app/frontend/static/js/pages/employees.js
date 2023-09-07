@@ -1,7 +1,7 @@
 
 $(document).ready(function(){
     let page_config
-    let url = '/companies'
+    let url = '/assets'
 
 
 
@@ -42,18 +42,20 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            exclude: ['id_company'],
-            required : ['company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'fk_sys_rec_status' , 'company_email', 'is_customer', 'is_supplier', 'is_subcontractor']
+            exclude: ['id_asset'],
+            required : ['employee_first_name', 'employee_last_name','employee_street', 'employee_zipcode', 'employee_city' , 'employee_email', 'fk_sys_rec_status', 'employee_cell_phone', 'employee_birthday', 'employee_internal_alias', 'fk_employee_type' ]
 
     })
+
+
     let update_form = new BootstrapForm({
             container: '#update_form_container',
             id: 'update_form',
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            disabled : ['id_company'],
-            required : ['id_company','company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'fk_sys_rec_status' , 'company_email', 'is_customer', 'is_supplier', 'is_subcontractor']
+            disabled : ['id_employee'],
+            required : ['id_employee', 'employee_first_name', 'employee_last_name','employee_street', 'employee_zipcode', 'employee_city' , 'employee_email', 'fk_sys_rec_status', 'employee_cell_phone', 'employee_birthday', 'employee_internal_alias', 'fk_employee_type' ]
 
     })
 
@@ -70,7 +72,6 @@ $(document).ready(function(){
       $.ajax({
         url: window.location.origin +page_config['ajax_url'] + '?' + query_params,
         success: function (result) {
-            console.log(result);
             table.data = result;
             table.build();
             $( "#"+page_config['table_id']+" tr" ).on( "dblclick", function() {
@@ -79,10 +80,8 @@ $(document).ready(function(){
         $.ajax({
             url: window.location.origin + page_config['ajax_url'] + '/' + record_id,
             success: function (result) {
-                console.log(result);
 
                 $.each(result, (key, value)=>{
-                    console.log(key)
                     if (value === true){
                         value = 1;
                     } else if (value === false){
@@ -117,10 +116,10 @@ $(document).ready(function(){
         $.ajax({
             url: window.location.origin + page_config['ajax_url'] + '/' + record_id,
             success: function (result) {
-                console.log(result);
+
 
                 $.each(result, (key, value)=>{
-                    console.log(key)
+
                     if (value === true){
                         value = 1;
                     } else if (value === false){
@@ -136,7 +135,7 @@ $(document).ready(function(){
 
 
     $( "#btn_save" ).on( "click", function() {
-        let pk = $('#update_form #id_company').val()
+        let pk = $('#update_form #' + page_config['pk']).val()
         update_form.submit(pk);
     });
 

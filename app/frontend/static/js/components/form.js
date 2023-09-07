@@ -4,16 +4,21 @@
 
 class BootstrapForm{
 
-      constructor({container, id, fields, validation, ajax_url}) {
+      constructor({container, id, fields, validation, ajax_url, exclude = [], required = [], disabled=[]}) {
           this.container = container;
           this.ajax_url = ajax_url;
           this.id = id;
+          this.exclude = exclude;
+          this.required = required;
           this.fields = fields;
           this.data = null;
+          this.disabled = disabled;
       }
 
 
-      input_field({id, title, type, placeholder, min, max, required}) {
+
+
+      input_field({id, title, type, placeholder, min, max, required, disabled}) {
         if (placeholder === undefined){
             placeholder = ''
         }
@@ -36,63 +41,125 @@ class BootstrapForm{
             required = 'required="'+ required +'"'
         }
 
+        if (disabled) {
+            disabled = 'disabled'
+        } else {
+            disabled = ''
+        }
 
         let html = '<div class="form-group">'
         html += '<label for="'+id+'">'+title+'</label>'
-        html += '<input type="'+type+'" name="'+id+'" class="form-control" id="'+id+'" ' + placeholder + ' ' + min + ' ' + max + ' ' + required+'></div>'
+        html += '<input type="'+type+'" name="'+id+'" class="form-control" id="'+id+'" ' + placeholder + ' ' + min + ' ' + max + ' ' + required+' ' + disabled +'></div>'
 
         return html
       }
 
-      select_field({id, title, required, ajax_url, options, value_field, description_field}){
+      select({id, title, required, ajax_url, options,value_field, description_field, disabled}){
 
           if (required) {
             required = 'required'
           } else {
             required = ''
           }
-          let html = '<div class="form-group"><label for="'+id+'">'+title+'</label><select class="form-control" id="'+id+'" name="'+id+'" '+required+'>'
+
+                  if (disabled) {
+            disabled = 'disabled'
+        } else {
+            disabled = ''
+        }
+          let html = '<div class="form-group"><label for="'+id+'">'+title+'</label><select class="form-control" id="'+id+'" name="'+id+'" '+required+' '+ disabled + '>'
 
           html += '<option value="">-----------</option>'
 
-          if (options){
+          if (ajax_url){
+                  let url = window.location.origin + ajax_url
 
-            $.each(options,(key,value) => {
-                html += '<option value="'+key+'">'+value+'</option>'
+                  $.ajax({
+                        url: ajax_url,
+                        async: false,
+                        success: function (result) {
 
+                           $.each(result,(key,value) => {
 
-            })
+                               html += '<option value="'+value[value_field]+'">'+value[description_field]+'</option>'
+                               return html
+                            })
+                        }
+                    });
 
+          } else if (options) {
 
-          } else if (ajax_url) {
+                $.each(options,(key,value) => {
+                            html += '<option value="'+key+'">'+value.de+'</option>'
+                            return html
+                })
 
-              $.ajax({
-                    url: ajax_url,
-                    async: false,
-                    success: function (result) {
-
-                       $.each(result,(key,value) => {
-
-                           html += '<option value="'+value[value_field]+'">'+value[description_field]+'</option>'
-                           return html
-                        })
-                    }
-                });
 
           }
+
+
+
+
         return html
       }
+
 
       build(){
         let form = '<form id="'+this.id+'" class="needs-validation"></div>';
         $(this.container).append(form);
         let field = ''
-        $.each(this.fields,(key,value) => {
 
-            if (value.type == 'select'){
-                field = this.select_field({id:key, title: value.title, ajax_url:value.ajax_url, options: value.options, value_field: value.value_field, description_field: value.description_field, required:value.required})
-            } else{
-               field = this.input_field({id:key, title: value.title, type: value.type, min: value.min, max: value.max, required: value.required})
+        let skip = this.exclude;
+        let req = this.required;
+        let disabled = this.disabled;
+
+        if (!skip) {
+            skip = [];
+        }
+
+        if (!req) {
+            req = [];
+        }
+
+        if (!disabled) {
+            disabled = [];
+        }
+
+        $.each(this.fields,(key,value) => {
+            if (skip.includes(key)){
+                return;
+            }
+
+            if (req.includes(key)) {
+                value.required = true;
+            }
+
+            if (disabled.includes(key)){
+                value.disabled = true;
+
+            }
+            if (value.input_type == 'select'){
+
+                field = this.select({
+                                            id:key,
+                                            title: value.title.de,
+                                            ajax_url:value.api_endpoint,
+                                            options: value.options,
+                                            value_field: value.pk_field,
+                                            description_field: value.display_field,
+                                            required:value.required,
+                                            disabled:value.disabled,
+                                         })
+            } else {
+               field = this.input_field({
+                                         id:key,
+                                         title: value.title.de,
+                                         type: value.input_type,
+                                         min: value.min,
+                                         max: value.max,
+                                         required: value.required,
+                                         disabled:value.disabled,
+                                         })
 
             }
             $('#' + this.id).append(field)
@@ -121,33 +188,49 @@ class BootstrapForm{
             return
         }
 
+        $.each(form_fields, (key,value)=>{
+            $(value).prop('disabled', false);
+        })
+
         let array = $(form).serializeArray(); // Encodes the set of form elements as an array of names and values.
         let json = {};
         $.each(array, function () {
             json[this.name] = this.value || "";
         });
+        console.log(json)
+        $.each(this.fields, (key,value)=>{
+            if (this.disabled.includes(key)){
+                $('#' + this.id + ' #' + key).prop('disabled', true);
+            }
+        })
 
-        console.log(pk)
+
+
         if (pk){
-            let url = this.ajax_url + pk + '/';
+            let url = this.ajax_url + '/' + pk + '/';
             $.ajax({
                url: url,
                type: 'PUT',
                data:json,
                success: function(response) {
-                 console.log(response);
-                 location.reload();
-               },
 
+                  location.reload();
+               },
+               error: function(error){
+                console.log(error)
+               }
             });
         } else {
             $.ajax({
-               url: this.ajax_url,
+               url: this.ajax_url + '/',
                type: 'POST',
                data:json,
                success: function(response) {
-                 console.log(response);
+
                  location.reload();
+               },
+               error: function(error) {
+                console.log(error)
                }
             });
 

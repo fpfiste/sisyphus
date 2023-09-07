@@ -207,7 +207,7 @@ pages = {
     '/companies' : {
         'title': { 'en' : 'Companies', 'de': 'Unternehmen'},
         'pk': 'id_company',
-        'template' : 'frontend/pages/overview_table.html',
+        'template' : 'frontend/pages/table.html',
         'detail_template' : 'frontend/pages/organization_profile.html',
         'url' : 'companies',
         'js_path' : 'static/js/pages/organizations.js',
@@ -222,7 +222,7 @@ pages = {
         'url': 'projects',
         'title': { 'en' : 'Projects', 'de': 'Projekte'},
         'pk': 'id_project',
-        'template' : 'frontend/pages/overview_table.html',
+        'template' : 'frontend/pages/table.html',
         'detail_template': 'frontend/pages/organization_profile.html',
         'fields': {
             'form':['id_project', 'project_name', 'fk_customer', 'planned_start_date', 'planned_end_date', 'effective_start_date', 'effective_end_date'],
@@ -234,7 +234,7 @@ pages = {
         'url': 'project/tasks',
         'title': {'en': 'Aufträge', 'de': 'Tasks'},
         'pk': 'id_task',
-        'template': 'frontend/pages/overview_table.html',
+        'template': 'frontend/pages/table.html',
         'detail_template': 'frontend/pages/organization_profile.html',
         'fields': {
             'form': ['id_task', 'fk_project', 'timestamp_from', 'timestamp_to', 'amount', 'price', 'task_description', 'fk_invoice', 'fk_subcontractor'],
@@ -245,7 +245,7 @@ pages = {
         'url': 'project/sales',
         'title': {'en': 'Sales', 'de': 'Verkäufe'},
         'pk': 'id_sale',
-        'template': 'frontend/pages/overview_table.html',
+        'template': 'frontend/pages/table.html',
         'detail_template': 'frontend/pages/organization_profile.html',
         'fields': {
             'form': [],
@@ -257,7 +257,7 @@ pages = {
         'url': 'employees',
         'title': {'en': 'Employees', 'de': 'Mitarbeiter'},
         'pk': 'id_employee',
-        'template': 'frontend/pages/overview_table.html',
+        'template': 'frontend/pages/table.html',
         'detail_template': 'frontend/pages/resource_profile.html',
         'fields': {
             'form': [],
@@ -269,7 +269,7 @@ pages = {
         'url': 'assets',
         'title': {'en': 'Assets', 'de': 'Maschinen / Gegenstände'},
         'pk': 'id_asset',
-        'template': 'frontend/pages/overview_table.html',
+        'template': 'frontend/pages/table.html',
         'detail_template': 'frontend/pages/resource_profile.html',
         'fields': {
             'form': [],
@@ -281,7 +281,7 @@ pages = {
         'url': 'invoices',
         'title': {'en': 'Invoices', 'de': 'Rechnungen'},
         'pk': 'id_invoice',
-        'template': 'frontend/pages/overview_table.html',
+        'template': 'frontend/pages/table.html',
         'detail_template': 'frontend/pages/organization_profile.html',
         'fields': {
             'form': [],
