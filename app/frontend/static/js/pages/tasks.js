@@ -1,7 +1,7 @@
 
 $(document).ready(function(){
     let page_config
-    let url = '/sales'
+    let url = '/tasks'
 
 
 
@@ -15,6 +15,7 @@ $(document).ready(function(){
           }
     });
 
+    let scheduler = new Scheduler({container:'#schedule_container', id:'scheduler'})
 
     // create table instance
     let table = new BootstrapDataTable({
@@ -26,6 +27,7 @@ $(document).ready(function(){
                     })
 
 
+
     // create form insstances
     let filter_form = new BootstrapForm({
             container: '#form_filter_container',
@@ -33,6 +35,7 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:false,
             fields: page_config['fields'],
+            exclude: ['task_template', 'task_description', 'fk_invoice', 'internal_info', 'employees', 'assets', 'amount', 'unit_price', 'fk_unit']
 
 
     })
@@ -42,8 +45,8 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            exclude: ['id_sale', 'fk_invoice'],
-            required : ['sale_timestamp', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_reference', 'fk_unit']
+            exclude: ['id_task', 'fk_invoice'],
+            required : ['fk_project', 'fk_task_status' , 'task_description']
 
     })
     let update_form = new BootstrapForm({
@@ -52,8 +55,9 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            disabled : ['id_sale', 'fk_invoice'],
-            required : ['id_sale', 'sale_timestamp', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_reference', 'fk_unit']
+            exclude: ['fk_invoice', 'task_template'],
+            disabled : ['id_task', 'fk_invoice'],
+            required : ['id_task', 'fk_project', 'fk_task_status' , 'task_description']
 
     })
 
@@ -63,7 +67,7 @@ $(document).ready(function(){
     create_form.build();
     update_form.build();
 
-
+    $('#table_container').css('height', '30vh')
     // add evetn listeners
     $( "#btn_filter" ).on( "click", function() {
       let query_params = $('#filter_form').serialize();
@@ -105,17 +109,86 @@ $(document).ready(function(){
     });
 
     $( "#btn_add" ).on( "click", function() {
-        create_form.submit();
+        let form = $('#' + create_form.id);
+        let form_fields = $(form).find(':input')
+
+        create_form.validate();
+
+        if (create_form.is_valid == false){
+            alert('Alle Felder ausfüllen!')
+            return
+        }
+
+        let array = $(form).serialize();
+        let url = page_config['ajax_url'] + '/';
+
+        let employees = $(form).find('#fk_employee').val()
+        let assets = $(form).find('#fk_asset').val()
+        let task_data;
+
+        $.ajax({
+               url: url,
+               type: 'POST',
+               data:array,
+               async:false,
+               success: function(response) {
+                  task_data = response;
+                  console.log(task_data);
+               },
+               error: function(error){
+                console.log(error)
+               }
+            });
+
+        url = '/api/employee-allocation/'
+
+        $.each(employees, (key,value)=>{
+            let payload = {'fk_task':task_data['id_task'], 'fk_employee': value}
+            $.ajax({
+                   url: url,
+                   type: 'POST',
+                   data:payload,
+                   async:false,
+                   success: function(response) {
+                      console.log(response);
+                   },
+                   error: function(error){
+                    console.log(error)
+                   }
+            });
+        })
+
+
+        url = '/api/asset-allocation/'
+        $.each(assets, (key,value)=>{
+            let payload = {'fk_task':task_data['id_task'], 'fk_asset': value}
+            $.ajax({
+                   url: url,
+                   type: 'POST',
+                   data:payload,
+                   async:false,
+                   success: function(response) {
+                      console.log(response);
+                   },
+                   error: function(error){
+                    console.log(error)
+                   }
+            });
+        })
+
     });
+
+
+
 
     $( "#"+page_config['table_id']+" tr").on( "dblclick", function() {
         let record_id =  $(this).attr('data-row-pk');
-projects
+
         $.ajax({
             url: window.location.origin + page_config['ajax_url'] + '/' + record_id,
             success: function (result) {
 
-
+                console.log(result)
                 $.each(result, (key, value)=>{
 
                     if (value === true){
@@ -135,8 +208,7 @@ projects
     $( "#btn_save" ).on( "click", function() {
         let pk = $('#update_form #' + page_config['pk']).val()
         update_form.submit(pk);
-    });
-
+        });
 
 
 });

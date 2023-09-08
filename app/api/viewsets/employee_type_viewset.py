@@ -10,3 +10,14 @@ class EmployeeTypesViewSet(viewsets.ModelViewSet):
     """
     queryset = EmployeeTypes.objects.all()
     serializer_class = EmployeeTypeSerializer
+
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = EmployeeTypes.objects.all()
+        params = dict([(key,value) for key, value in self.request.query_params.items() if value != ''])
+        data = queryset.filter(**params)
+        return data

@@ -20,13 +20,10 @@ class CompanyViewSet(viewsets.ModelViewSet):
         by filtering against a `username` query parameter in the URL.
         """
         queryset = Companies.objects.all()
+
         params = dict([(key,value) for key, value in self.request.query_params.items() if value != ''])
-        print(params)
+
         data = queryset.filter(**params)
-        print(data)
+
         return data
 
-
-    @action(detail=True, methods=['PUT'])
-    def put(self):
-        print(self.request)

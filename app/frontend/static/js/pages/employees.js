@@ -1,7 +1,7 @@
 
 $(document).ready(function(){
     let page_config
-    let url = '/assets'
+    let url = '/employees'
 
 
 
@@ -42,7 +42,7 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            exclude: ['id_asset'],
+            exclude: ['id_employee'],
             required : ['employee_first_name', 'employee_last_name','employee_street', 'employee_zipcode', 'employee_city' , 'employee_email', 'fk_sys_rec_status', 'employee_cell_phone', 'employee_birthday', 'employee_internal_alias', 'fk_employee_type' ]
 
     })

@@ -19,6 +19,7 @@ from .task_state_viewset import TaskStateViewSet
 from .task_template_viewset import TaskTemplateViewSet
 from .task_viewset import TaskViewSet
 from .unit_viewset import UnitViewSet
+
 __all__ = ['CompanyViewSet',
            'CurrencyViewSet',
            'AssetAbsenceCodesViewSet',
@@ -39,5 +40,6 @@ __all__ = ['CompanyViewSet',
            'TaskStateViewSet',
            'TaskTemplateViewSet',
            'TaskViewSet',
-           'UnitViewSet'
+           'UnitViewSet',
+
            ]

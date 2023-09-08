@@ -13,11 +13,7 @@ class AssetAbsenceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class AssetTaskAllocationSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = AssetTaskAllocation
-        fields = '__all__'
 
 class AssetTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -61,11 +57,6 @@ class EmployeeAbsenceSerializer(serializers.ModelSerializer):
         model = EmployeeAbsences
         fields = '__all__'
 
-class EmployeeTaskAllocationSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = EmployeeTaskAllocation
-        fields = '__all__'
 
 
 class EmployeeTypeSerializer(serializers.ModelSerializer):
@@ -127,6 +118,8 @@ class TaskTemplateSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
+
+
     class Meta:
         model = Tasks
         fields = '__all__'

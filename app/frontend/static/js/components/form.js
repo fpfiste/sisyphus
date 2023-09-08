@@ -13,6 +13,7 @@ class BootstrapForm{
           this.fields = fields;
           this.data = null;
           this.disabled = disabled;
+          this.is_valid = false
       }
 
 
@@ -53,29 +54,35 @@ class BootstrapForm{
 
         return html
       }
-
-      select({id, title, required, ajax_url, options,value_field, description_field, disabled}){
-
+      select({id, title, required, ajax_url, api_endpoint_filter, options,value_field, description_field, disabled, multiple}){
+           let name = id;
           if (required) {
             required = 'required'
           } else {
             required = ''
           }
 
-                  if (disabled) {
+         if (disabled) {
             disabled = 'disabled'
         } else {
             disabled = ''
         }
-          let html = '<div class="form-group"><label for="'+id+'">'+title+'</label><select class="form-control" id="'+id+'" name="'+id+'" '+required+' '+ disabled + '>'
+
+        if (multiple) {
+            multiple = 'multiple'
+            name = id + '[]'
+        } else {
+            multiple = ''
+        }
+          let html = '<div class="form-group"><label for="'+id+'">'+title+'</label><select class="form-control" id="'+id+'" name="'+id+'" '+required+' '+ disabled + ' ' + multiple + '>'
 
           html += '<option value="">-----------</option>'
 
           if (ajax_url){
-                  let url = window.location.origin + ajax_url
+                  let url = ajax_url + '?' + api_endpoint_filter
 
                   $.ajax({
-                        url: ajax_url,
+                        url: url,
                         async: false,
                         success: function (result) {
 
@@ -104,8 +111,9 @@ class BootstrapForm{
       }
 
 
+
       build(){
-        let form = '<form id="'+this.id+'" class="needs-validation"></div>';
+        let form = '<form id="'+this.id+'" class="needs-validation" style="overflow:auto;"></div>';
         $(this.container).append(form);
         let field = ''
 
@@ -139,7 +147,7 @@ class BootstrapForm{
 
             }
             if (value.input_type == 'select'){
-
+                console.log(value.multiple)
                 field = this.select({
                                             id:key,
                                             title: value.title.de,
@@ -149,6 +157,8 @@ class BootstrapForm{
                                             description_field: value.display_field,
                                             required:value.required,
                                             disabled:value.disabled,
+                                            multiple: value.multiple,
+                                            api_endpoint_filter: value.api_filter
                                          })
             } else {
                field = this.input_field({
@@ -165,14 +175,9 @@ class BootstrapForm{
             $('#' + this.id).append(field)
 
         });
-
-
-
       }
 
-      submit(pk){
-
-
+      validate(){
         let form = $('#' + this.id)
         let form_fields = $(form).find(':input')
 
@@ -183,26 +188,45 @@ class BootstrapForm{
             }
         })
 
-        if (valid == false){
-            alert('Alle Felder ausfüllen!')
-            return
-        }
+        this.is_valid = valid;
 
+      }
+
+
+      serialize() {
+        let form = $('#' + this.id)
+        let form_fields = $(form).find(':input')
         $.each(form_fields, (key,value)=>{
             $(value).prop('disabled', false);
         })
 
-        let array = $(form).serializeArray(); // Encodes the set of form elements as an array of names and values.
-        let json = {};
-        $.each(array, function () {
-            json[this.name] = this.value || "";
-        });
-        console.log(json)
+        let array = $(form).serialize();
+
+
         $.each(this.fields, (key,value)=>{
             if (this.disabled.includes(key)){
                 $('#' + this.id + ' #' + key).prop('disabled', true);
             }
         })
+
+
+        return array;
+      }
+
+      submit(pk){
+
+
+        let form = $('#' + this.id)
+        let form_fields = $(form).find(':input')
+
+        this.validate();
+
+        if (this.is_valid == false){
+            alert('Alle Felder ausfüllen!')
+            return
+        }
+
+        let array = this.serialize();
 
 
 
@@ -211,7 +235,7 @@ class BootstrapForm{
             $.ajax({
                url: url,
                type: 'PUT',
-               data:json,
+               data:array,
                success: function(response) {
 
                   location.reload();

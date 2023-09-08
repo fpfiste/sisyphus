@@ -20,7 +20,7 @@ class AssetAbsenceCodes(models.Model):
 
 class AssetAbsences(models.Model):
     id_asset_absence = models.AutoField(primary_key=True)
-    asset_absence_from = models.DateTimeField()  # Field renamed because it was a Python reserved word.
+    asset_absence_from = models.DateTimeField()
     asset_absence_to = models.DateTimeField()
     fk_asset = models.ForeignKey('Assets', models.DO_NOTHING, db_column='fk_asset')
     fk_asset_absence_code = models.ForeignKey(AssetAbsenceCodes, models.DO_NOTHING, db_column='fk_asset_absence_code')
@@ -28,17 +28,6 @@ class AssetAbsences(models.Model):
     class Meta:
         managed = False
         db_table = 'asset_absences'
-
-
-class AssetTaskAllocation(models.Model):
-    id_asset_allocation = models.AutoField(primary_key=True)
-    fk_asset = models.ForeignKey('Assets', models.DO_NOTHING, db_column='fk_asset')
-    fk_task = models.ForeignKey('Tasks', models.DO_NOTHING, db_column='fk_task')
-
-    class Meta:
-        managed = False
-        db_table = 'asset_task_allocation'
-        unique_together = (('fk_asset', 'fk_task'),)
 
 
 class AssetTypes(models.Model):
@@ -230,7 +219,7 @@ class EmployeeAbsenceCodes(models.Model):
 
 class EmployeeAbsences(models.Model):
     id_employee_absence = models.AutoField(primary_key=True)
-    employee_absence_from = models.DateTimeField(db_column='employee_absence_from')  # Field renamed because it was a Python reserved word.
+    employee_absence_from = models.DateTimeField()
     employee_absence_to = models.DateTimeField()
     fk_employee = models.ForeignKey('Employees', models.DO_NOTHING, db_column='fk_employee')
     fk_employee_absence_code = models.ForeignKey(EmployeeAbsenceCodes, models.DO_NOTHING, db_column='fk_employee_absence_code')
@@ -238,16 +227,6 @@ class EmployeeAbsences(models.Model):
     class Meta:
         managed = False
         db_table = 'employee_absences'
-
-
-class EmployeeTaskAllocation(models.Model):
-    id_employee_allocation = models.AutoField(primary_key=True)
-    fk_task = models.ForeignKey('Tasks', models.DO_NOTHING, db_column='fk_task')
-    fk_employee = models.ForeignKey('Employees', models.DO_NOTHING, db_column='fk_employee')
-
-    class Meta:
-        managed = False
-        db_table = 'employee_task_allocation'
 
 
 class EmployeeTypes(models.Model):
@@ -271,10 +250,9 @@ class Employees(models.Model):
     employee_birthday = models.DateField()
     employee_salary = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     fk_employee_type = models.ForeignKey(EmployeeTypes, models.DO_NOTHING, db_column='fk_employee_type')
-    employee_fte = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True )
-    employee_internal_alias = models.CharField(unique=True, blank=True, null=True)
+    employee_fte = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
+    employee_internal_alias = models.CharField(unique=True)
     fk_sys_rec_status = models.ForeignKey('SysRecStates', models.DO_NOTHING, db_column='fk_sys_rec_status')
-
 
     class Meta:
         managed = False
@@ -346,8 +324,8 @@ class Sales(models.Model):
     sale_unit_price = models.DecimalField(max_digits=65535, decimal_places=65535)
     sale_reference = models.CharField()
     fk_unit = models.ForeignKey('Units', models.DO_NOTHING, db_column='fk_unit')
-    fk_product = models.IntegerField()
-    fk_invoice = models.ForeignKey(Invoices, models.DO_NOTHING, db_column='fk_invoice')
+    fk_product = models.IntegerField(blank=True, null=True)
+    fk_invoice = models.ForeignKey(Invoices, models.DO_NOTHING, db_column='fk_invoice', blank=True, null=True)
 
     class Meta:
         managed = False
@@ -357,6 +335,7 @@ class Sales(models.Model):
 class SysRecStates(models.Model):
     id_sys_rec_status = models.AutoField(primary_key=True)
     sys_rec_status = models.CharField()
+    entity = models.CharField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -389,19 +368,22 @@ class Tasks(models.Model):
     id_task = models.AutoField(primary_key=True)
     fk_project = models.ForeignKey(Projects, models.DO_NOTHING, db_column='fk_project')
     fk_task_state = models.ForeignKey(TaskStates, models.DO_NOTHING, db_column='fk_task_state')
-    timestamp_from = models.DateTimeField(blank=True, null=True)
-    timestamp_to = models.DateTimeField(blank=True, null=True)
+    task_date_from = models.DateField(blank=True, null=True)
+    task_date_to = models.DateField(blank=True, null=True)
     amount = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     unit_price = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
     task_description = models.CharField()
     fk_invoice = models.ForeignKey(Invoices, models.DO_NOTHING, db_column='fk_invoice', blank=True, null=True)
     fk_unit = models.ForeignKey('Units', models.DO_NOTHING, db_column='fk_unit', blank=True, null=True)
-    fk_asset_allocation = models.IntegerField(blank=True, null=True)
     internal_info = models.CharField(blank=True, null=True)
     customer_reference = models.CharField(blank=True, null=True)
     fk_subcontractor = models.IntegerField(blank=True, null=True)
-    brokerage_fee = models.DecimalField(max_digits=65535, decimal_places=65535, blank=True, null=True)
-    fk_service_type = models.IntegerField()
+    fk_employee_1 = models.ForeignKey(Employees, models.DO_NOTHING, db_column='fk_employee_1', blank=True, null=True)
+    fk_employee_2 = models.ForeignKey(Employees, models.DO_NOTHING, db_column='fk_employee_2', related_name='tasks_fk_employee_2_set', blank=True, null=True)
+    fk_asset_1 = models.ForeignKey(Assets, models.DO_NOTHING, db_column='fk_asset_1', blank=True, null=True)
+    fk_asset_2 = models.ForeignKey(Assets, models.DO_NOTHING, db_column='fk_asset_2', related_name='tasks_fk_asset_2_set', blank=True, null=True)
+    task_time_from = models.TimeField(blank=True, null=True)
+    task_time_to = models.TimeField(blank=True, null=True)
 
     class Meta:
         managed = False

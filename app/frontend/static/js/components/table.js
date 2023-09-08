@@ -76,12 +76,14 @@ class BootstrapDataTable{
 
       }
 
+
+
       build_grid() {
           $(this.container).empty();
 
 
             //* draw the grid of the new table object
-            let table_grid = '<div style="overflow:auto; white-space:nowrap;"><table class="table table-striped table-hover" id='+this.id+'><thead></thead><tbody></tbody></table></div>';
+            let table_grid = '<div id="table_container" style="overflow:auto; white-space:nowrap;"><table class="table table-striped table-hover table-bordered table-lg" id='+this.id+'><thead></thead><tbody></tbody></table></div>';
             $(this.container).append(table_grid);
 
             //* add header field to the grid from this.fields object
@@ -111,9 +113,9 @@ class BootstrapDataTable{
                 //* get corresponding field based on the field name from the data object
                 //* continue if the fieldname is url
 
-
-
-                if(config.display_type == 'text') {
+               if (element[field] == null) {
+                row += '<td></td>'
+               } else if(config.display_type == 'text') {
                     row += this.text_field(element[field])
                 } else if (config.display_type == 'checkbox') {
                     row += this.checkbox_field(element[field])
