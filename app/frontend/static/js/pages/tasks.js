@@ -2,8 +2,8 @@
 $(document).ready(function(){
     let page_config
     let url = '/tasks'
-
-
+    let employees;
+    let assets;
 
     //*** read the config file ***//
     $.ajax({
@@ -15,7 +15,8 @@ $(document).ready(function(){
           }
     });
 
-    let scheduler = new Scheduler({container:'#schedule_container', id:'scheduler'})
+
+
 
     // create table instance
     let table = new BootstrapDataTable({
@@ -26,7 +27,11 @@ $(document).ready(function(){
                         pk_field: page_config['pk'],
                     })
 
-
+    let scheduler = new Scheduler({
+            container:'#schedule_container',
+            id:'scheduler',
+            data : table.data
+          })
 
     // create form insstances
     let filter_form = new BootstrapForm({
@@ -63,6 +68,7 @@ $(document).ready(function(){
 
     // build components
     table.build();
+    scheduler.build();
     filter_form.build();
     create_form.build();
     update_form.build();

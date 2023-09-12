@@ -147,7 +147,7 @@ class BootstrapForm{
 
             }
             if (value.input_type == 'select'){
-                console.log(value.multiple)
+
                 field = this.select({
                                             id:key,
                                             title: value.title.de,
@@ -248,7 +248,7 @@ class BootstrapForm{
             $.ajax({
                url: this.ajax_url + '/',
                type: 'POST',
-               data:json,
+               data:array,
                success: function(response) {
 
                  location.reload();
