@@ -7,7 +7,7 @@ from django.urls import reverse
 import datetime as dt
 import os
 import copy
-from .config import pages, fields
+
 
 
 # Create your views here.

@@ -7,122 +7,216 @@ class Scheduler{
           this.id = id;
           this.data = data
           this.employee_url = '/api/employees/';
-          this.employee_data = this.ajax_call(this.employee_url, 'GET');
+          this.subcontractor_url = '/api/companies?is_subcontractor=1'
           this.asset_url = '/api/assets';
-          this.asset_data = this.ajax_call(this.asset_url, 'GET');
           this.task_url = '/api/tasks/listday/';
-          this.task_data = this.ajax_call(this.task_url, 'GET');
+          this.open_tasks_url = '/api/tasks/getOpenTasks/'
           this.get_date_url = '/api/tasks/getDate/'
           this.set_date_url = '/api/tasks/setDate/'
-          this.schedule_date = this.ajax_call(this.get_date_url, 'GET')['date'];
-          this.scheduleDateStart = new Date(this.schedule_date + ' 00:00:00');
-          this.scheduleDateEnd = new Date(this.schedule_date + ' 23:59:00');
+          this.schedule_date = Cookies.get('scheduler_date')  || new Date().toISOString().split('T')[0];
+
 
           this.build_grid()
       }
 
+      get_date(){
+        console.log(document.schedule_date)
 
+      }
       ajax_call(url, type, data) {
            let result;
 
-           $.ajax({
+           return $.ajax({
                url: url,
                type: type,
                data: data,
-               async: false,
-               success: function(response) {
-                 result =  response;
-               }
+               //async:false,
             });
 
-        return result;
+        //return result;
+      }
+
+
+      draw_drop_down_select() {
+        let drp = '<div class="dropdown">'+
+                       '<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true">Dropdownd</button>' +
+                            '<ul class="dropdown-menu" id=scheduler_dropdown aria-labelledby="dropdownMenu1">' +
+                            '<li ><label><input type="checkbox"> Mitarbeiter</label></li>' +
+                            '<li><label><input type="checkbox"> Subunternehmer</label></li>' +
+                            '<li><label><input type="checkbox"> Offene Aufträge</label></li>' +
+                       '</ul>' +
+                  '</div>'
+
+
+        return drp
+      }
+
+      draw_header() {
+
+          let header = '<thead style="position:sticky; top:0;">'
+          let input_row =  '<tr id="scheduler_input_row">' +
+                                '<th><input type="date" id="scheduler_date_input" class="scheduler-first-column" value="'+this.schedule_date+'"/></th>'+
+                                '<th class="scheduler-second-column"><button><i class="fa-solid fa-chevron-left"></i></button><button><i class="fa-solid fa-chevron-right"></i></button></th>'+
+                           '</tr>'
+
+
+          let title_row = '<tr id="scheduler_title_row">' +
+                            '<th class="scheduler-first-column">Mitarbeiter</th>'+
+                            '<th class="scheduler-second-column" >Geräte</th>'
+
+          let spacer_row = '<tr id="scheduler_spacer_row">'+
+                                '<th class="scheduler-first-column"></th>'+
+                                '<th class="scheduler-second-column"></th>'
+
+
+          for (let i = 1; i < (25); i++){
+              title_row += '<th class="scheduler_time_titles">'+i+':00</th>'
+              spacer_row += '<th class="scheduler_time_ticks"></th>'
+          }
+
+          title_row += '</tr>'
+          spacer_row +='</tr>'
+
+          header += input_row
+          header += title_row
+          header += spacer_row
+          header += '</thead>'
+
+          return header
+      }
+
+
+
+      draw_body() {
+        let body = '</tbody>'
+
+
+        $.each(this.employee_data, (key,value) => {
+            let row = '<tr id="e'+value.id_employee+'">' +
+                            '<td class="scheduler-first-column">'+value.employee_internal_alias+'</td> '+
+                            '<td id="resource_lane_e'+value.id_employee+'">'+
+                                '<ul style="list-style:None; padding: 0px; margin-bottom: 0px;"></ul>'+
+                            '</td>'+
+                            '<td id="task_lane_e'+value.id_employee+'" class="task_lane" colspan="100" >' +
+                                '<ul style="list-style:None; padding: 0px; margin-bottom: 0px;"></ul>'+
+                            '</td>'+
+                        '</tr>'
+            body += row;
+        })
+
+        $.each(this.subcontractor_data, (key,value) => {
+            let row = '<tr id="s'+value.id_company+'">' +
+                            '<td class="scheduler-first-column">'+value.company_internal_alias+'</td> '+
+                            '<td id="resource_lane_s'+value.id_company+'">'+
+                                '<ul style="list-style:None; padding: 0px; margin-bottom: 0px;"></ul>'+
+                            '</td>'+
+                            '<td id="task_lane_s'+value.id_company+'" class="task_lane" colspan="100" >' +
+                                '<ul style="list-style:None; padding: 0px; margin-bottom: 0px;"></ul>'+
+                            '</td>'+
+                        '</tr>'
+            body += row;
+        })
+
+
+        body += '</tbody>'
+        return body
+      }
+
+      draw_footer() {
+        let footer = '<tfoot>'
+
+        footer += '<tr id="open_task_row">' +
+                        '<td colspan="2">Open Tasks</td>'+
+                        '<td id="task_lane_o" colspan="100"></td>' +
+                    '</tr>'
+
+        footer += '</tfoot>'
+        return footer
       }
 
 
       build_grid() {
           $(this.container).empty();
 
+            let header = this.draw_header();
+            let body = this.draw_body();
+            let footer = this.draw_footer();
             //* draw the grid of the new table object
-            let table_grid = '<div id="scheduler_container" style="overflow:scroll;"><table id="schedule_table" class="table"><thead style="position:sticky; top:0;"></thead><tbody></tbody><tfoot></tfoot></table></div>';
+            let table_grid = '<div id="scheduler_container" style="overflow:scroll;"><table id="schedule_table" class="table">'+header+body+footer+'</table></div>';
             $(this.container).append(table_grid);
-
-            let header =  '<tr><th><input type="date" id="scheduler_date_input" class="scheduler-first-column" value="'+this.schedule_date+'" /></th><th class="scheduler-second-column" ><button><i class="fa-solid fa-chevron-left"></i></button><button><i class="fa-solid fa-chevron-right"></i></button></th><div class="overflow_part>"'
-            for (let i = 0; i < (25); i++){
-                header += '<th colspan="4">'+i+':00</th>'
-            }
-            header += '</div></tr>'
-            header +='<tr><th class="scheduler-first-column">Mitarbeiter</th><th class="scheduler-second-column" >Geräte</th>'
-
-            for (let i = 1; i < (97); i++){
-                header += '<th></th>'
-            }
-            header += '</tr>'
-            $('#scheduler_container thead').append(header);
-            //$('#schedule_table').append('<tr></tr>');
-
-            $.each(this.employee_data, (key,value) => {
-                let row = '<tr id="employee_'+value.id_employee+'"><td class="scheduler-first-column">'+value.employee_internal_alias+'</td><td id="resource_lane_'+value.id_employee+'"><ul style="list-style:None; padding: 0px; margin-bottom: 0px;"></ul></td><td id="task_lane_'+value.id_employee+'" class="task_lane" colspan="100" ><ul style="list-style:None; padding: 0px; margin-bottom: 0px;"></ul></td></tr>'
-                $('#schedule_table').append(row);
-            })
-
-            let footer = '<tr id="open_task_row"><td colspan="2">Open Tasks</td><td colspan="100"></td></tr>'
-            $('#schedule_table tfoot').append(footer);
       }
 
 
       get_asset(asset_id) {
          let asset = this.asset_data.filter(a => a.id_asset == asset_id);
-
          return asset[0]
       }
 
-      add_row(employee_id, task_id, task_title, event_box_width, left, asset_1, asset_2) {
-        let task_span = '<li><span class="scheduled_task_span badge badge-primary" style = "box-sizing: border-box; margin-left:' + left + 'px; width:' + event_box_width + 'px">'+ task_title +'</span></li>'
-        let task_lane = $('#task_lane_'+employee_id + ' ul').append(task_span);
+
+
+      add_row(row_id, task_id, task_title, startDate, endDate, asset_1, asset_2) {
+
+        let width_of_time_table = $('#task_lane_'+row_id).width()
+        let event_duration = (endDate - startDate) / 1000 / 60 / 60
+        let event_box_width = width_of_time_table / 24 * event_duration
+
+        if (event_box_width == '') {
+            event_box_width = '100px'
+        }
+
+        let left_offset_h = (startDate - this.scheduleDateStart) / 1000 / 60 / 60;
+
+        let left_offset_px = width_of_time_table / 24 * left_offset_h;
+        let task_span = '<li><span class="task scheduled_task badge badge-primary" style = "box-sizing: border-box; margin-left:' + left_offset_px + 'px; width:' + event_box_width + 'px" data-row-pk="'+task_id+'">'+ task_title +'</span></li>'
+        let task_lane = $('#task_lane_'+row_id + ' ul').append(task_span);
 
         asset_1 = this.get_asset(asset_1);
         asset_2 = this.get_asset(asset_2);
 
         let asset_html = '<li>';
         if ( asset_1 ) {
-            asset_html += '<span class="asset_span badge badge-primary">'+ asset_1.asset_internal_alias +'</span>'
+            asset_html += '<span class="asset badge badge-primary">'+ asset_1.asset_internal_alias +'</span>'
         }
 
         if ( asset_2 ) {
-            asset_html += '<span class="asset_span badge badge-primary">'+ asset_2.asset_internal_alias +'</span>'
+            asset_html += '<span class="asset badge badge-primary">'+ asset_2.asset_internal_alias +'</span>'
         }
 
         asset_html += '</li>'
 
-        $('#resource_lane_'+employee_id + ' ul').append(asset_html)
+        $('#resource_lane_'+row_id + ' ul').append(asset_html)
 
 
       }
 
+
       populate() {
-        $.each(this.task_data, (key,value) => {
-            let startDate = new Date(value.task_date_from +' '+value.task_time_from);
-            let endDate = new Date(value.task_date_to +' '+ value.task_time_to);
-            if (this.scheduleDateStart > startDate) {
-                startDate = this.scheduleDateStart
-            }
 
-            if (this.scheduleDateEnd < endDate) {
-                endDate = this.scheduleDateEnd;
-            }
+          this.scheduleDateStart = new Date(this.schedule_date + ' 00:00:00');
+          this.scheduleDateEnd = new Date(this.schedule_date + ' 23:59:00');
+            $.each(this.task_data, (key,value) => {
+                let startDate = new Date(value.task_date_from +' '+value.task_time_from);
+                let endDate = new Date(value.task_date_to +' '+ value.task_time_to);
+                if (this.scheduleDateStart > startDate) {
+                    startDate = this.scheduleDateStart
+                }
 
-            let width_of_time_table = $('#task_lane_'+value.fk_employee_1).width()
-            let event_duration = (endDate - startDate) / 1000 / 60 / 60
-            let event_box_width = width_of_time_table / 24 * event_duration
+                if (this.scheduleDateEnd < endDate) {
+                    endDate = this.scheduleDateEnd;
+                }
 
 
-            let left_offset_h = (startDate - this.scheduleDateStart) / 1000 / 60 / 60;
 
-            let left_offset_px = width_of_time_table / 24 * left_offset_h;
-            console.log(left_offset_px)
+                this.add_row('e'+value.fk_employee_1, value.id_task, value.fk_project + '-' + value.task_description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
+                this.add_row('e'+value.fk_employee_2, value.id_task, value.fk_project + '-' + value.task_description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
+                this.add_row('s'+value.fk_subcontractor, value.id_task, value.fk_project + '-' + value.task_description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
+            })
 
-            this.add_row(value.fk_employee_1, value.id_task, value.fk_project + '-' + value.task_description, event_box_width, left_offset_px, value.fk_asset_1, value.fk_asset_2)
-        })
+          $.each(this.open_tasks, (key,value) => {
+                 let task_span = '<span class="task open_task badge badge-primary" style = "box-sizing: border-box; margin-left: 1vw; width: 200px" data-row-pk="'+value.id_task+'">'+ value.id_task +'-' + value.task_description +'</span>'
+                 $('#task_lane_o').append(task_span)
+
+          })
 
 
 
@@ -132,11 +226,36 @@ class Scheduler{
       create_event_handlers() {
             $('#scheduler_date_input').on("change", ()=> {
                 let date = $('#scheduler_date_input').val();
-                date = this.ajax_call(this.set_date_url, 'POST', {'date': date})
-                this.task_data =  this.ajax_call(this.task_url, 'GET');
-                this.schedule_date = date['date']
+                console.log(date)
+                Cookies.set('scheduler_date', date);
+                this.schedule_date = date;
+
+
                 this.build()
             })
+
+            $('.scheduled_task, .open_task').on( "dblclick", function() {
+                let record_id =  $(this).attr('data-row-pk');
+
+                $.ajax({
+                    url: window.location.origin +'/api/tasks/' + record_id,
+                    success: function (result) {
+
+                        console.log(result)
+                        $.each(result, (key, value)=>{
+
+                            if (value === true){
+                                value = 1;
+                            } else if (value === false){
+                                value = 0;
+                            }
+                            $('#update_form #'+ key).val(value);
+                        });
+
+                        $('#update_modal').modal('show');
+                    }
+                    })
+    } );
 
 
 
@@ -146,9 +265,28 @@ class Scheduler{
 
 
       build(){
-         this.build_grid();
-         this.populate();
-         this.create_event_handlers();
+        $.when(
+            this.ajax_call(this.employee_url, 'GET'),
+            this.ajax_call(this.subcontractor_url, 'GET'),
+            this.ajax_call(this.asset_url, 'GET'),
+            this.ajax_call(this.task_url + '?date='+ this.schedule_date, 'GET'),
+            this.ajax_call(this.open_tasks_url, 'GET')
+
+
+        ).done((empl, subcon, asset, tasks, open_tasks)=> {
+            this.employee_data = empl[0]
+            this.subcontractor_data = subcon[0]
+            this.asset_data = asset[0]
+            this.task_data = tasks[0]
+            this.open_tasks = open_tasks[0]
+            this.build_grid();
+            this.populate();
+            this.create_event_handlers();
+        }
+
+
+        )
+
 
       }
 

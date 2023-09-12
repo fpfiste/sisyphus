@@ -14,19 +14,19 @@
 								<div class="card-header">
 									<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#create_modal">Add</button>
 								</div>
-								<div class="card-body">
-									<div id="schedule_container"></div>
+								<div class="card-body" style="height:100%;">
+									<div id="schedule_container" style="height:100%"></div>
 								</div>
 							</div>
 						</div>
                 </div>
 				<hr class="mt-1 mb-1" style="2vh;">
-				<div class="row" style="height: 30vh;">
-                    <div class="col-3" style="max-height: 30vh;">
-							<div class="card">
+				<div class="row" style="height: 35vh;">
+                    <div class="col-3" style="height:100%;">
+							<div class="card" style="height:100%;">
 
-								<div class="card-body">
-									<div id="form_filter_container" style="height: 30vh; overflow:auto;"></div>
+								<div class="card-body" style="height:85%;">
+									<div id="form_filter_container" style="height: 100%; overflow:auto;"></div>
 
 									      {% csrf_token %}
 									<!--
@@ -44,7 +44,7 @@
 												</form>-->
 
 								</div>
-								<div class="card-footer">
+								<div class="card-footer" style="height:15%;">
 									<button type="button" id="btn_form_reset" class="btn btn-secondary">Reset</button>
 									<button type="button" id="btn_filter" class="btn btn-danger">Filter</button>
 
@@ -52,13 +52,13 @@
 
 							</div>
 						</div>
-                    <div class="col-9" style="max-height: 30vh;">
-							<div class="card">
-								<div class="card-header">
+                    <div class="col-9" style="height:100%;">
+							<div class="card" style="height:100%;">
+								<div class="card-header" style="height:15%">
 									<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#create_modal">Add</button>
 								</div>
-								<div class="card-body">
-									<div id="overview-table"></div>
+								<div class="card-body" style="height:85%;">
+									<div id="overview-table" style="height:100%;"></div>
 								</div>
 							</div>
 						</div>
@@ -120,8 +120,10 @@
 					  </div>
 			  </div>
 			  <div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				<button type="button" id="btn_save" class="btn btn-danger">Save</button>
+				  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quit</button>
+				  <button type="button" id="btn_delete" class="btn btn-danger">Delete</button>
+				  <button type="button" id="btn_close_task" class="btn btn-danger">Close Task</button>
+				  <button type="button" id="btn_save" class="btn btn-danger">Save</button>
 			  </div>
 			</div>
 		  </div>

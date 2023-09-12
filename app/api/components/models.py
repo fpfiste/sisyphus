@@ -350,6 +350,9 @@ class TaskStates(models.Model):
         managed = False
         db_table = 'task_states'
 
+    def __str__(self):
+        self.task_state
+
 
 class TaskTemplates(models.Model):
     id_task_template = models.AutoField(primary_key=True)

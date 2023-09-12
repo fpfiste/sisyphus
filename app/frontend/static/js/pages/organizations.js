@@ -23,6 +23,7 @@ $(document).ready(function(){
                         fields: page_config['fields'],
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
+                        exclude: ['fk_sys_rec_status'],
                     })
 
 
@@ -67,36 +68,10 @@ $(document).ready(function(){
     // add evetn listeners
     $( "#btn_filter" ).on( "click", function() {
       let query_params = $('#filter_form').serialize();
-      $.ajax({
-        url: window.location.origin +page_config['ajax_url'] + '?' + query_params,
-        success: function (result) {
-            console.log(result);
-            table.data = result;
-            table.build();
-            $( "#"+page_config['table_id']+" tr" ).on( "dblclick", function() {
-        let record_id =  $(this).attr('data-row-pk');
+      table.query_params = '?' + query_params,
 
-        $.ajax({
-            url: window.location.origin + page_config['ajax_url'] + '/' + record_id,
-            success: function (result) {
-                console.log(result);
+      table.build()
 
-                $.each(result, (key, value)=>{
-                    console.log(key)
-                    if (value === true){
-                        value = 1;
-                    } else if (value === false){
-                        value = 0;
-                    }
-                    $('#update_form #'+ key).val(value);
-                });
-
-                $('#update_modal').modal('show');
-            }
-            })
-    } );
-        }
-    });
 
     });
 
@@ -108,36 +83,16 @@ $(document).ready(function(){
     });
 
     $( "#btn_add" ).on( "click", function() {
-        create_form.submit();
+        let url = page_config['ajax_url']
+        create_form.submit(url, 'POST')
     });
-
-    $( "#"+page_config['table_id']+" tr").on( "dblclick", function() {
-        let record_id =  $(this).attr('data-row-pk');
-
-        $.ajax({
-            url: window.location.origin + page_config['ajax_url'] + '/' + record_id,
-            success: function (result) {
-                console.log(result);
-
-                $.each(result, (key, value)=>{
-                    console.log(key)
-                    if (value === true){
-                        value = 1;
-                    } else if (value === false){
-                        value = 0;
-                    }
-                    $('#update_form #'+ key).val(value);
-                });
-
-                $('#update_modal').modal('show');
-            }
-            })
-    } );
 
 
     $( "#btn_save" ).on( "click", function() {
-        let pk = $('#update_form #id_company').val()
-        update_form.submit(pk);
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = page_config['ajax_url'] + '/' +pk + '/'
+        console.log(url)
+        update_form.submit(url, 'PUT');
     });
 
 

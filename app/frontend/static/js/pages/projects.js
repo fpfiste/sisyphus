@@ -23,7 +23,9 @@ $(document).ready(function(){
                         fields: page_config['fields'],
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
+                        exclude: ['fk_customer'],
                     })
+
 
 
     // create form insstances
@@ -67,69 +69,19 @@ $(document).ready(function(){
     // add evetn listeners
     $( "#btn_filter" ).on( "click", function() {
       let query_params = $('#filter_form').serialize();
-      $.ajax({
-        url: window.location.origin +page_config['ajax_url'] + '?' + query_params,
-        success: function (result) {
-            table.data = result;
-            table.build();
-            $( "#"+page_config['table_id']+" tr" ).on( "dblclick", function() {
-        let record_id =  $(this).attr('data-row-pk');
-
-        $.ajax({
-            url: window.location.origin + page_config['ajax_url'] + '/' + record_id,
-            success: function (result) {
-
-                $.each(result, (key, value)=>{
-                    if (value === true){
-                        value = 1;
-                    } else if (value === false){
-                        value = 0;
-                    }
-                    $('#update_form #'+ key).val(value);
-                });
-
-                $('#update_modal').modal('show');
-            }
-            })
-    } );
-        }
-    });
-
+      table.query_params = '?' + query_params
+      table.build();
     });
 
     $( "#btn_form_reset" ).on( "click", function() {
         $('#filter_form').trigger("reset");
         $('#btn_filter').click();
-
-
     });
 
     $( "#btn_add" ).on( "click", function() {
         create_form.submit();
     });
 
-    $( "#"+page_config['table_id']+" tr").on( "dblclick", function() {
-        let record_id =  $(this).attr('data-row-pk');
-
-        $.ajax({
-            url: window.location.origin + page_config['ajax_url'] + '/' + record_id,
-            success: function (result) {
-
-
-                $.each(result, (key, value)=>{
-
-                    if (value === true){
-                        value = 1;
-                    } else if (value === false){
-                        value = 0;
-                    }
-                    $('#update_form #'+ key).val(value);
-                });
-
-                $('#update_modal').modal('show');
-            }
-            })
-    } );
 
 
     $( "#btn_save" ).on( "click", function() {

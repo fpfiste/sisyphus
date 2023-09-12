@@ -213,7 +213,7 @@ class BootstrapForm{
         return array;
       }
 
-      submit(pk){
+      submit(url, method){
 
 
         let form = $('#' + this.id)
@@ -229,40 +229,18 @@ class BootstrapForm{
         let array = this.serialize();
 
 
+        $.ajax({
+           url: url,
+           type: method,
+           data:array,
+           success: function(response) {
 
-        if (pk){
-            let url = this.ajax_url + '/' + pk + '/';
-            $.ajax({
-               url: url,
-               type: 'PUT',
-               data:array,
-               success: function(response) {
-
-                  location.reload();
-               },
-               error: function(error){
-                console.log(error)
-               }
-            });
-        } else {
-            $.ajax({
-               url: this.ajax_url + '/',
-               type: 'POST',
-               data:array,
-               success: function(response) {
-
-                 location.reload();
-               },
-               error: function(error) {
-                console.log(error)
-               }
-            });
-
-
-        }
-
-
-
+              location.reload();
+           },
+           error: function(error){
+            console.log(error)
+           }
+        });
       }
 }
 

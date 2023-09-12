@@ -23,7 +23,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
         params = dict([(key,value) for key, value in self.request.query_params.items() if value != ''])
 
-        data = queryset.filter(**params)
+        data = queryset.filter(**params).order_by('-id_company')
 
         return data
 

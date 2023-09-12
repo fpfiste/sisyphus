@@ -8,60 +8,74 @@
     border-right: 0.1px solid;
     border-left: 0.1px solid;
     border-bottom: 0.1px solid;
+    border-top: 0.1px solid;
     border-color: lightgray;
 
 }
 
 #schedule_table {
-   /* Don't collapse */
+
   border-spacing: 0;
   border-collapse: separate;
   margin-bottom: 0px !important;
+  height:100%;
 
 }
 
 #schedule_table thead {
     background: white;
-    border-top: 0.01px solid transparent;
     border-color: lightgray;
 
 }
 
 
 #schedule_table  thead {
-  position: -webkit-sticky; /* for Safari */
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
   background-color: white;
   z-index: 10;
 }
 
+thead th{
+    border:None;
+}
 
-#schedule_table  thead tr:first-child th{
-    border-top: 0.1px solid;
-    border-bottom: None;
-    border-color: lightgray;
+.scheduler_time_titles{
     text-align: right;
 }
 
+#scheduler_spacer_row {
+    height: 10px !important;
 
+}
+#scheduler_spacer_row th {
+    border-bottom: 1px solid;
+
+
+}
+.scheduler_time_ticks {
+    border-right:1px solid
+
+}
 
 #schedule_table td,
 #schedule_table th {
-    border-bottom: 0.1px solid;
-    border-right: 0.1px solid;
-    border-color: lightgray;
     padding: 0px;
-    min-width: 24px;
+    min-width: 96px;
+
 }
 
-#schedule_table th {
-    border-right: None;
-}
-
-#schedule_table tr:nth-child(2) th:nth-child(4n+2){
-    border-right: 0.1px solid;
-    border-color: lightgray;
+#schedule_table tr th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  min-width: 10vw;
+  max-width: 10vw;
+  background-color:#efefef;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 #schedule_table tr td:first-child {
   position: sticky;
@@ -69,16 +83,24 @@
   z-index: 0;
   min-width: 10vw;
   max-width: 10vw;
-
   background-color:#efefef;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
 
 }
-
-
-
+#schedule_table thead tr th:nth-child(2) {
+  position: sticky;
+  z-index: 0;
+  min-width: 10vw;
+  max-width: 20vw;
+  left: 10vw;
+    background-color:#efefef;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+}
 #schedule_table tbody tr td:nth-child(2) {
   position: sticky;
   z-index: 0;
@@ -88,9 +110,92 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-    background-color:#efefef;
+  background-color:#efefef;
 
 }
+
+#schedule_table tfoot {
+  position: sticky;
+  z-index: 0;
+  bottom: 0vw;
+
+
+
+}
+
+
+#schedule_table tr {
+    height: 50px;
+
+}
+
+.task_lane {
+    background: linear-gradient(to right, transparent 95px, lightgray 1px),linear-gradient(to right, transparent 23px, #e5e5e5 0.1px, transparent 24.2px, transparent 47px, #e5e5e5 0.1px, transparent 48.2px, transparent 71px, #e5e5e5 0.1px, transparent 72.2px);
+    background-size: 96px;
+
+}
+
+#task_lane_o {
+    background:white;
+
+}
+.scheduled_task {
+    display: block;
+    background: #dc3545;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    line-height: 40px;
+
+
+}
+.open_task {
+    display: inline-block;
+    background: #6c757d;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    line-height: 40px;
+
+
+}
+.asset {
+    background:#17a2b8;
+    line-height: 40px;
+    margin: 2px;
+}
+
+
+/*
+
+#schedule_table  thead tr:nth-child(2) th{
+    //border-top: 0.1px solid;
+    //border-bottom: None;
+    border-color: lightgray;
+    text-align: right;
+}
+
+
+
+#schedule_table td,
+#schedule_table th {
+    //border-bottom: 0.1px solid;
+    //border-right: 0.1px solid;
+    border-color: lightgray;
+    padding: 0px;
+    min-width: 96px;
+}
+
+#schedule_table th {
+    //border-right: None;
+}
+
+#schedule_table tr:nth-child(2) th:nth-child(4n+2){
+    //border-right: 0.1px solid;
+    border-color: lightgray;
+}
+
+
+
+
 
 
 #schedule_table tr th:first-child {
@@ -106,20 +211,7 @@
   overflow: hidden;
 }
 
-#schedule_table thead tr th:nth-child(2) {
-  position: sticky;
-  z-index: 0;
-  min-width: 10vw;
-  max-width: 20vw;
-  left: 10vw;
-    background-color:#efefef;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  //border-top: 0.1px solid;
-  border-color: lightgray;
-  text-align: center;
-}
+
 
 #schedule_table tr th:last-child {
     border-right: None;
@@ -133,29 +225,5 @@
     border-bottom: None;
 }
 
-#schedule_table tr {
-    height: 50px;
 
-}
-
-.task_lane {
-    background: linear-gradient(to right, transparent 95px, lightgray 1px),linear-gradient(to right, transparent 23px, #e5e5e5 0.1px, transparent 24.2px, transparent 47px, #e5e5e5 0.1px, transparent 48.2px, transparent 71px, #e5e5e5 0.1px, transparent 72.2px);
-    background-size: 96px;
-
-}
-
-.scheduled_task_span {
-    display: block;
-    background: #dc3545;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    line-height: 40px;
-
-
-}
-
-.asset_span {
-    background:#17a2b8;
-    line-height: 40px;
-    margin: 2px;
-}
+*/

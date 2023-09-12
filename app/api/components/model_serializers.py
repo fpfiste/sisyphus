@@ -26,20 +26,17 @@ class AssetSerializer(serializers.ModelSerializer):
         model = Assets
         fields = '__all__'
 
-class SysRecStatesSerializer(serializers.HyperlinkedModelSerializer):
+class SysRecStatesSerializer(serializers.ModelSerializer):
     class Meta:
         model = SysRecStates
         fields = ('url', 'id_sys_rec_status', 'sys_rec_status')
 
-class CompanySerializer(serializers.HyperlinkedModelSerializer):
-    fk_sys_rec_status = serializers.PrimaryKeyRelatedField(queryset=SysRecStates.objects.all())
-
+class CompanySerializer(serializers.ModelSerializer):
 
 
     class Meta:
         model = Companies
-        fields = ['url', 'id_company', 'company_name', 'company_street', 'company_zipcode','company_country','company_city','company_internal_alias','company_email', 'fk_sys_rec_status', 'is_customer', 'is_supplier', 'is_subcontractor']
-        depth = 2
+        fields = '__all__'
 
 
 class CurrencySerializer(serializers.ModelSerializer):
