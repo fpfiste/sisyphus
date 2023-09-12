@@ -5,7 +5,7 @@
 -- Dumped from database version 13.0
 -- Dumped by pg_dump version 14.9 (Ubuntu 14.9-0ubuntu0.22.04.1)
 
--- Started on 2023-09-05 08:32:16 CEST
+-- Started on 2023-09-12 19:36:10 CEST
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -22,12 +22,12 @@ SET row_security = off;
 -- TOC entry 3 (class 2615 OID 2200)
 -- Name: public; Type: SCHEMA; Schema: -; Owner: -
 --
-
+DROP SCHEMA public;
 CREATE SCHEMA public;
 
 
 --
--- TOC entry 3430 (class 0 OID 0)
+-- TOC entry 3405 (class 0 OID 0)
 -- Dependencies: 3
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: -
 --
@@ -36,7 +36,7 @@ COMMENT ON SCHEMA public IS 'standard public schema';
 
 
 --
--- TOC entry 264 (class 1255 OID 16391)
+-- TOC entry 260 (class 1255 OID 16391)
 -- Name: f_create_default_project(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -45,11 +45,11 @@ CREATE FUNCTION public.f_create_default_project() RETURNS trigger
     AS $$
 declare default_cnt integer;
 begin
-	SELECT count(*) INTO default_cnt FROM operations.projects WHERE project_name = CONCAT(new.company_name, '- default');
+	SELECT count(*) INTO default_cnt FROM public.projects WHERE project_name = CONCAT(new.company_name, '- default');
 	RAISE NOTICE 'Value: %', default_cnt;
 
 	if new.is_customer = true and default_cnt = 0 THEN
-  		INSERT INTO operations.projects (project_name, fk_customer, planned_start_date, planned_end_date) VALUES(CONCAT(new.company_name, '- default'), new.id_company, now(), '99991231');
+  		INSERT INTO public.projects (project_name, fk_customer, planned_start_date, planned_end_date) VALUES(CONCAT(new.company_name, '- default'), new.id_company, now(), '99991231');
   	end if;
 	return new;
 END; 
@@ -87,7 +87,7 @@ CREATE SEQUENCE public.employee_absence_code_id_employee_absence_code_seq
 
 
 --
--- TOC entry 3431 (class 0 OID 0)
+-- TOC entry 3406 (class 0 OID 0)
 -- Dependencies: 201
 -- Name: employee_absence_code_id_employee_absence_code_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -114,8 +114,8 @@ CREATE TABLE public.asset_absence_codes (
 
 CREATE TABLE public.employee_absences (
     id_employee_absence integer NOT NULL,
-    "from" timestamp without time zone NOT NULL,
-    "to" timestamp without time zone NOT NULL,
+    employee_absence_from timestamp without time zone NOT NULL,
+    employee_absence_to timestamp without time zone NOT NULL,
     fk_employee integer NOT NULL,
     fk_employee_absence_code integer NOT NULL
 );
@@ -136,7 +136,7 @@ CREATE SEQUENCE public.employee_absence_id_employee_absence_seq
 
 
 --
--- TOC entry 3432 (class 0 OID 0)
+-- TOC entry 3407 (class 0 OID 0)
 -- Dependencies: 204
 -- Name: employee_absence_id_employee_absence_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -151,46 +151,11 @@ ALTER SEQUENCE public.employee_absence_id_employee_absence_seq OWNED BY public.e
 
 CREATE TABLE public.asset_absences (
     id_asset_absence integer DEFAULT nextval('public.employee_absence_id_employee_absence_seq'::regclass) NOT NULL,
-    "from" timestamp without time zone NOT NULL,
-    "to" timestamp without time zone NOT NULL,
+    asset_absence_from timestamp without time zone NOT NULL,
+    asset_absence_to timestamp without time zone NOT NULL,
     fk_asset integer NOT NULL,
     fk_asset_absence_code integer NOT NULL
 );
-
-
---
--- TOC entry 261 (class 1259 OID 16910)
--- Name: asset_task_allocation; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.asset_task_allocation (
-    id_asset_allocation integer NOT NULL,
-    fk_asset integer NOT NULL,
-    fk_task integer NOT NULL
-);
-
-
---
--- TOC entry 260 (class 1259 OID 16908)
--- Name: asset_allocation_id_asset_allocation_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.asset_allocation_id_asset_allocation_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- TOC entry 3433 (class 0 OID 0)
--- Dependencies: 260
--- Name: asset_allocation_id_asset_allocation_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.asset_allocation_id_asset_allocation_seq OWNED BY public.asset_task_allocation.id_asset_allocation;
 
 
 --
@@ -220,7 +185,7 @@ CREATE SEQUENCE public.asset_types_id_asset_type_seq
 
 
 --
--- TOC entry 3434 (class 0 OID 0)
+-- TOC entry 3408 (class 0 OID 0)
 -- Dependencies: 207
 -- Name: asset_types_id_asset_type_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -237,11 +202,9 @@ CREATE TABLE public.assets (
     id_asset integer NOT NULL,
     fk_asset_type integer NOT NULL,
     asset_description character varying NOT NULL,
-    fk_employee integer,
     asset_internal_alias character varying NOT NULL,
     year_of_production integer,
-    asset_km_counter character varying,
-    fk_sys_rec_state integer NOT NULL
+    fk_sys_rec_status integer NOT NULL
 );
 
 
@@ -260,7 +223,7 @@ CREATE SEQUENCE public.assets_id_asset_seq
 
 
 --
--- TOC entry 3435 (class 0 OID 0)
+-- TOC entry 3409 (class 0 OID 0)
 -- Dependencies: 209
 -- Name: assets_id_asset_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -499,7 +462,7 @@ CREATE SEQUENCE public.curency_id_currency_seq
 
 
 --
--- TOC entry 3436 (class 0 OID 0)
+-- TOC entry 3410 (class 0 OID 0)
 -- Dependencies: 216
 -- Name: curency_id_currency_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -534,7 +497,7 @@ CREATE SEQUENCE public.customer_invoice_text_id_customer_invoice_text_seq
 
 
 --
--- TOC entry 3437 (class 0 OID 0)
+-- TOC entry 3411 (class 0 OID 0)
 -- Dependencies: 218
 -- Name: customer_invoice_text_id_customer_invoice_text_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -643,41 +606,6 @@ CREATE TABLE public.django_session (
 
 
 --
--- TOC entry 263 (class 1259 OID 16930)
--- Name: employee_task_allocation; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.employee_task_allocation (
-    id_employee_allocation integer NOT NULL,
-    fk_task integer NOT NULL,
-    fk_employee integer NOT NULL
-);
-
-
---
--- TOC entry 262 (class 1259 OID 16928)
--- Name: employee_allocation_id_employee_allocation_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.employee_allocation_id_employee_allocation_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- TOC entry 3438 (class 0 OID 0)
--- Dependencies: 262
--- Name: employee_allocation_id_employee_allocation_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.employee_allocation_id_employee_allocation_seq OWNED BY public.employee_task_allocation.id_employee_allocation;
-
-
---
 -- TOC entry 211 (class 1259 OID 16435)
 -- Name: employees; Type: TABLE; Schema: public; Owner: -
 --
@@ -689,15 +617,14 @@ CREATE TABLE public.employees (
     employee_street character varying NOT NULL,
     employee_zipcode character varying NOT NULL,
     employee_city character varying NOT NULL,
-    emplyee_email character varying NOT NULL,
+    employee_email character varying NOT NULL,
     employee_cell_phone character varying NOT NULL,
-    emplyee_birthday date NOT NULL,
-    emplyee_salary numeric,
+    employee_birthday date NOT NULL,
+    employee_salary numeric,
     fk_employee_type integer NOT NULL,
-    employee_fte numeric DEFAULT 1 NOT NULL,
+    employee_fte numeric DEFAULT 1,
     employee_internal_alias character varying NOT NULL,
-    fk_sys_rec_status integer NOT NULL,
-    employee_house_nr character varying NOT NULL
+    fk_sys_rec_status integer NOT NULL
 );
 
 
@@ -716,7 +643,7 @@ CREATE SEQUENCE public.employee_id_employee_seq
 
 
 --
--- TOC entry 3439 (class 0 OID 0)
+-- TOC entry 3412 (class 0 OID 0)
 -- Dependencies: 212
 -- Name: employee_id_employee_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -750,7 +677,7 @@ CREATE SEQUENCE public.employee_type_employee_type_seq
 
 
 --
--- TOC entry 3440 (class 0 OID 0)
+-- TOC entry 3413 (class 0 OID 0)
 -- Dependencies: 214
 -- Name: employee_type_employee_type_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -787,7 +714,7 @@ CREATE SEQUENCE public.invoice_id_invoice_seq
 
 
 --
--- TOC entry 3441 (class 0 OID 0)
+-- TOC entry 3414 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: invoice_id_invoice_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -822,7 +749,7 @@ CREATE SEQUENCE public.invoice_status_id_invoice_status_seq
 
 
 --
--- TOC entry 3442 (class 0 OID 0)
+-- TOC entry 3415 (class 0 OID 0)
 -- Dependencies: 222
 -- Name: invoice_status_id_invoice_status_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -845,7 +772,7 @@ CREATE SEQUENCE public.newtable_id_customer_seq
 
 
 --
--- TOC entry 3443 (class 0 OID 0)
+-- TOC entry 3416 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: newtable_id_customer_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -860,7 +787,7 @@ ALTER SEQUENCE public.newtable_id_customer_seq OWNED BY public.companies.id_comp
 
 CREATE TABLE public.payment_conditions (
     id_payment_condition integer NOT NULL,
-    vat numeric NOT NULL,
+    vat numeric(3,3) NOT NULL,
     fk_currency integer NOT NULL,
     due_days integer NOT NULL
 );
@@ -881,7 +808,7 @@ CREATE SEQUENCE public.payment_conditions_id_payment_condition_seq
 
 
 --
--- TOC entry 3444 (class 0 OID 0)
+-- TOC entry 3417 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: payment_conditions_id_payment_condition_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -920,7 +847,7 @@ CREATE SEQUENCE public.projects_id_project_seq
 
 
 --
--- TOC entry 3445 (class 0 OID 0)
+-- TOC entry 3418 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: projects_id_project_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -937,12 +864,12 @@ CREATE TABLE public.sales (
     id_sale integer NOT NULL,
     sale_timestamp timestamp without time zone NOT NULL,
     fk_project integer NOT NULL,
-    sale_amount numeric NOT NULL,
-    sale_unit_price numeric NOT NULL,
-    sales_reference character varying NOT NULL,
+    sale_amount numeric(11,2) NOT NULL,
+    sale_unit_price numeric(11,2) NOT NULL,
+    sale_reference character varying NOT NULL,
     fk_unit integer NOT NULL,
-    fk_product integer NOT NULL,
-    fk_invoice integer NOT NULL
+    fk_product integer,
+    fk_invoice integer
 );
 
 
@@ -961,7 +888,7 @@ CREATE SEQUENCE public.sales_id_sale_seq
 
 
 --
--- TOC entry 3446 (class 0 OID 0)
+-- TOC entry 3419 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: sales_id_sale_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -995,7 +922,7 @@ CREATE SEQUENCE public.service_states_id_service_state_seq
 
 
 --
--- TOC entry 3447 (class 0 OID 0)
+-- TOC entry 3420 (class 0 OID 0)
 -- Dependencies: 232
 -- Name: service_states_id_service_state_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -1033,7 +960,7 @@ CREATE SEQUENCE public.service_templates_id_service_template_seq
 
 
 --
--- TOC entry 3448 (class 0 OID 0)
+-- TOC entry 3421 (class 0 OID 0)
 -- Dependencies: 234
 -- Name: service_templates_id_service_template_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -1050,19 +977,22 @@ CREATE TABLE public.tasks (
     id_task integer NOT NULL,
     fk_project integer NOT NULL,
     fk_task_state integer NOT NULL,
-    timestamp_from timestamp without time zone,
-    timestamp_to timestamp without time zone,
-    amount numeric,
-    unit_price numeric,
+    task_date_from date,
+    task_date_to date,
+    amount numeric(11,2),
+    unit_price numeric(11,2),
     task_description character varying NOT NULL,
     fk_invoice integer,
     fk_unit integer,
-    fk_asset_allocation integer,
     internal_info character varying,
     customer_reference character varying,
     fk_subcontractor integer,
-    brokerage_fee numeric,
-    fk_service_type integer NOT NULL
+    fk_employee_1 integer,
+    fk_employee_2 integer,
+    fk_asset_1 integer,
+    fk_asset_2 integer,
+    task_time_from time without time zone,
+    task_time_to time without time zone
 );
 
 
@@ -1081,7 +1011,7 @@ CREATE SEQUENCE public.services_id_service_seq
 
 
 --
--- TOC entry 3449 (class 0 OID 0)
+-- TOC entry 3422 (class 0 OID 0)
 -- Dependencies: 236
 -- Name: services_id_service_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -1096,7 +1026,8 @@ ALTER SEQUENCE public.services_id_service_seq OWNED BY public.tasks.id_task;
 
 CREATE TABLE public.sys_rec_states (
     id_sys_rec_status integer NOT NULL,
-    sys_rec_status character varying NOT NULL
+    sys_rec_status character varying NOT NULL,
+    entity character varying
 );
 
 
@@ -1115,7 +1046,7 @@ CREATE SEQUENCE public.sys_rec_states_id_sys_rec_status_seq
 
 
 --
--- TOC entry 3450 (class 0 OID 0)
+-- TOC entry 3423 (class 0 OID 0)
 -- Dependencies: 257
 -- Name: sys_rec_states_id_sys_rec_status_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -1150,7 +1081,7 @@ CREATE SEQUENCE public.units_id_unit_seq
 
 
 --
--- TOC entry 3451 (class 0 OID 0)
+-- TOC entry 3424 (class 0 OID 0)
 -- Dependencies: 259
 -- Name: units_id_unit_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -1159,15 +1090,7 @@ ALTER SEQUENCE public.units_id_unit_seq OWNED BY public.units.id_unit;
 
 
 --
--- TOC entry 3086 (class 2604 OID 16913)
--- Name: asset_task_allocation id_asset_allocation; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.asset_task_allocation ALTER COLUMN id_asset_allocation SET DEFAULT nextval('public.asset_allocation_id_asset_allocation_seq'::regclass);
-
-
---
--- TOC entry 3067 (class 2604 OID 16614)
+-- TOC entry 3054 (class 2604 OID 16614)
 -- Name: asset_types id_asset_type; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1175,7 +1098,7 @@ ALTER TABLE ONLY public.asset_types ALTER COLUMN id_asset_type SET DEFAULT nextv
 
 
 --
--- TOC entry 3068 (class 2604 OID 16615)
+-- TOC entry 3055 (class 2604 OID 16615)
 -- Name: assets id_asset; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1183,7 +1106,7 @@ ALTER TABLE ONLY public.assets ALTER COLUMN id_asset SET DEFAULT nextval('public
 
 
 --
--- TOC entry 3077 (class 2604 OID 16625)
+-- TOC entry 3064 (class 2604 OID 16625)
 -- Name: companies id_company; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1191,7 +1114,7 @@ ALTER TABLE ONLY public.companies ALTER COLUMN id_company SET DEFAULT nextval('p
 
 
 --
--- TOC entry 3072 (class 2604 OID 16620)
+-- TOC entry 3059 (class 2604 OID 16620)
 -- Name: currencies id_currency; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1199,7 +1122,7 @@ ALTER TABLE ONLY public.currencies ALTER COLUMN id_currency SET DEFAULT nextval(
 
 
 --
--- TOC entry 3063 (class 2604 OID 16616)
+-- TOC entry 3050 (class 2604 OID 16616)
 -- Name: employee_absence_codes id_employee_absence_code; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1207,7 +1130,7 @@ ALTER TABLE ONLY public.employee_absence_codes ALTER COLUMN id_employee_absence_
 
 
 --
--- TOC entry 3065 (class 2604 OID 16617)
+-- TOC entry 3052 (class 2604 OID 16617)
 -- Name: employee_absences id_employee_absence; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1215,15 +1138,7 @@ ALTER TABLE ONLY public.employee_absences ALTER COLUMN id_employee_absence SET D
 
 
 --
--- TOC entry 3087 (class 2604 OID 16933)
--- Name: employee_task_allocation id_employee_allocation; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.employee_task_allocation ALTER COLUMN id_employee_allocation SET DEFAULT nextval('public.employee_allocation_id_employee_allocation_seq'::regclass);
-
-
---
--- TOC entry 3071 (class 2604 OID 16618)
+-- TOC entry 3058 (class 2604 OID 16618)
 -- Name: employee_types id_employee_type; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1231,7 +1146,7 @@ ALTER TABLE ONLY public.employee_types ALTER COLUMN id_employee_type SET DEFAULT
 
 
 --
--- TOC entry 3070 (class 2604 OID 16619)
+-- TOC entry 3057 (class 2604 OID 16619)
 -- Name: employees id_employee; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1239,7 +1154,7 @@ ALTER TABLE ONLY public.employees ALTER COLUMN id_employee SET DEFAULT nextval('
 
 
 --
--- TOC entry 3075 (class 2604 OID 16621)
+-- TOC entry 3062 (class 2604 OID 16621)
 -- Name: invoice_states id_invoice_state; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1247,7 +1162,7 @@ ALTER TABLE ONLY public.invoice_states ALTER COLUMN id_invoice_state SET DEFAULT
 
 
 --
--- TOC entry 3073 (class 2604 OID 16622)
+-- TOC entry 3060 (class 2604 OID 16622)
 -- Name: invoice_texts id_invoice_text; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1255,7 +1170,7 @@ ALTER TABLE ONLY public.invoice_texts ALTER COLUMN id_invoice_text SET DEFAULT n
 
 
 --
--- TOC entry 3074 (class 2604 OID 16623)
+-- TOC entry 3061 (class 2604 OID 16623)
 -- Name: invoices id_invoice; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1263,7 +1178,7 @@ ALTER TABLE ONLY public.invoices ALTER COLUMN id_invoice SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 3076 (class 2604 OID 16624)
+-- TOC entry 3063 (class 2604 OID 16624)
 -- Name: payment_conditions id_payment_condition; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1271,7 +1186,7 @@ ALTER TABLE ONLY public.payment_conditions ALTER COLUMN id_payment_condition SET
 
 
 --
--- TOC entry 3078 (class 2604 OID 16626)
+-- TOC entry 3065 (class 2604 OID 16626)
 -- Name: projects id_project; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1279,7 +1194,7 @@ ALTER TABLE ONLY public.projects ALTER COLUMN id_project SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 3079 (class 2604 OID 16627)
+-- TOC entry 3066 (class 2604 OID 16627)
 -- Name: sales id_sale; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1287,7 +1202,7 @@ ALTER TABLE ONLY public.sales ALTER COLUMN id_sale SET DEFAULT nextval('public.s
 
 
 --
--- TOC entry 3084 (class 2604 OID 16631)
+-- TOC entry 3071 (class 2604 OID 16631)
 -- Name: sys_rec_states id_sys_rec_status; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1295,7 +1210,7 @@ ALTER TABLE ONLY public.sys_rec_states ALTER COLUMN id_sys_rec_status SET DEFAUL
 
 
 --
--- TOC entry 3080 (class 2604 OID 16628)
+-- TOC entry 3067 (class 2604 OID 16628)
 -- Name: task_states id_task_state; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1303,7 +1218,7 @@ ALTER TABLE ONLY public.task_states ALTER COLUMN id_task_state SET DEFAULT nextv
 
 
 --
--- TOC entry 3081 (class 2604 OID 16629)
+-- TOC entry 3068 (class 2604 OID 16629)
 -- Name: task_templates id_task_template; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1311,7 +1226,7 @@ ALTER TABLE ONLY public.task_templates ALTER COLUMN id_task_template SET DEFAULT
 
 
 --
--- TOC entry 3082 (class 2604 OID 16630)
+-- TOC entry 3069 (class 2604 OID 16630)
 -- Name: tasks id_task; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1319,7 +1234,7 @@ ALTER TABLE ONLY public.tasks ALTER COLUMN id_task SET DEFAULT nextval('public.s
 
 
 --
--- TOC entry 3085 (class 2604 OID 16632)
+-- TOC entry 3072 (class 2604 OID 16632)
 -- Name: units id_unit; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -1327,7 +1242,7 @@ ALTER TABLE ONLY public.units ALTER COLUMN id_unit SET DEFAULT nextval('public.u
 
 
 --
--- TOC entry 3363 (class 0 OID 16400)
+-- TOC entry 3342 (class 0 OID 16400)
 -- Dependencies: 202
 -- Data for Name: asset_absence_codes; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1342,27 +1257,18 @@ COPY public.asset_absence_codes (id_asset_absence_code, asset_absence_code, asse
 
 
 --
--- TOC entry 3366 (class 0 OID 16412)
+-- TOC entry 3345 (class 0 OID 16412)
 -- Dependencies: 205
 -- Data for Name: asset_absences; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.asset_absences (id_asset_absence, "from", "to", fk_asset, fk_asset_absence_code) FROM stdin;
+COPY public.asset_absences (id_asset_absence, asset_absence_from, asset_absence_to, fk_asset, fk_asset_absence_code) FROM stdin;
+2	2023-09-13 00:00:00	2023-09-14 00:00:00	1	2
 \.
 
 
 --
--- TOC entry 3422 (class 0 OID 16910)
--- Dependencies: 261
--- Data for Name: asset_task_allocation; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public.asset_task_allocation (id_asset_allocation, fk_asset, fk_task) FROM stdin;
-\.
-
-
---
--- TOC entry 3367 (class 0 OID 16416)
+-- TOC entry 3346 (class 0 OID 16416)
 -- Dependencies: 206
 -- Data for Name: asset_types; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1375,17 +1281,20 @@ COPY public.asset_types (id_asset_type, asset_type, max_capacity) FROM stdin;
 
 
 --
--- TOC entry 3369 (class 0 OID 16424)
+-- TOC entry 3348 (class 0 OID 16424)
 -- Dependencies: 208
 -- Data for Name: assets; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.assets (id_asset, fk_asset_type, asset_description, fk_employee, asset_internal_alias, year_of_production, asset_km_counter, fk_sys_rec_state) FROM stdin;
+COPY public.assets (id_asset, fk_asset_type, asset_description, asset_internal_alias, year_of_production, fk_sys_rec_status) FROM stdin;
+1	1	Geschäftsauto	Plugin	2022	1
+2	2	BE 232 156	Pupfi 1	2023	1
+3	3	BE 555 555	Truckli	2022	1
 \.
 
 
 --
--- TOC entry 3398 (class 0 OID 16537)
+-- TOC entry 3377 (class 0 OID 16537)
 -- Dependencies: 237
 -- Data for Name: auth_group; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1395,7 +1304,7 @@ COPY public.auth_group (id, name) FROM stdin;
 
 
 --
--- TOC entry 3400 (class 0 OID 16542)
+-- TOC entry 3379 (class 0 OID 16542)
 -- Dependencies: 239
 -- Data for Name: auth_group_permissions; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1405,7 +1314,7 @@ COPY public.auth_group_permissions (id, group_id, permission_id) FROM stdin;
 
 
 --
--- TOC entry 3402 (class 0 OID 16547)
+-- TOC entry 3381 (class 0 OID 16547)
 -- Dependencies: 241
 -- Data for Name: auth_permission; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1447,7 +1356,7 @@ COPY public.auth_permission (id, name, content_type_id, codename) FROM stdin;
 
 
 --
--- TOC entry 3404 (class 0 OID 16552)
+-- TOC entry 3383 (class 0 OID 16552)
 -- Dependencies: 243
 -- Data for Name: auth_user; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1459,7 +1368,7 @@ COPY public.auth_user (id, password, last_login, is_superuser, username, first_n
 
 
 --
--- TOC entry 3405 (class 0 OID 16558)
+-- TOC entry 3384 (class 0 OID 16558)
 -- Dependencies: 244
 -- Data for Name: auth_user_groups; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1469,7 +1378,7 @@ COPY public.auth_user_groups (id, user_id, group_id) FROM stdin;
 
 
 --
--- TOC entry 3408 (class 0 OID 16565)
+-- TOC entry 3387 (class 0 OID 16565)
 -- Dependencies: 247
 -- Data for Name: auth_user_user_permissions; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1479,7 +1388,7 @@ COPY public.auth_user_user_permissions (id, user_id, permission_id) FROM stdin;
 
 
 --
--- TOC entry 3371 (class 0 OID 16432)
+-- TOC entry 3350 (class 0 OID 16432)
 -- Dependencies: 210
 -- Data for Name: authtoken_token; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1490,21 +1399,21 @@ COPY public.authtoken_token (key, created, user_id) FROM stdin;
 
 
 --
--- TOC entry 3386 (class 0 OID 16489)
+-- TOC entry 3365 (class 0 OID 16489)
 -- Dependencies: 225
 -- Data for Name: companies; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.companies (id_company, company_name, company_street, company_zipcode, company_country, company_city, company_internal_alias, fk_sys_rec_status, company_email, is_customer, is_supplier, is_subcontractor) FROM stdin;
-33	asdfasdf	asdfasdf	asdfasf	asdfasdf	zzzzzzz	asdfasdf	2	asdfasfd	t	t	t
-31	Pfister Transporte AG	Buchsistrasse 10	3380	Schweiz77	Wangen an der Aare	Zwangslager	2	info@pfister-transporte.ch	t	f	f
-34	Data Dudes	Zürichstrasse 9	6004	Schweiz	Luzern	DD	1	info@data-dudes.ch	t	f	f
-32	test1	test1	teset	test	test	stest1	1	asdfadfasdfasdfafd	t	f	f
+34	Data Dudes	Zürichstrasse 9	6003	Schweiz	Luzern	DD	2	info@data-dudes.ch	t	f	f
+33	R. Pfister Rändlimäier GmbH und Co. KG	Hauptstrasse 1	6000	Schweiz	Burgdorf	Rändlimäier	1	r.pfister@rändlimäier.com	t	t	t
+32	Maya Pfiser Coiffeur	Flurweg 2	3377	Schweiz	Walliswil bei Wangen	Möise	2	maya.pfister@pfister.ch	t	f	f
+31	Pfister Transporte AG	Buchsistrasse 10	3380	Schweiz	Wangen an der Aare	Zwangslager	1	info@pfister-transporte.ch	t	f	f
 \.
 
 
 --
--- TOC entry 3376 (class 0 OID 16452)
+-- TOC entry 3355 (class 0 OID 16452)
 -- Dependencies: 215
 -- Data for Name: currencies; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1515,7 +1424,7 @@ COPY public.currencies (id_currency, currency, currency_abbreviation, currency_a
 
 
 --
--- TOC entry 3410 (class 0 OID 16570)
+-- TOC entry 3389 (class 0 OID 16570)
 -- Dependencies: 249
 -- Data for Name: django_admin_log; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1526,7 +1435,7 @@ COPY public.django_admin_log (id, action_time, object_id, object_repr, action_fl
 
 
 --
--- TOC entry 3412 (class 0 OID 16579)
+-- TOC entry 3391 (class 0 OID 16579)
 -- Dependencies: 251
 -- Data for Name: django_content_type; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1544,7 +1453,7 @@ COPY public.django_content_type (id, app_label, model) FROM stdin;
 
 
 --
--- TOC entry 3414 (class 0 OID 16584)
+-- TOC entry 3393 (class 0 OID 16584)
 -- Dependencies: 253
 -- Data for Name: django_migrations; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1575,68 +1484,78 @@ COPY public.django_migrations (id, app, name, applied) FROM stdin;
 
 
 --
--- TOC entry 3416 (class 0 OID 16592)
+-- TOC entry 3395 (class 0 OID 16592)
 -- Dependencies: 255
 -- Data for Name: django_session; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.django_session (session_key, session_data, expire_date) FROM stdin;
 51gop5y9xk05govqecdalhlt31tih0ha	.eJxVjEEOgyAURK_SsK7mA4LWZfc9A4H_odgabASbNE3vXk3cuJvMezNf9lpyNNmnwvq0jOOZjTYXY7EM76F8WM8ECFlBV_HuxHUPl15qdmbGLiWaJfvZDLRZx85ZfPq0AXrYdJ9qnFKZB1dvSr3TXN8m8uN1dw8H0ea4rsEBKeqkJs0JW4VyjY12sgXBRQDwVglClIF8h40A7WzLXeABRatVYL8_8A1Igg:1qX22a:iWLww0E1bG5NKq5uSst8iHjdy_Oyr8f3VfQ36T_fpjU	2023-09-01 16:09:36.162747+00
+fqkybj9ggf31vskrko0q4m2x608t4hv7	eyJzY2hlZHVsZV9kYXRlIjoiMjAyMy0wOS0xMSJ9:1qfeLZ:QR_1dRTCHKTw5n33zNQW79-_mqPdFcoU29noT73JPBg	2023-09-25 10:40:49.230479+00
+cnh5wz0r7z0c7h5163wfxrmn8yw6e157	eyJzY2hlZHVsZV9kYXRlIjoiMjAyMy0wOS0xMSJ9:1qfePK:DRnD-35ne4o0j5HFA0HkdeKtbPZW2CWfg48AGACJplQ	2023-09-25 10:44:42.945028+00
+2uj6n9tynb329xt3r7vcd80bepleb9fp	eyJzY2hlZHVsZV9kYXRlIjoiMjAyMy0wOS0xMSJ9:1qfecu:liuq5GJPk9nlFGHPOcAv8qSVR48TGrcgl24jtFizKOo	2023-09-25 10:58:44.249777+00
+c1a7laoe1xh6uijhv2fv93ggbixrn5gd	eyJzY2hlZHVsZV9kYXRlIjoiMjAyMy0wOS0xMSJ9:1qfedx:5JStZ7WoQA7iWG1PqnGSu4OuXzcRnW2z6QGNuwp9fqs	2023-09-25 10:59:49.036371+00
+974rmyci820xrr776bvekeq3vb5x160b	eyJzY2hlZHVsZV9kYXRlIjoiMjAyMy0wOS0xMSJ9:1qffBe:heEmBE4VRoi5HxKbEXvKaPT84bdwd_78I5ZIZJ3dWpI	2023-09-25 11:34:38.955631+00
+d244rrcqg5kuth5fc9jl770nlc6w24dn	eyJzY2hlZHVsZV9kYXRlIjoiMjAyMy0wOS0xMSJ9:1qffFT:B_bOGjGP-yo6uaEWCAjd2e_gE-R9YzwGExfgUi0cvx8	2023-09-25 11:38:35.821569+00
+nrf4a7rt7qe0mlfovfbcj4ec32tyk6xq	eyJzY2hlZHVsZV9kYXRlIjoiMjAyMy0wOS0xMSJ9:1qffNN:ELir-Pj1a3DOla1qWvF8C4VI4M2-K2ddUg0QZKC8gJY	2023-09-25 11:46:45.725499+00
+nxkhukv64e8nis37tmiz739owqjrrdk8	eyJzY2hlZHVsZV9kYXRlIjoiMjAyMy0wOS0xMSJ9:1qffQc:87GMv9_AOmzo7dAMN97lRUof2m-BDrA8cwWTo7O-q0A	2023-09-25 11:50:06.441718+00
+3gaoos3yvn2yszx55jiposa6cnqmhind	eyJzY2hlZHVsZV9kYXRlIjoiMjAyMy0wOS0xMSJ9:1qffpC:6TLK7lWpQlzUvM2hDCd49OpD5kBaBYaK4K9FBJNul70	2023-09-25 12:15:30.510135+00
+bg51viiqsu1zbcqwgz1j5pq03qabuuj3	eyJzY2hlZHVsZV9kYXRlIjoiMjAyMy0wOS0xMSJ9:1qfgMk:4nru9eeXDQZl2Avx0iVxnZfh2WoINFMreMdGCsIHhDo	2023-09-25 12:50:10.754918+00
+9ck1u8hdpa8m45day1gotq9i5ki4t3is	eyJzY2hlZHVsZV9kYXRlIjoiMjAyMy0wOS0yOCJ9:1qg1ON:ee1CQkM0vB7culxm39UbfUrLlg60VFhOvFVm0NBoTVQ	2023-09-26 11:17:15.432015+00
 \.
 
 
 --
--- TOC entry 3361 (class 0 OID 16392)
+-- TOC entry 3340 (class 0 OID 16392)
 -- Dependencies: 200
 -- Data for Name: employee_absence_codes; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.employee_absence_codes (id_employee_absence_code, employee_absence_code, employee_absence_code_abbreviation) FROM stdin;
+7	Ferien	F
 \.
 
 
 --
--- TOC entry 3364 (class 0 OID 16407)
+-- TOC entry 3343 (class 0 OID 16407)
 -- Dependencies: 203
 -- Data for Name: employee_absences; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.employee_absences (id_employee_absence, "from", "to", fk_employee, fk_employee_absence_code) FROM stdin;
+COPY public.employee_absences (id_employee_absence, employee_absence_from, employee_absence_to, fk_employee, fk_employee_absence_code) FROM stdin;
+1	2023-05-09 00:00:00	2023-09-15 00:00:00	2	7
 \.
 
 
 --
--- TOC entry 3424 (class 0 OID 16930)
--- Dependencies: 263
--- Data for Name: employee_task_allocation; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public.employee_task_allocation (id_employee_allocation, fk_task, fk_employee) FROM stdin;
-\.
-
-
---
--- TOC entry 3374 (class 0 OID 16444)
+-- TOC entry 3353 (class 0 OID 16444)
 -- Dependencies: 213
 -- Data for Name: employee_types; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.employee_types (id_employee_type, employee_type_description) FROM stdin;
+1	Office - Fix
+2	Transport
 \.
 
 
 --
--- TOC entry 3372 (class 0 OID 16435)
+-- TOC entry 3351 (class 0 OID 16435)
 -- Dependencies: 211
 -- Data for Name: employees; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.employees (id_employee, employee_first_name, employee_last_name, employee_street, employee_zipcode, employee_city, emplyee_email, employee_cell_phone, emplyee_birthday, emplyee_salary, fk_employee_type, employee_fte, employee_internal_alias, fk_sys_rec_status, employee_house_nr) FROM stdin;
+COPY public.employees (id_employee, employee_first_name, employee_last_name, employee_street, employee_zipcode, employee_city, employee_email, employee_cell_phone, employee_birthday, employee_salary, fk_employee_type, employee_fte, employee_internal_alias, fk_sys_rec_status) FROM stdin;
+2	Fabian	Pfister	Zürichstrasse 9	6003	Luzern	fabian.pfister@hotmail.com	079 957 25 54	1996-02-22	\N	1	\N	Fäbu	1
+3	Ramon	Pfister	Flurweg 2	3377	Walliswil bei Wangen	ramon.pfister@rändlimäier.ch	0798887766	1998-04-15	\N	2	\N	Pfüdu	1
+4	Hausi	Pfister	Flureweg 2	3377	Walliswil bei Wangen	hans.pfister@pfister-transporte.ch	079 957 25 54	1966-05-08	\N	2	\N	Hausi	1
+5	Dominic	Pfister	Heimenhausenstrasse 6	3377	Walliswil bei Wangen	dominic.pfister@pfister-transporte.ch	079 957 25 54	1994-04-24	\N	2	\N	Dömu	1
+6	Julian	Pfister	Flurweg 2	3377	Walliswil bei Wangen	julian.pfister@pfister-transporte.ch	079 957 25 54	2001-05-28	\N	2	\N	Jülu	1
 \.
 
 
 --
--- TOC entry 3382 (class 0 OID 16473)
+-- TOC entry 3361 (class 0 OID 16473)
 -- Dependencies: 221
 -- Data for Name: invoice_states; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1646,7 +1565,7 @@ COPY public.invoice_states (id_invoice_state, invoice_state, invoice_state_abbre
 
 
 --
--- TOC entry 3378 (class 0 OID 16460)
+-- TOC entry 3357 (class 0 OID 16460)
 -- Dependencies: 217
 -- Data for Name: invoice_texts; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1656,7 +1575,7 @@ COPY public.invoice_texts (id_invoice_text, invoice_text, fk_customer) FROM stdi
 
 
 --
--- TOC entry 3380 (class 0 OID 16468)
+-- TOC entry 3359 (class 0 OID 16468)
 -- Dependencies: 219
 -- Data for Name: invoices; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1666,7 +1585,7 @@ COPY public.invoices (id_invoice, invoice_date, fk_invoice_text, fk_invoice_stat
 
 
 --
--- TOC entry 3384 (class 0 OID 16481)
+-- TOC entry 3363 (class 0 OID 16481)
 -- Dependencies: 223
 -- Data for Name: payment_conditions; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1676,56 +1595,67 @@ COPY public.payment_conditions (id_payment_condition, vat, fk_currency, due_days
 
 
 --
--- TOC entry 3388 (class 0 OID 16497)
+-- TOC entry 3367 (class 0 OID 16497)
 -- Dependencies: 227
 -- Data for Name: projects; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.projects (id_project, project_name, fk_customer, planned_start_date, planned_end_date, effective_start_date, effective_end_date) FROM stdin;
-2	test1- default	32	2023-08-18	9999-12-31	\N	\N
-3	test- default	31	2023-08-18	9999-12-31	\N	\N
-4	asdfasdf- default	33	2023-09-04	9999-12-31	\N	\N
-5	Pfister Transporte AG- default	31	2023-09-04	9999-12-31	\N	\N
+5	Pfister Transporte AG- default	31	2023-09-04	9999-12-31	2023-09-20	\N
 6	Data Dudes- default	34	2023-09-04	9999-12-31	\N	\N
+4	asdfasdf- default	33	2023-09-04	9999-12-31	\N	\N
+3	test- default	31	2023-08-18	9999-12-31	\N	\N
+2	test1- default	32	2023-08-18	9999-12-31	\N	\N
+7	Test- default	33	2023-09-08	9999-12-31	\N	\N
+8	test2- default	32	2023-09-09	9999-12-31	\N	\N
+9	R. Pfister Rändlimäier GmbH und Co. KG- default	33	2023-09-12	9999-12-31	\N	\N
+10	Maya Pfiser Coiffeur- default	32	2023-09-12	9999-12-31	\N	\N
 \.
 
 
 --
--- TOC entry 3390 (class 0 OID 16505)
+-- TOC entry 3369 (class 0 OID 16505)
 -- Dependencies: 229
 -- Data for Name: sales; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.sales (id_sale, sale_timestamp, fk_project, sale_amount, sale_unit_price, sales_reference, fk_unit, fk_product, fk_invoice) FROM stdin;
+COPY public.sales (id_sale, sale_timestamp, fk_project, sale_amount, sale_unit_price, sale_reference, fk_unit, fk_product, fk_invoice) FROM stdin;
+1	2023-09-13 00:00:00	5	1.00	500.00	test	21	\N	\N
 \.
 
 
 --
--- TOC entry 3417 (class 0 OID 16598)
+-- TOC entry 3396 (class 0 OID 16598)
 -- Dependencies: 256
 -- Data for Name: sys_rec_states; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.sys_rec_states (id_sys_rec_status, sys_rec_status) FROM stdin;
-1	active
-2	passive
-3	left_the_company
-4	sold
+COPY public.sys_rec_states (id_sys_rec_status, sys_rec_status, entity) FROM stdin;
+1	active	GENERAL
+2	passive	GENERAL
+3	left_the_company	EMPLOYEES
+4	sold	ASSETS
 \.
 
 
 --
--- TOC entry 3392 (class 0 OID 16513)
+-- TOC entry 3371 (class 0 OID 16513)
 -- Dependencies: 231
 -- Data for Name: task_states; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.task_states (id_task_state, task_state) FROM stdin;
+1	created
+2	planned
+3	finished
+4	closed
+5	billed
+-1	deleted
 \.
 
 
 --
--- TOC entry 3394 (class 0 OID 16521)
+-- TOC entry 3373 (class 0 OID 16521)
 -- Dependencies: 233
 -- Data for Name: task_templates; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1735,17 +1665,46 @@ COPY public.task_templates (id_task_template, fk_customer, fk_unit, amount, unit
 
 
 --
--- TOC entry 3396 (class 0 OID 16529)
+-- TOC entry 3375 (class 0 OID 16529)
 -- Dependencies: 235
 -- Data for Name: tasks; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.tasks (id_task, fk_project, fk_task_state, timestamp_from, timestamp_to, amount, unit_price, task_description, fk_invoice, fk_unit, fk_asset_allocation, internal_info, customer_reference, fk_subcontractor, brokerage_fee, fk_service_type) FROM stdin;
+COPY public.tasks (id_task, fk_project, fk_task_state, task_date_from, task_date_to, amount, unit_price, task_description, fk_invoice, fk_unit, internal_info, customer_reference, fk_subcontractor, fk_employee_1, fk_employee_2, fk_asset_1, fk_asset_2, task_time_from, task_time_to) FROM stdin;
+6	6	1	\N	\N	\N	\N	test	\N	\N			\N	\N	\N	\N	\N	\N	\N
+8	5	1	\N	\N	\N	\N	asdfasdf	\N	\N			\N	\N	\N	\N	\N	\N	\N
+9	5	1	\N	\N	\N	\N	asdfasdf	\N	\N			\N	\N	\N	\N	\N	\N	\N
+10	5	1	\N	\N	\N	\N	asdfasdf	\N	\N			\N	\N	\N	\N	\N	\N	\N
+11	5	1	\N	\N	\N	\N	asdfasdf	\N	\N			\N	\N	\N	\N	\N	\N	\N
+12	5	1	\N	\N	\N	\N	asdfasdf	\N	\N			\N	\N	\N	\N	\N	\N	\N
+13	5	1	\N	\N	\N	\N	sdfgasdgsdfgsdwg	\N	\N			\N	\N	\N	\N	\N	\N	\N
+14	5	1	\N	\N	\N	\N	sdfgasdgsdfgsdwg	\N	\N			\N	\N	\N	\N	\N	\N	\N
+15	5	1	\N	\N	\N	\N	sdfgasdgsdfgsdwg	\N	\N			\N	\N	\N	\N	\N	\N	\N
+16	6	1	\N	\N	\N	\N	asdfgASDFASDF	\N	\N			\N	\N	\N	\N	\N	\N	\N
+17	6	1	\N	\N	\N	\N	asdfgASDFASDF	\N	\N			\N	\N	\N	\N	\N	\N	\N
+18	6	1	\N	\N	\N	\N	YXV<AYVDFAS	\N	\N			\N	\N	\N	\N	\N	\N	\N
+19	7	1	\N	\N	\N	\N	asddfgasdfasdf	\N	\N			\N	\N	\N	\N	\N	\N	\N
+20	4	1	\N	\N	\N	\N	yxcvyxvc	\N	\N			\N	\N	\N	\N	\N	\N	\N
+21	5	1	\N	\N	\N	\N	asdfasfdasfd	\N	\N			\N	\N	\N	\N	\N	\N	\N
+22	3	1	\N	\N	\N	\N	fdsgsdg	\N	\N			\N	\N	\N	\N	\N	\N	\N
+2	6	1	2023-09-10	2023-09-12	\N	\N	adsdfasF	\N	\N			\N	\N	\N	\N	\N	\N	\N
+4	6	1	2023-09-11	2023-09-11	\N	\N	test	\N	\N			\N	2	3	2	3	14:00:00	15:00:00
+7	5	3	2023-09-12	2023-09-12	\N	\N	shdfshs	\N	\N			\N	6	\N	2	\N	12:00:00	13:00:00
+5	6	3	2023-09-11	2023-09-11	\N	\N	test	\N	\N			\N	2	\N	1	\N	08:00:00	11:00:00
+3	5	2	2023-09-12	2023-09-13	\N	\N	test	\N	\N			\N	2	\N	\N	\N	10:00:00	09:00:00
+23	9	1	\N	\N	\N	\N	etasdefa	\N	\N			\N	\N	\N	\N	\N	\N	\N
+24	9	1	\N	\N	\N	\N	etasdefa	\N	\N			\N	\N	\N	\N	\N	\N	\N
+25	9	1	\N	\N	\N	\N	etasdefa	\N	\N			\N	\N	\N	\N	\N	\N	\N
+26	9	1	\N	\N	\N	\N	etasdefa	\N	\N			\N	\N	\N	\N	\N	\N	\N
+27	10	1	\N	\N	\N	\N	asdfadfasdfsas	\N	\N			\N	\N	\N	\N	\N	\N	\N
+28	10	1	\N	\N	\N	\N	asdfasfasd	\N	\N			\N	\N	\N	\N	\N	\N	\N
+29	6	1	\N	\N	\N	\N	asdfasdf	\N	\N			\N	\N	\N	\N	\N	\N	\N
+1	5	1	\N	\N	\N	\N	Test	\N	1	hallo velo		\N	\N	\N	\N	\N	\N	\N
 \.
 
 
 --
--- TOC entry 3419 (class 0 OID 16606)
+-- TOC entry 3398 (class 0 OID 16606)
 -- Dependencies: 258
 -- Data for Name: units; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -1776,16 +1735,7 @@ COPY public.units (id_unit, unit, unit_abbreviation) FROM stdin;
 
 
 --
--- TOC entry 3452 (class 0 OID 0)
--- Dependencies: 260
--- Name: asset_allocation_id_asset_allocation_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public.asset_allocation_id_asset_allocation_seq', 1, false);
-
-
---
--- TOC entry 3453 (class 0 OID 0)
+-- TOC entry 3425 (class 0 OID 0)
 -- Dependencies: 207
 -- Name: asset_types_id_asset_type_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1794,16 +1744,16 @@ SELECT pg_catalog.setval('public.asset_types_id_asset_type_seq', 3, true);
 
 
 --
--- TOC entry 3454 (class 0 OID 0)
+-- TOC entry 3426 (class 0 OID 0)
 -- Dependencies: 209
 -- Name: assets_id_asset_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.assets_id_asset_seq', 1, false);
+SELECT pg_catalog.setval('public.assets_id_asset_seq', 3, true);
 
 
 --
--- TOC entry 3455 (class 0 OID 0)
+-- TOC entry 3427 (class 0 OID 0)
 -- Dependencies: 238
 -- Name: auth_group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1812,7 +1762,7 @@ SELECT pg_catalog.setval('public.auth_group_id_seq', 1, false);
 
 
 --
--- TOC entry 3456 (class 0 OID 0)
+-- TOC entry 3428 (class 0 OID 0)
 -- Dependencies: 240
 -- Name: auth_group_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1821,7 +1771,7 @@ SELECT pg_catalog.setval('public.auth_group_permissions_id_seq', 1, false);
 
 
 --
--- TOC entry 3457 (class 0 OID 0)
+-- TOC entry 3429 (class 0 OID 0)
 -- Dependencies: 242
 -- Name: auth_permission_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1830,7 +1780,7 @@ SELECT pg_catalog.setval('public.auth_permission_id_seq', 32, true);
 
 
 --
--- TOC entry 3458 (class 0 OID 0)
+-- TOC entry 3430 (class 0 OID 0)
 -- Dependencies: 245
 -- Name: auth_user_groups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1839,7 +1789,7 @@ SELECT pg_catalog.setval('public.auth_user_groups_id_seq', 1, false);
 
 
 --
--- TOC entry 3459 (class 0 OID 0)
+-- TOC entry 3431 (class 0 OID 0)
 -- Dependencies: 246
 -- Name: auth_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1848,7 +1798,7 @@ SELECT pg_catalog.setval('public.auth_user_id_seq', 2, true);
 
 
 --
--- TOC entry 3460 (class 0 OID 0)
+-- TOC entry 3432 (class 0 OID 0)
 -- Dependencies: 248
 -- Name: auth_user_user_permissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1857,7 +1807,7 @@ SELECT pg_catalog.setval('public.auth_user_user_permissions_id_seq', 1, false);
 
 
 --
--- TOC entry 3461 (class 0 OID 0)
+-- TOC entry 3433 (class 0 OID 0)
 -- Dependencies: 216
 -- Name: curency_id_currency_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1866,7 +1816,7 @@ SELECT pg_catalog.setval('public.curency_id_currency_seq', 1, true);
 
 
 --
--- TOC entry 3462 (class 0 OID 0)
+-- TOC entry 3434 (class 0 OID 0)
 -- Dependencies: 218
 -- Name: customer_invoice_text_id_customer_invoice_text_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1875,7 +1825,7 @@ SELECT pg_catalog.setval('public.customer_invoice_text_id_customer_invoice_text_
 
 
 --
--- TOC entry 3463 (class 0 OID 0)
+-- TOC entry 3435 (class 0 OID 0)
 -- Dependencies: 250
 -- Name: django_admin_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1884,7 +1834,7 @@ SELECT pg_catalog.setval('public.django_admin_log_id_seq', 1, true);
 
 
 --
--- TOC entry 3464 (class 0 OID 0)
+-- TOC entry 3436 (class 0 OID 0)
 -- Dependencies: 252
 -- Name: django_content_type_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1893,7 +1843,7 @@ SELECT pg_catalog.setval('public.django_content_type_id_seq', 8, true);
 
 
 --
--- TOC entry 3465 (class 0 OID 0)
+-- TOC entry 3437 (class 0 OID 0)
 -- Dependencies: 254
 -- Name: django_migrations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1902,52 +1852,43 @@ SELECT pg_catalog.setval('public.django_migrations_id_seq', 21, true);
 
 
 --
--- TOC entry 3466 (class 0 OID 0)
+-- TOC entry 3438 (class 0 OID 0)
 -- Dependencies: 201
 -- Name: employee_absence_code_id_employee_absence_code_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.employee_absence_code_id_employee_absence_code_seq', 6, true);
+SELECT pg_catalog.setval('public.employee_absence_code_id_employee_absence_code_seq', 7, true);
 
 
 --
--- TOC entry 3467 (class 0 OID 0)
+-- TOC entry 3439 (class 0 OID 0)
 -- Dependencies: 204
 -- Name: employee_absence_id_employee_absence_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.employee_absence_id_employee_absence_seq', 1, false);
+SELECT pg_catalog.setval('public.employee_absence_id_employee_absence_seq', 2, true);
 
 
 --
--- TOC entry 3468 (class 0 OID 0)
--- Dependencies: 262
--- Name: employee_allocation_id_employee_allocation_seq; Type: SEQUENCE SET; Schema: public; Owner: -
---
-
-SELECT pg_catalog.setval('public.employee_allocation_id_employee_allocation_seq', 1, false);
-
-
---
--- TOC entry 3469 (class 0 OID 0)
+-- TOC entry 3440 (class 0 OID 0)
 -- Dependencies: 212
 -- Name: employee_id_employee_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.employee_id_employee_seq', 1, true);
+SELECT pg_catalog.setval('public.employee_id_employee_seq', 6, true);
 
 
 --
--- TOC entry 3470 (class 0 OID 0)
+-- TOC entry 3441 (class 0 OID 0)
 -- Dependencies: 214
 -- Name: employee_type_employee_type_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.employee_type_employee_type_seq', 1, false);
+SELECT pg_catalog.setval('public.employee_type_employee_type_seq', 2, true);
 
 
 --
--- TOC entry 3471 (class 0 OID 0)
+-- TOC entry 3442 (class 0 OID 0)
 -- Dependencies: 220
 -- Name: invoice_id_invoice_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1956,7 +1897,7 @@ SELECT pg_catalog.setval('public.invoice_id_invoice_seq', 1, false);
 
 
 --
--- TOC entry 3472 (class 0 OID 0)
+-- TOC entry 3443 (class 0 OID 0)
 -- Dependencies: 222
 -- Name: invoice_status_id_invoice_status_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1965,7 +1906,7 @@ SELECT pg_catalog.setval('public.invoice_status_id_invoice_status_seq', 1, false
 
 
 --
--- TOC entry 3473 (class 0 OID 0)
+-- TOC entry 3444 (class 0 OID 0)
 -- Dependencies: 226
 -- Name: newtable_id_customer_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1974,7 +1915,7 @@ SELECT pg_catalog.setval('public.newtable_id_customer_seq', 34, true);
 
 
 --
--- TOC entry 3474 (class 0 OID 0)
+-- TOC entry 3445 (class 0 OID 0)
 -- Dependencies: 224
 -- Name: payment_conditions_id_payment_condition_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -1983,34 +1924,34 @@ SELECT pg_catalog.setval('public.payment_conditions_id_payment_condition_seq', 1
 
 
 --
--- TOC entry 3475 (class 0 OID 0)
+-- TOC entry 3446 (class 0 OID 0)
 -- Dependencies: 228
 -- Name: projects_id_project_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.projects_id_project_seq', 6, true);
+SELECT pg_catalog.setval('public.projects_id_project_seq', 10, true);
 
 
 --
--- TOC entry 3476 (class 0 OID 0)
+-- TOC entry 3447 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: sales_id_sale_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.sales_id_sale_seq', 1, false);
+SELECT pg_catalog.setval('public.sales_id_sale_seq', 1, true);
 
 
 --
--- TOC entry 3477 (class 0 OID 0)
+-- TOC entry 3448 (class 0 OID 0)
 -- Dependencies: 232
 -- Name: service_states_id_service_state_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.service_states_id_service_state_seq', 1, false);
+SELECT pg_catalog.setval('public.service_states_id_service_state_seq', 5, true);
 
 
 --
--- TOC entry 3478 (class 0 OID 0)
+-- TOC entry 3449 (class 0 OID 0)
 -- Dependencies: 234
 -- Name: service_templates_id_service_template_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -2019,25 +1960,25 @@ SELECT pg_catalog.setval('public.service_templates_id_service_template_seq', 1, 
 
 
 --
--- TOC entry 3479 (class 0 OID 0)
+-- TOC entry 3450 (class 0 OID 0)
 -- Dependencies: 236
 -- Name: services_id_service_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.services_id_service_seq', 1, false);
+SELECT pg_catalog.setval('public.services_id_service_seq', 29, true);
 
 
 --
--- TOC entry 3480 (class 0 OID 0)
+-- TOC entry 3451 (class 0 OID 0)
 -- Dependencies: 257
 -- Name: sys_rec_states_id_sys_rec_status_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.sys_rec_states_id_sys_rec_status_seq', 4, true);
+SELECT pg_catalog.setval('public.sys_rec_states_id_sys_rec_status_seq', 6, true);
 
 
 --
--- TOC entry 3481 (class 0 OID 0)
+-- TOC entry 3452 (class 0 OID 0)
 -- Dependencies: 259
 -- Name: units_id_unit_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
@@ -2046,7 +1987,7 @@ SELECT pg_catalog.setval('public.units_id_unit_seq', 21, true);
 
 
 --
--- TOC entry 3091 (class 2606 OID 16634)
+-- TOC entry 3076 (class 2606 OID 16634)
 -- Name: asset_absence_codes asset_absence_code_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2055,7 +1996,7 @@ ALTER TABLE ONLY public.asset_absence_codes
 
 
 --
--- TOC entry 3095 (class 2606 OID 16636)
+-- TOC entry 3080 (class 2606 OID 16636)
 -- Name: asset_absences asset_absences_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2064,25 +2005,7 @@ ALTER TABLE ONLY public.asset_absences
 
 
 --
--- TOC entry 3187 (class 2606 OID 16915)
--- Name: asset_task_allocation asset_allocation_pk; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.asset_task_allocation
-    ADD CONSTRAINT asset_allocation_pk PRIMARY KEY (id_asset_allocation);
-
-
---
--- TOC entry 3189 (class 2606 OID 16917)
--- Name: asset_task_allocation asset_allocation_un; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.asset_task_allocation
-    ADD CONSTRAINT asset_allocation_un UNIQUE (fk_asset, fk_task);
-
-
---
--- TOC entry 3097 (class 2606 OID 16638)
+-- TOC entry 3082 (class 2606 OID 16638)
 -- Name: asset_types asset_types_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2091,7 +2014,7 @@ ALTER TABLE ONLY public.asset_types
 
 
 --
--- TOC entry 3099 (class 2606 OID 16640)
+-- TOC entry 3084 (class 2606 OID 16640)
 -- Name: assets assets_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2100,7 +2023,7 @@ ALTER TABLE ONLY public.assets
 
 
 --
--- TOC entry 3137 (class 2606 OID 16680)
+-- TOC entry 3122 (class 2606 OID 16680)
 -- Name: auth_group auth_group_name_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2109,7 +2032,7 @@ ALTER TABLE ONLY public.auth_group
 
 
 --
--- TOC entry 3142 (class 2606 OID 16682)
+-- TOC entry 3127 (class 2606 OID 16682)
 -- Name: auth_group_permissions auth_group_permissions_group_id_permission_id_0cd325b0_uniq; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2118,7 +2041,7 @@ ALTER TABLE ONLY public.auth_group_permissions
 
 
 --
--- TOC entry 3145 (class 2606 OID 16684)
+-- TOC entry 3130 (class 2606 OID 16684)
 -- Name: auth_group_permissions auth_group_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2127,7 +2050,7 @@ ALTER TABLE ONLY public.auth_group_permissions
 
 
 --
--- TOC entry 3139 (class 2606 OID 16686)
+-- TOC entry 3124 (class 2606 OID 16686)
 -- Name: auth_group auth_group_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2136,7 +2059,7 @@ ALTER TABLE ONLY public.auth_group
 
 
 --
--- TOC entry 3148 (class 2606 OID 16688)
+-- TOC entry 3133 (class 2606 OID 16688)
 -- Name: auth_permission auth_permission_content_type_id_codename_01ab375a_uniq; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2145,7 +2068,7 @@ ALTER TABLE ONLY public.auth_permission
 
 
 --
--- TOC entry 3150 (class 2606 OID 16690)
+-- TOC entry 3135 (class 2606 OID 16690)
 -- Name: auth_permission auth_permission_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2154,7 +2077,7 @@ ALTER TABLE ONLY public.auth_permission
 
 
 --
--- TOC entry 3158 (class 2606 OID 16692)
+-- TOC entry 3143 (class 2606 OID 16692)
 -- Name: auth_user_groups auth_user_groups_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2163,7 +2086,7 @@ ALTER TABLE ONLY public.auth_user_groups
 
 
 --
--- TOC entry 3161 (class 2606 OID 16694)
+-- TOC entry 3146 (class 2606 OID 16694)
 -- Name: auth_user_groups auth_user_groups_user_id_group_id_94350c0c_uniq; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2172,7 +2095,7 @@ ALTER TABLE ONLY public.auth_user_groups
 
 
 --
--- TOC entry 3152 (class 2606 OID 16696)
+-- TOC entry 3137 (class 2606 OID 16696)
 -- Name: auth_user auth_user_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2181,7 +2104,7 @@ ALTER TABLE ONLY public.auth_user
 
 
 --
--- TOC entry 3164 (class 2606 OID 16698)
+-- TOC entry 3149 (class 2606 OID 16698)
 -- Name: auth_user_user_permissions auth_user_user_permissions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2190,7 +2113,7 @@ ALTER TABLE ONLY public.auth_user_user_permissions
 
 
 --
--- TOC entry 3167 (class 2606 OID 16700)
+-- TOC entry 3152 (class 2606 OID 16700)
 -- Name: auth_user_user_permissions auth_user_user_permissions_user_id_permission_id_14a6b632_uniq; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2199,7 +2122,7 @@ ALTER TABLE ONLY public.auth_user_user_permissions
 
 
 --
--- TOC entry 3155 (class 2606 OID 16702)
+-- TOC entry 3140 (class 2606 OID 16702)
 -- Name: auth_user auth_user_username_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2208,7 +2131,7 @@ ALTER TABLE ONLY public.auth_user
 
 
 --
--- TOC entry 3102 (class 2606 OID 16642)
+-- TOC entry 3087 (class 2606 OID 16642)
 -- Name: authtoken_token authtoken_token_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2217,7 +2140,7 @@ ALTER TABLE ONLY public.authtoken_token
 
 
 --
--- TOC entry 3104 (class 2606 OID 16644)
+-- TOC entry 3089 (class 2606 OID 16644)
 -- Name: authtoken_token authtoken_token_user_id_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2226,7 +2149,7 @@ ALTER TABLE ONLY public.authtoken_token
 
 
 --
--- TOC entry 3112 (class 2606 OID 16656)
+-- TOC entry 3097 (class 2606 OID 16656)
 -- Name: currencies curency_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2235,7 +2158,7 @@ ALTER TABLE ONLY public.currencies
 
 
 --
--- TOC entry 3114 (class 2606 OID 16658)
+-- TOC entry 3099 (class 2606 OID 16658)
 -- Name: invoice_texts customer_invoice_text_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2244,7 +2167,7 @@ ALTER TABLE ONLY public.invoice_texts
 
 
 --
--- TOC entry 3170 (class 2606 OID 16704)
+-- TOC entry 3155 (class 2606 OID 16704)
 -- Name: django_admin_log django_admin_log_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2253,7 +2176,7 @@ ALTER TABLE ONLY public.django_admin_log
 
 
 --
--- TOC entry 3173 (class 2606 OID 16706)
+-- TOC entry 3158 (class 2606 OID 16706)
 -- Name: django_content_type django_content_type_app_label_model_76bd3d3b_uniq; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2262,7 +2185,7 @@ ALTER TABLE ONLY public.django_content_type
 
 
 --
--- TOC entry 3175 (class 2606 OID 16708)
+-- TOC entry 3160 (class 2606 OID 16708)
 -- Name: django_content_type django_content_type_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2271,7 +2194,7 @@ ALTER TABLE ONLY public.django_content_type
 
 
 --
--- TOC entry 3177 (class 2606 OID 16710)
+-- TOC entry 3162 (class 2606 OID 16710)
 -- Name: django_migrations django_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2280,7 +2203,7 @@ ALTER TABLE ONLY public.django_migrations
 
 
 --
--- TOC entry 3180 (class 2606 OID 16712)
+-- TOC entry 3165 (class 2606 OID 16712)
 -- Name: django_session django_session_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2289,7 +2212,7 @@ ALTER TABLE ONLY public.django_session
 
 
 --
--- TOC entry 3089 (class 2606 OID 16646)
+-- TOC entry 3074 (class 2606 OID 16646)
 -- Name: employee_absence_codes employee_absence_code_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2298,7 +2221,7 @@ ALTER TABLE ONLY public.employee_absence_codes
 
 
 --
--- TOC entry 3093 (class 2606 OID 16648)
+-- TOC entry 3078 (class 2606 OID 16648)
 -- Name: employee_absences employee_absences_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2307,16 +2230,7 @@ ALTER TABLE ONLY public.employee_absences
 
 
 --
--- TOC entry 3191 (class 2606 OID 16935)
--- Name: employee_task_allocation employee_allocation_pk; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.employee_task_allocation
-    ADD CONSTRAINT employee_allocation_pk PRIMARY KEY (id_employee_allocation);
-
-
---
--- TOC entry 3106 (class 2606 OID 16650)
+-- TOC entry 3091 (class 2606 OID 16650)
 -- Name: employees employee_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2325,7 +2239,7 @@ ALTER TABLE ONLY public.employees
 
 
 --
--- TOC entry 3110 (class 2606 OID 16652)
+-- TOC entry 3095 (class 2606 OID 16652)
 -- Name: employee_types employee_type_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2334,7 +2248,7 @@ ALTER TABLE ONLY public.employee_types
 
 
 --
--- TOC entry 3108 (class 2606 OID 16654)
+-- TOC entry 3093 (class 2606 OID 16654)
 -- Name: employees employee_un; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2343,7 +2257,7 @@ ALTER TABLE ONLY public.employees
 
 
 --
--- TOC entry 3118 (class 2606 OID 16660)
+-- TOC entry 3103 (class 2606 OID 16660)
 -- Name: invoice_states invoice_status_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2352,7 +2266,7 @@ ALTER TABLE ONLY public.invoice_states
 
 
 --
--- TOC entry 3116 (class 2606 OID 16662)
+-- TOC entry 3101 (class 2606 OID 16662)
 -- Name: invoices invoices_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2361,7 +2275,7 @@ ALTER TABLE ONLY public.invoices
 
 
 --
--- TOC entry 3122 (class 2606 OID 16666)
+-- TOC entry 3107 (class 2606 OID 16666)
 -- Name: companies newtable_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2370,7 +2284,7 @@ ALTER TABLE ONLY public.companies
 
 
 --
--- TOC entry 3124 (class 2606 OID 16668)
+-- TOC entry 3109 (class 2606 OID 16668)
 -- Name: companies newtable_un; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2379,7 +2293,7 @@ ALTER TABLE ONLY public.companies
 
 
 --
--- TOC entry 3120 (class 2606 OID 16664)
+-- TOC entry 3105 (class 2606 OID 16664)
 -- Name: payment_conditions payment_conditions_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2388,7 +2302,7 @@ ALTER TABLE ONLY public.payment_conditions
 
 
 --
--- TOC entry 3126 (class 2606 OID 16670)
+-- TOC entry 3111 (class 2606 OID 16670)
 -- Name: projects projects_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2397,7 +2311,7 @@ ALTER TABLE ONLY public.projects
 
 
 --
--- TOC entry 3128 (class 2606 OID 16672)
+-- TOC entry 3113 (class 2606 OID 16672)
 -- Name: sales sales_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2406,7 +2320,7 @@ ALTER TABLE ONLY public.sales
 
 
 --
--- TOC entry 3130 (class 2606 OID 16674)
+-- TOC entry 3115 (class 2606 OID 16674)
 -- Name: task_states service_states_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2415,7 +2329,7 @@ ALTER TABLE ONLY public.task_states
 
 
 --
--- TOC entry 3132 (class 2606 OID 16676)
+-- TOC entry 3117 (class 2606 OID 16676)
 -- Name: task_templates service_templates_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2424,7 +2338,7 @@ ALTER TABLE ONLY public.task_templates
 
 
 --
--- TOC entry 3134 (class 2606 OID 16678)
+-- TOC entry 3119 (class 2606 OID 16678)
 -- Name: tasks services_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2433,7 +2347,7 @@ ALTER TABLE ONLY public.tasks
 
 
 --
--- TOC entry 3183 (class 2606 OID 16714)
+-- TOC entry 3168 (class 2606 OID 16714)
 -- Name: sys_rec_states sys_rec_states_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2442,7 +2356,7 @@ ALTER TABLE ONLY public.sys_rec_states
 
 
 --
--- TOC entry 3185 (class 2606 OID 16716)
+-- TOC entry 3170 (class 2606 OID 16716)
 -- Name: units units_pk; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2451,7 +2365,7 @@ ALTER TABLE ONLY public.units
 
 
 --
--- TOC entry 3135 (class 1259 OID 16718)
+-- TOC entry 3120 (class 1259 OID 16718)
 -- Name: auth_group_name_a6ea08ec_like; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2459,7 +2373,7 @@ CREATE INDEX auth_group_name_a6ea08ec_like ON public.auth_group USING btree (nam
 
 
 --
--- TOC entry 3140 (class 1259 OID 16719)
+-- TOC entry 3125 (class 1259 OID 16719)
 -- Name: auth_group_permissions_group_id_b120cbf9; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2467,7 +2381,7 @@ CREATE INDEX auth_group_permissions_group_id_b120cbf9 ON public.auth_group_permi
 
 
 --
--- TOC entry 3143 (class 1259 OID 16720)
+-- TOC entry 3128 (class 1259 OID 16720)
 -- Name: auth_group_permissions_permission_id_84c5c92e; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2475,7 +2389,7 @@ CREATE INDEX auth_group_permissions_permission_id_84c5c92e ON public.auth_group_
 
 
 --
--- TOC entry 3146 (class 1259 OID 16721)
+-- TOC entry 3131 (class 1259 OID 16721)
 -- Name: auth_permission_content_type_id_2f476e4b; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2483,7 +2397,7 @@ CREATE INDEX auth_permission_content_type_id_2f476e4b ON public.auth_permission 
 
 
 --
--- TOC entry 3156 (class 1259 OID 16722)
+-- TOC entry 3141 (class 1259 OID 16722)
 -- Name: auth_user_groups_group_id_97559544; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2491,7 +2405,7 @@ CREATE INDEX auth_user_groups_group_id_97559544 ON public.auth_user_groups USING
 
 
 --
--- TOC entry 3159 (class 1259 OID 16723)
+-- TOC entry 3144 (class 1259 OID 16723)
 -- Name: auth_user_groups_user_id_6a12ed8b; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2499,7 +2413,7 @@ CREATE INDEX auth_user_groups_user_id_6a12ed8b ON public.auth_user_groups USING 
 
 
 --
--- TOC entry 3162 (class 1259 OID 16724)
+-- TOC entry 3147 (class 1259 OID 16724)
 -- Name: auth_user_user_permissions_permission_id_1fbb5f2c; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2507,7 +2421,7 @@ CREATE INDEX auth_user_user_permissions_permission_id_1fbb5f2c ON public.auth_us
 
 
 --
--- TOC entry 3165 (class 1259 OID 16725)
+-- TOC entry 3150 (class 1259 OID 16725)
 -- Name: auth_user_user_permissions_user_id_a95ead1b; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2515,7 +2429,7 @@ CREATE INDEX auth_user_user_permissions_user_id_a95ead1b ON public.auth_user_use
 
 
 --
--- TOC entry 3153 (class 1259 OID 16726)
+-- TOC entry 3138 (class 1259 OID 16726)
 -- Name: auth_user_username_6821ab7c_like; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2523,7 +2437,7 @@ CREATE INDEX auth_user_username_6821ab7c_like ON public.auth_user USING btree (u
 
 
 --
--- TOC entry 3100 (class 1259 OID 16717)
+-- TOC entry 3085 (class 1259 OID 16717)
 -- Name: authtoken_token_key_10f0b77e_like; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2531,7 +2445,7 @@ CREATE INDEX authtoken_token_key_10f0b77e_like ON public.authtoken_token USING b
 
 
 --
--- TOC entry 3168 (class 1259 OID 16727)
+-- TOC entry 3153 (class 1259 OID 16727)
 -- Name: django_admin_log_content_type_id_c4bce8eb; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2539,7 +2453,7 @@ CREATE INDEX django_admin_log_content_type_id_c4bce8eb ON public.django_admin_lo
 
 
 --
--- TOC entry 3171 (class 1259 OID 16728)
+-- TOC entry 3156 (class 1259 OID 16728)
 -- Name: django_admin_log_user_id_c564eba6; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2547,7 +2461,7 @@ CREATE INDEX django_admin_log_user_id_c564eba6 ON public.django_admin_log USING 
 
 
 --
--- TOC entry 3178 (class 1259 OID 16729)
+-- TOC entry 3163 (class 1259 OID 16729)
 -- Name: django_session_expire_date_a5c62663; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2555,7 +2469,7 @@ CREATE INDEX django_session_expire_date_a5c62663 ON public.django_session USING 
 
 
 --
--- TOC entry 3181 (class 1259 OID 16730)
+-- TOC entry 3166 (class 1259 OID 16730)
 -- Name: django_session_session_key_c0390e0f_like; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -2563,7 +2477,7 @@ CREATE INDEX django_session_session_key_c0390e0f_like ON public.django_session U
 
 
 --
--- TOC entry 3230 (class 2620 OID 16731)
+-- TOC entry 3209 (class 2620 OID 16731)
 -- Name: companies default_project; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -2571,7 +2485,7 @@ CREATE TRIGGER default_project AFTER INSERT OR DELETE OR UPDATE ON public.compan
 
 
 --
--- TOC entry 3194 (class 2606 OID 16732)
+-- TOC entry 3173 (class 2606 OID 16732)
 -- Name: asset_absences asset_absences_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2580,7 +2494,7 @@ ALTER TABLE ONLY public.asset_absences
 
 
 --
--- TOC entry 3195 (class 2606 OID 16737)
+-- TOC entry 3174 (class 2606 OID 16737)
 -- Name: asset_absences asset_absences_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2589,25 +2503,7 @@ ALTER TABLE ONLY public.asset_absences
 
 
 --
--- TOC entry 3226 (class 2606 OID 16918)
--- Name: asset_task_allocation asset_allocation_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.asset_task_allocation
-    ADD CONSTRAINT asset_allocation_fk FOREIGN KEY (fk_task) REFERENCES public.tasks(id_task);
-
-
---
--- TOC entry 3227 (class 2606 OID 16923)
--- Name: asset_task_allocation asset_allocation_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.asset_task_allocation
-    ADD CONSTRAINT asset_allocation_fk_1 FOREIGN KEY (fk_asset) REFERENCES public.assets(id_asset);
-
-
---
--- TOC entry 3196 (class 2606 OID 16742)
+-- TOC entry 3175 (class 2606 OID 16742)
 -- Name: assets assets_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2616,16 +2512,16 @@ ALTER TABLE ONLY public.assets
 
 
 --
--- TOC entry 3197 (class 2606 OID 16747)
+-- TOC entry 3176 (class 2606 OID 16747)
 -- Name: assets assets_rec_status; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.assets
-    ADD CONSTRAINT assets_rec_status FOREIGN KEY (fk_sys_rec_state) REFERENCES public.sys_rec_states(id_sys_rec_status);
+    ADD CONSTRAINT assets_rec_status FOREIGN KEY (fk_sys_rec_status) REFERENCES public.sys_rec_states(id_sys_rec_status);
 
 
 --
--- TOC entry 3217 (class 2606 OID 16857)
+-- TOC entry 3200 (class 2606 OID 16857)
 -- Name: auth_group_permissions auth_group_permissio_permission_id_84c5c92e_fk_auth_perm; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2634,7 +2530,7 @@ ALTER TABLE ONLY public.auth_group_permissions
 
 
 --
--- TOC entry 3218 (class 2606 OID 16862)
+-- TOC entry 3201 (class 2606 OID 16862)
 -- Name: auth_group_permissions auth_group_permissions_group_id_b120cbf9_fk_auth_group_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2643,7 +2539,7 @@ ALTER TABLE ONLY public.auth_group_permissions
 
 
 --
--- TOC entry 3219 (class 2606 OID 16867)
+-- TOC entry 3202 (class 2606 OID 16867)
 -- Name: auth_permission auth_permission_content_type_id_2f476e4b_fk_django_co; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2652,7 +2548,7 @@ ALTER TABLE ONLY public.auth_permission
 
 
 --
--- TOC entry 3220 (class 2606 OID 16872)
+-- TOC entry 3203 (class 2606 OID 16872)
 -- Name: auth_user_groups auth_user_groups_group_id_97559544_fk_auth_group_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2661,7 +2557,7 @@ ALTER TABLE ONLY public.auth_user_groups
 
 
 --
--- TOC entry 3221 (class 2606 OID 16877)
+-- TOC entry 3204 (class 2606 OID 16877)
 -- Name: auth_user_groups auth_user_groups_user_id_6a12ed8b_fk_auth_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2670,7 +2566,7 @@ ALTER TABLE ONLY public.auth_user_groups
 
 
 --
--- TOC entry 3222 (class 2606 OID 16882)
+-- TOC entry 3205 (class 2606 OID 16882)
 -- Name: auth_user_user_permissions auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2679,7 +2575,7 @@ ALTER TABLE ONLY public.auth_user_user_permissions
 
 
 --
--- TOC entry 3223 (class 2606 OID 16887)
+-- TOC entry 3206 (class 2606 OID 16887)
 -- Name: auth_user_user_permissions auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2688,7 +2584,7 @@ ALTER TABLE ONLY public.auth_user_user_permissions
 
 
 --
--- TOC entry 3198 (class 2606 OID 16752)
+-- TOC entry 3177 (class 2606 OID 16752)
 -- Name: authtoken_token authtoken_token_user_id_35299eff_fk_auth_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2697,7 +2593,7 @@ ALTER TABLE ONLY public.authtoken_token
 
 
 --
--- TOC entry 3206 (class 2606 OID 16903)
+-- TOC entry 3185 (class 2606 OID 16903)
 -- Name: companies companies_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2706,7 +2602,7 @@ ALTER TABLE ONLY public.companies
 
 
 --
--- TOC entry 3201 (class 2606 OID 16777)
+-- TOC entry 3180 (class 2606 OID 16777)
 -- Name: invoice_texts customer_invoice_text_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2715,7 +2611,7 @@ ALTER TABLE ONLY public.invoice_texts
 
 
 --
--- TOC entry 3224 (class 2606 OID 16892)
+-- TOC entry 3207 (class 2606 OID 16892)
 -- Name: django_admin_log django_admin_log_content_type_id_c4bce8eb_fk_django_co; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2724,7 +2620,7 @@ ALTER TABLE ONLY public.django_admin_log
 
 
 --
--- TOC entry 3225 (class 2606 OID 16897)
+-- TOC entry 3208 (class 2606 OID 16897)
 -- Name: django_admin_log django_admin_log_user_id_c564eba6_fk_auth_user_id; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2733,7 +2629,7 @@ ALTER TABLE ONLY public.django_admin_log
 
 
 --
--- TOC entry 3192 (class 2606 OID 16757)
+-- TOC entry 3171 (class 2606 OID 16757)
 -- Name: employee_absences employee_absence_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2742,7 +2638,7 @@ ALTER TABLE ONLY public.employee_absences
 
 
 --
--- TOC entry 3193 (class 2606 OID 16762)
+-- TOC entry 3172 (class 2606 OID 16762)
 -- Name: employee_absences employee_absence_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2751,25 +2647,7 @@ ALTER TABLE ONLY public.employee_absences
 
 
 --
--- TOC entry 3228 (class 2606 OID 16936)
--- Name: employee_task_allocation employee_allocation_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.employee_task_allocation
-    ADD CONSTRAINT employee_allocation_fk FOREIGN KEY (fk_employee) REFERENCES public.employees(id_employee);
-
-
---
--- TOC entry 3229 (class 2606 OID 16941)
--- Name: employee_task_allocation employee_allocation_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.employee_task_allocation
-    ADD CONSTRAINT employee_allocation_fk_1 FOREIGN KEY (fk_task) REFERENCES public.tasks(id_task);
-
-
---
--- TOC entry 3199 (class 2606 OID 16767)
+-- TOC entry 3178 (class 2606 OID 16767)
 -- Name: employees employees_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2778,7 +2656,43 @@ ALTER TABLE ONLY public.employees
 
 
 --
--- TOC entry 3200 (class 2606 OID 16772)
+-- TOC entry 3196 (class 2606 OID 25094)
+-- Name: tasks fk_asset_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tasks
+    ADD CONSTRAINT fk_asset_1 FOREIGN KEY (fk_asset_1) REFERENCES public.assets(id_asset);
+
+
+--
+-- TOC entry 3197 (class 2606 OID 25099)
+-- Name: tasks fk_asset_2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tasks
+    ADD CONSTRAINT fk_asset_2 FOREIGN KEY (fk_asset_2) REFERENCES public.assets(id_asset);
+
+
+--
+-- TOC entry 3198 (class 2606 OID 25104)
+-- Name: tasks fk_employee_1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tasks
+    ADD CONSTRAINT fk_employee_1 FOREIGN KEY (fk_employee_1) REFERENCES public.employees(id_employee);
+
+
+--
+-- TOC entry 3199 (class 2606 OID 25109)
+-- Name: tasks fk_employee_2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.tasks
+    ADD CONSTRAINT fk_employee_2 FOREIGN KEY (fk_employee_2) REFERENCES public.employees(id_employee);
+
+
+--
+-- TOC entry 3179 (class 2606 OID 16772)
 -- Name: employees fk_employee_type; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2787,7 +2701,7 @@ ALTER TABLE ONLY public.employees
 
 
 --
--- TOC entry 3202 (class 2606 OID 16782)
+-- TOC entry 3181 (class 2606 OID 16782)
 -- Name: invoices invoices_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2796,7 +2710,7 @@ ALTER TABLE ONLY public.invoices
 
 
 --
--- TOC entry 3203 (class 2606 OID 16787)
+-- TOC entry 3182 (class 2606 OID 16787)
 -- Name: invoices invoices_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2805,7 +2719,7 @@ ALTER TABLE ONLY public.invoices
 
 
 --
--- TOC entry 3204 (class 2606 OID 16792)
+-- TOC entry 3183 (class 2606 OID 16792)
 -- Name: invoices invoices_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2814,7 +2728,7 @@ ALTER TABLE ONLY public.invoices
 
 
 --
--- TOC entry 3205 (class 2606 OID 16797)
+-- TOC entry 3184 (class 2606 OID 16797)
 -- Name: payment_conditions payment_conditions_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2823,7 +2737,7 @@ ALTER TABLE ONLY public.payment_conditions
 
 
 --
--- TOC entry 3207 (class 2606 OID 16807)
+-- TOC entry 3186 (class 2606 OID 16807)
 -- Name: projects projects_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2832,7 +2746,7 @@ ALTER TABLE ONLY public.projects
 
 
 --
--- TOC entry 3208 (class 2606 OID 16812)
+-- TOC entry 3187 (class 2606 OID 16812)
 -- Name: sales sales_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2841,7 +2755,7 @@ ALTER TABLE ONLY public.sales
 
 
 --
--- TOC entry 3209 (class 2606 OID 16817)
+-- TOC entry 3188 (class 2606 OID 16817)
 -- Name: sales sales_fk3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2850,7 +2764,7 @@ ALTER TABLE ONLY public.sales
 
 
 --
--- TOC entry 3210 (class 2606 OID 16822)
+-- TOC entry 3189 (class 2606 OID 16822)
 -- Name: sales sales_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2859,7 +2773,7 @@ ALTER TABLE ONLY public.sales
 
 
 --
--- TOC entry 3213 (class 2606 OID 16827)
+-- TOC entry 3192 (class 2606 OID 16827)
 -- Name: tasks service_state; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2868,7 +2782,7 @@ ALTER TABLE ONLY public.tasks
 
 
 --
--- TOC entry 3211 (class 2606 OID 16832)
+-- TOC entry 3190 (class 2606 OID 16832)
 -- Name: task_templates service_templates_customer; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2877,7 +2791,7 @@ ALTER TABLE ONLY public.task_templates
 
 
 --
--- TOC entry 3212 (class 2606 OID 16837)
+-- TOC entry 3191 (class 2606 OID 16837)
 -- Name: task_templates service_templates_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2886,7 +2800,7 @@ ALTER TABLE ONLY public.task_templates
 
 
 --
--- TOC entry 3214 (class 2606 OID 16842)
+-- TOC entry 3193 (class 2606 OID 16842)
 -- Name: tasks services_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2895,7 +2809,7 @@ ALTER TABLE ONLY public.tasks
 
 
 --
--- TOC entry 3215 (class 2606 OID 16847)
+-- TOC entry 3194 (class 2606 OID 16847)
 -- Name: tasks services_fk3; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2904,7 +2818,7 @@ ALTER TABLE ONLY public.tasks
 
 
 --
--- TOC entry 3216 (class 2606 OID 16852)
+-- TOC entry 3195 (class 2606 OID 16852)
 -- Name: tasks tasks_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -2912,7 +2826,7 @@ ALTER TABLE ONLY public.tasks
     ADD CONSTRAINT tasks_fk FOREIGN KEY (fk_project) REFERENCES public.projects(id_project);
 
 
--- Completed on 2023-09-05 08:32:17 CEST
+-- Completed on 2023-09-12 19:36:10 CEST
 
 --
 -- PostgreSQL database dump complete
