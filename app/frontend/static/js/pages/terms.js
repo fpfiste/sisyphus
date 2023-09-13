@@ -1,7 +1,7 @@
 
 $(document).ready(function(){
     let page_config
-    let url = '/projects'
+    let url = '/terms'
     let lang_cookie = Cookies.get('sisyphus_language');
 
 
@@ -24,10 +24,9 @@ $(document).ready(function(){
                         fields: page_config['fields'],
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
-                        exclude: ['fk_customer'],
-                        language: lang_cookie,
-                    })
+                        language: lang_cookie
 
+                    })
 
 
     // create form insstances
@@ -37,7 +36,8 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:false,
             fields: page_config['fields'],
-            language: lang_cookie,
+            language: lang_cookie
+
 
 
     })
@@ -47,24 +47,28 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            exclude: ['id_project'],
-            required : ['id_project', 'fk_customer', 'planned_start_date', 'planned_end_date'],
-            language: lang_cookie,
+            exclude: ['id_payment_condition' , ''],
+            required : ['fk_currency', 'vat' , 'due_days'],
+            language: lang_cookie
 
     })
+
+
+
     let update_form = new BootstrapForm({
             container: '#update_form_container',
             id: 'update_form',
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            disabled : ['id_project', 'fk_customer'],
-            required : ['id_project', 'fk_customer', 'planned_start_date', 'planned_end_date'],
-            language: lang_cookie,
+            disabled : ['id_payment_condition'],
+            required : ['id_payment_condition', 'fk_currency', 'vat' , 'due_days'],
+            language: lang_cookie
+
 
     })
 
-    // build components
+ // build components
     table.build();
     filter_form.build();
     create_form.build();

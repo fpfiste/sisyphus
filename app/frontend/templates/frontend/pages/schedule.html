@@ -5,70 +5,29 @@
 {% block content %}
 
 
-				<h1 class="h3 mb-3">{{page_config.title.en}}</h1>
+				<h1 class="h3 mb-3"></h1>
 
-				<div class="row" style="height: 50vh; max-height:50vh;">
+				<div class="row" style="height: 80vh">
 
-                    <div class="col-12">
-							<div class="card" style="min-height: 100%;">
-								<div class="card-header">
-									<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#create_modal">Add</button>
+                    <div class="col-12" style="height:100%;">
+							<div class="card" style="height: 100%;">
+								<div class="card-header" style="height:5%">
+									<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#create_modal" id="btn_create"></button>
 								</div>
-								<div class="card-body" style="height:100%;">
+								<div class="card-body" style="height:95%;">
 									<div id="schedule_container" style="height:100%"></div>
 								</div>
 							</div>
 						</div>
                 </div>
-				<hr class="mt-1 mb-1" style="2vh;">
-				<div class="row" style="height: 35vh;">
-                    <div class="col-3" style="height:100%;">
-							<div class="card" style="height:100%;">
-
-								<div class="card-body" style="height:85%;">
-									<div id="form_filter_container" style="height: 100%; overflow:auto;"></div>
-
-									      {% csrf_token %}
-									<!--
-                                              <form id="filter_form">
-												  {% for value in page_config.fields.form %}
-												  <div class="form-group">
-
-													{{value.input | safe}}
-												  </div>
 
 
-												  {% endfor %}
-
-
-												</form>-->
-
-								</div>
-								<div class="card-footer" style="height:15%;">
-									<button type="button" id="btn_form_reset" class="btn btn-secondary">Reset</button>
-									<button type="button" id="btn_filter" class="btn btn-danger">Filter</button>
-
-								</div>
-
-							</div>
-						</div>
-                    <div class="col-9" style="height:100%;">
-							<div class="card" style="height:100%;">
-								<div class="card-header" style="height:15%">
-									<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#create_modal">Add</button>
-								</div>
-								<div class="card-body" style="height:85%;">
-									<div id="overview-table" style="height:100%;"></div>
-								</div>
-							</div>
-						</div>
-                </div>
 
 		<div class="modal fade" id="create_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		  <div class="modal-dialog">
 			<div class="modal-content">
 			  <div class="modal-header">
-				<h5 class="modal-title" id="create_modal_label">Add</h5>
+				<h5 class="modal-title" id="modal_add_title"></h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			  </div>
 			  <div class="modal-body">
@@ -89,8 +48,8 @@
 					  </div>
 			  </div>
 			  <div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-				<button type="button" id="btn_add" class="btn btn-danger">Save</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn_quit_create"></button>
+				<button type="button" id="btn_add" class="btn btn-danger"></button>
 			  </div>
 			</div>
 		  </div>
@@ -99,7 +58,7 @@
 		  <div class="modal-dialog">
 			<div class="modal-content">
 			  <div class="modal-header">
-				<h5 class="modal-title" id="update_modal_label">Add</h5>
+				<h5 class="modal-title" id="modal_update_title"></h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			  </div>
 			  <div class="modal-body">
@@ -120,10 +79,10 @@
 					  </div>
 			  </div>
 			  <div class="modal-footer">
-				  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Quit</button>
-				  <button type="button" id="btn_delete" class="btn btn-danger">Delete</button>
-				  <button type="button" id="btn_close_task" class="btn btn-danger">Close Task</button>
-				  <button type="button" id="btn_save" class="btn btn-danger">Save</button>
+				  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn_quit_update"></button>
+				  <button type="button" id="btn_delete" class="btn btn-danger"></button>
+				  <button type="button" id="btn_close_task" class="btn btn-danger"></button>
+				  <button type="button" id="btn_save" class="btn btn-danger"></button>
 			  </div>
 			</div>
 		  </div>

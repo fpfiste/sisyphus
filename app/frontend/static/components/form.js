@@ -4,7 +4,7 @@
 
 class BootstrapForm{
 
-      constructor({container, id, fields, validation, ajax_url, exclude = [], required = [], disabled=[]}) {
+      constructor({container, id, fields, validation, ajax_url, language, exclude = [], required = [], disabled=[]}) {
           this.container = container;
           this.ajax_url = ajax_url;
           this.id = id;
@@ -13,7 +13,8 @@ class BootstrapForm{
           this.fields = fields;
           this.data = null;
           this.disabled = disabled;
-          this.is_valid = false
+          this.is_valid = false;
+          this.language = language
       }
 
 
@@ -97,7 +98,7 @@ class BootstrapForm{
           } else if (options) {
 
                 $.each(options,(key,value) => {
-                            html += '<option value="'+key+'">'+value.de+'</option>'
+                            html += '<option value="'+key+'">'+value[this.language]+'</option>'
                             return html
                 })
 
@@ -134,6 +135,7 @@ class BootstrapForm{
         }
 
         $.each(this.fields,(key,value) => {
+        console.log(value)
             if (skip.includes(key)){
                 return;
             }
@@ -150,7 +152,7 @@ class BootstrapForm{
 
                 field = this.select({
                                             id:key,
-                                            title: value.title.de,
+                                            title: value.title[this.language],
                                             ajax_url:value.api_endpoint,
                                             options: value.options,
                                             value_field: value.pk_field,
@@ -163,7 +165,7 @@ class BootstrapForm{
             } else {
                field = this.input_field({
                                          id:key,
-                                         title: value.title.de,
+                                         title: value.title[this.language],
                                          type: value.input_type,
                                          min: value.min,
                                          max: value.max,

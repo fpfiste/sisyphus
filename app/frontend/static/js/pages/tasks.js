@@ -2,8 +2,7 @@
 $(document).ready(function(){
     let page_config
     let url = '/tasks'
-    let employees;
-    let assets;
+    let lang_cookie = Cookies.get('sisyphus_language');
 
     //*** read the config file ***//
     $.ajax({
@@ -25,14 +24,10 @@ $(document).ready(function(){
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
                         exclude: ['task_template','fk_employee_1', 'fk_employee_2', 'fk_asset_1', 'fk_asset_2', 'fk_subcontractor', 'fk_invoice', 'fk_project', 'fk_task_state', 'fk_unit'],
+                        language: lang_cookie
                     })
 
 
-    let scheduler = new Scheduler({
-            container:'#schedule_container',
-            id:'scheduler',
-            data : table.data
-          })
 
     // create form insstances
     let filter_form = new BootstrapForm({
@@ -41,8 +36,8 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:false,
             fields: page_config['fields'],
-            exclude: ['task_template', 'task_description', 'fk_invoice', 'internal_info', 'employees', 'assets', 'amount', 'unit_price', 'fk_unit']
-
+            exclude: ['task_template', 'task_description', 'fk_invoice', 'internal_info', 'employees', 'assets', 'amount', 'unit_price', 'fk_unit'],
+            language: lang_cookie
 
     })
     let create_form = new BootstrapForm({
@@ -52,7 +47,9 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             exclude: ['id_task', 'fk_invoi console.log(this.fields)ce'],
-            required : ['fk_project', 'fk_task_status' , 'task_description']
+            required : ['fk_project',  'task_description'],
+            disabled : ['fk_task_state'],
+            language: lang_cookie
 
     })
     let update_form = new BootstrapForm({
@@ -62,34 +59,29 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             exclude: ['fk_invoice', 'task_template'],
-            disabled : ['id_task', 'fk_invoice'],
-            required : ['id_task', 'fk_project', 'fk_task_status' , 'task_description']
+            disabled : ['id_task', 'fk_invoice', 'fk_task_state' ,],
+            required : ['id_task', 'fk_project',  'task_description'],
+            language: lang_cookie
 
     })
 
-    // build components
+// build components
     table.build();
-    scheduler.build();
     filter_form.build();
     create_form.build();
     update_form.build();
 
-    $('#table_container').css('height', '30vh')
+
     // add evetn listeners
-        // add evetn listeners
     $( "#btn_filter" ).on( "click", function() {
       let query_params = $('#filter_form').serialize();
-      table.query_params = '?' + query_params,
-
-      table.build()
-
-
+      table.query_params = '?' + query_params
+      table.build();
     });
-    $( "#btn_form_reset" ).on( "click", function() {
+
+    $( "#btn_reset" ).on( "click", function() {
         $('#filter_form').trigger("reset");
         $('#btn_filter').click();
-
-
     });
 
     $( "#btn_add" ).on( "click", function() {
@@ -99,20 +91,12 @@ $(document).ready(function(){
 
 
 
-
-
     $( "#btn_save" ).on( "click", function() {
         let pk = $('#update_form #' + page_config['pk']).val()
-        let url = page_config['ajax_url'] + '/' +pk + '/'
-        console.log(url)
-         update_form.submit(url, 'PUT');
+        let url = page_config['ajax_url'] +pk + '/'
+        update_form.submit(url, 'PUT');
     });
 
-    $( "#btn_delete" ).on( "click", function() {
-        let pk = $('#update_form #' + page_config['pk']).val()
-        let url = page_config['ajax_url'] + '/' +pk + '/'
-        console.log(url)
-         update_form.submit(url, 'DELETE');
-    });
+
 
 });

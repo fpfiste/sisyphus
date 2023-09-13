@@ -2,6 +2,7 @@
 $(document).ready(function(){
     let page_config
     let url = '/companies'
+    let lang_cookie = Cookies.get('sisyphus_language');
 
 
 
@@ -24,6 +25,7 @@ $(document).ready(function(){
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
                         exclude: ['fk_sys_rec_status'],
+                        language: lang_cookie
                     })
 
 
@@ -34,6 +36,7 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:false,
             fields: page_config['fields'],
+            language: lang_cookie
 
 
     })
@@ -44,7 +47,8 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             exclude: ['id_company'],
-            required : ['company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'fk_sys_rec_status' , 'company_email', 'is_customer', 'is_supplier', 'is_subcontractor']
+            required : ['company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'fk_sys_rec_status' , 'company_email', 'is_customer', 'is_supplier', 'is_subcontractor'],
+            language: lang_cookie
 
     })
     let update_form = new BootstrapForm({
@@ -54,11 +58,12 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             disabled : ['id_company'],
-            required : ['id_company','company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'fk_sys_rec_status' , 'company_email', 'is_customer', 'is_supplier', 'is_subcontractor']
+            required : ['id_company','company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'fk_sys_rec_status' , 'company_email', 'is_customer', 'is_supplier', 'is_subcontractor'],
+            language: lang_cookie
 
     })
 
-    // build components
+   // build components
     table.build();
     filter_form.build();
     create_form.build();
@@ -68,18 +73,13 @@ $(document).ready(function(){
     // add evetn listeners
     $( "#btn_filter" ).on( "click", function() {
       let query_params = $('#filter_form').serialize();
-      table.query_params = '?' + query_params,
-
-      table.build()
-
-
+      table.query_params = '?' + query_params
+      table.build();
     });
 
-    $( "#btn_form_reset" ).on( "click", function() {
+    $( "#btn_reset" ).on( "click", function() {
         $('#filter_form').trigger("reset");
         $('#btn_filter').click();
-
-
     });
 
     $( "#btn_add" ).on( "click", function() {
@@ -88,10 +88,10 @@ $(document).ready(function(){
     });
 
 
+
     $( "#btn_save" ).on( "click", function() {
         let pk = $('#update_form #' + page_config['pk']).val()
-        let url = page_config['ajax_url'] + '/' +pk + '/'
-        console.log(url)
+        let url = page_config['ajax_url'] +pk + '/'
         update_form.submit(url, 'PUT');
     });
 

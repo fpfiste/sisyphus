@@ -47,77 +47,65 @@
         			</a>
 
 					<ul class="sidebar-nav">
+					<li class="sidebar-header" id="sidebar_title_planning"></li>
 						<li class="sidebar-item">
-							<a class="sidebar-link" href="{% url 'companies' %}">
-              					<i class="fa-solid fa-industry"></i> <span class="align-middle">Organizations</span>
-            				</a>
+							<a class="sidebar-link" href="{% url 'schedule' %}">
+              					<i class="fa-regular fa-calendar-days"></i><span class="align-middle" id="sidebar_title_schedule"></span>
+           					</a>
 						</li>
-					<li class="sidebar-header">
-						Operations
-					</li>
+					<li class="sidebar-header" id="sidebar_title_operations"></li>
 						<li class="sidebar-item">
 							<a class="sidebar-link" href="{% url 'projects' %}">
-              					<i class="fa-solid fa-folder"></i><span class="align-middle">Projects</span>
+              					<i class="fa-solid fa-bars-progress"></i><span class="align-middle" id="sidebar_title_projects"></span>
            					</a>
 						</li>
 						<li class="sidebar-item">
 							<a class="sidebar-link" href="{% url 'tasks' %}">
-              					<i class="fa-solid fa-list-check"></i> <span class="align-middle">Tasks</span>
+              					<i class="fa-solid fa-list-check"></i> <span class="align-middle" id="sidebar_title_tasks"></span>
            					</a>
 						</li>
 						<li class="sidebar-item">
 							<a class="sidebar-link" href="{% url 'sales' %}">
-              					<i class="fa-solid fa-cash-register"></i> <span class="align-middle">Sales</span>
+              					<i class="fa-solid fa-cash-register"></i> <span class="align-middle" id="sidebar_title_sales"></span>
            					</a>
 						</li>
+						<li class="sidebar-header" id="sidebar_title_master_data"></li>
 						<li class="sidebar-item">
-							<a class="sidebar-link" href="pages-profile.html">
-              					<i class="fa-regular fa-calendar-days"></i><span class="align-middle">Schedule</span>
-           					</a>
-						</li>
-						<li class="sidebar-header">
-							Employees
+							<a class="sidebar-link" href="{% url 'companies' %}">
+              					<i class="fa-solid fa-industry"></i> <span class="align-middle" id="sidebar_title_companies"></span>
+            				</a>
 						</li>
 						<li class="sidebar-item">
 							<a class="sidebar-link" href="{% url 'employees' %}">
-								<i class="fa-solid fa-person"></i> <span class="align-middle">Employees</span>
+								<i class="fa-solid fa-person"></i> <span class="align-middle" id="sidebar_title_employees"></span>
             				</a>
-						</li>
-						<li class="sidebar-item">
-							<a class="sidebar-link" href="{% url 'employee_absences' %}">
-								<i class="fa-solid fa-person"></i> <span class="align-middle">Employee Absences</span>
-            				</a>
-						</li>
-
-						<li class="sidebar-header">
-							Assets
 						</li>
 						<li class="sidebar-item">
 							<a class="sidebar-link" href="{% url 'assets' %}">
-              					<i class="fa-solid fa-truck-plane"></i><span class="align-middle">Assets</span>
+              					<i class="fa-solid fa-truck-plane"></i><span class="align-middle" id="sidebar_title_assets"></span>
             				</a>
 						</li>
 						<li class="sidebar-item">
-							<a class="sidebar-link" href="{% url 'asset_absences' %}">
-              					<i class="fa-solid fa-truck-plane"></i><span class="align-middle">Asset Absences</span>
+							<a class="sidebar-link" href="{% url 'task-templates' %}">
+              					<i class="fa-solid fa-folder-open"></i><span class="align-middle" id="sidebar_title_task_templates"></span>
             				</a>
 						</li>
 
-
-
-					<li class="sidebar-header">
-						Finances
+					<li class="sidebar-header" id="sidebar_title_finances"></li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{% url 'terms' %}">
+             				<i class="fa-solid fa-gears"></i><span class="align-middle" id="sidebar_title_payment_conditions"></span>
+            			</a>
 					</li>
-
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="{% url 'invoices' %}">
-             				<i class="fa-solid fa-receipt"></i><span class="align-middle">Invoices</span>
+             				<i class="fa-solid fa-receipt"></i><span class="align-middle" id="sidebar_title_invoices"></span>
             			</a>
 					</li>
 
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="ui-forms.html">
-              				<i class="fa-solid fa-coins"></i><span class="align-middle">Billing</span>
+              				<i class="fa-solid fa-coins"></i><span class="align-middle" id="sidebar_title_billing"></span>
             			</a>
 					</li>
 
@@ -125,6 +113,16 @@
 
 			</div>
 		</nav>
+
+
+
+
+
+
+
+
+
+
 
 			<div class="main">
 				<nav class="navbar navbar-expand navbar-light navbar-bg">
@@ -135,82 +133,18 @@
 					<div class="navbar-collapse collapse">
 						<ul class="navbar-nav navbar-align">
 							<li class="nav-item dropdown">
-								<a class="nav-icon dropdown-toggle" href="#" id="messagesDropdown" data-bs-toggle="dropdown">
-									<div class="position-relative">
-										<i class="align-middle" data-feather="message-square"></i>
-									</div>
-								</a>
-								<div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="messagesDropdown">
-									<div class="dropdown-menu-header">
-										<div class="position-relative">
-											4 New Messages
-										</div>
-									</div>
-									<div class="list-group">
-										<a href="#" class="list-group-item">
-											<div class="row g-0 align-items-center">
-												<div class="col-2">
-													<img src="/img/avatars/avatar-5.jpg" class="avatar img-fluid rounded-circle" alt="Vanessa Tucker">
-												</div>
-												<div class="col-10 ps-2">
-													<div class="text-dark">Vanessa Tucker</div>
-													<div class="text-muted small mt-1">Nam pretium turpis et arcu. Duis arcu tortor.</div>
-													<div class="text-muted small mt-1">15m ago</div>
-												</div>
-											</div>
-										</a>
-										<a href="#" class="list-group-item">
-											<div class="row g-0 align-items-center">
-												<div class="col-2">
-													<img src="/img/avatars/avatar-2.jpg" class="avatar img-fluid rounded-circle" alt="William Harris">
-												</div>
-												<div class="col-10 ps-2">
-													<div class="text-dark">William Harris</div>
-													<div class="text-muted small mt-1">Curabitur ligula sapien euismod vitae.</div>
-													<div class="text-muted small mt-1">2h ago</div>
-												</div>
-											</div>
-										</a>
-										<a href="#" class="list-group-item">
-											<div class="row g-0 align-items-center">
-												<div class="col-2">
-													<img src="/img/avatars/avatar-4.jpg" class="avatar img-fluid rounded-circle" alt="Christina Mason">
-												</div>
-												<div class="col-10 ps-2">
-													<div class="text-dark">Christina Mason</div>
-													<div class="text-muted small mt-1">Pellentesque auctor neque nec urna.</div>
-													<div class="text-muted small mt-1">4h ago</div>
-												</div>
-											</div>
-										</a>
-										<a href="#" class="list-group-item">
-											<div class="row g-0 align-items-center">
-												<div class="col-2">
-													<img src="/img/avatars/avatar-3.jpg" class="avatar img-fluid rounded-circle" alt="Sharon Lessman">
-												</div>
-												<div class="col-10 ps-2">
-													<div class="text-dark">Sharon Lessman</div>
-													<div class="text-muted small mt-1">Aenean tellus metus, bibendum sed, posuere ac, mattis non.</div>
-													<div class="text-muted small mt-1">5h ago</div>
-												</div>
-											</div>
-										</a>
-									</div>
-								</div>
+								<select id="language_selector" name="countries" style="height:100%; background:transparent; border:None;">
+									<option value="ch">🇨🇭</option>
+									<option value="en">🇬🇧</option>
+
+								</select>
 							</li>
 							<li class="nav-item dropdown">
-								<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
-									<i class="align-middle" data-feather="settings"></i>
-				  				</a>
 								<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-									<img src="/static/img/avatar.jpg" class="avatar img-fluid rounded me-1"/>
+									<img id="user_image" src="/static/img/user.png" class="avatar img-fluid rounded me-1"/>
 				  				</a>
 								<div class="dropdown-menu dropdown-menu-end">
-									<a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1" data-feather="user"></i> Profile</a>
-									<div class="dropdown-divider"></div>
-									<a class="dropdown-item" href="index.html"><i class="align-middle me-1" data-feather="settings"></i> Settings</a>
-									<div class="dropdown-divider"></div>
-									<a class="dropdown-item" href="#">Log out</a>
+									<a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
 								</div>
 							</li>
 					</ul>
@@ -231,7 +165,7 @@
 
 </div>
 
-<script src="/static/js/app.js"></script>
+<script src="/static/js/index.js"></script>
 		<script>
 			let page_config = {{page_config | safe}}
 		</script>

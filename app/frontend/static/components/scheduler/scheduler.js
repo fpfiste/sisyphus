@@ -2,7 +2,7 @@
 
 class Scheduler{
 
-      constructor({container, id, data, scheduleDate}) {
+      constructor({container, id, data, scheduleDate, employee_label, asset_label, subcontractor_label, open_task_label}) {
           this.container = container;
           this.id = id;
           this.data = data
@@ -14,7 +14,10 @@ class Scheduler{
           this.get_date_url = '/api/tasks/getDate/'
           this.set_date_url = '/api/tasks/setDate/'
           this.schedule_date = Cookies.get('scheduler_date')  || new Date().toISOString().split('T')[0];
-
+          this.employee_label= employee_label
+          this.asset_label= asset_label
+          this.subcontractor_label = subcontractor_label
+          this.open_task_label = open_task_label
 
           this.build_grid()
       }
@@ -61,8 +64,8 @@ class Scheduler{
 
 
           let title_row = '<tr id="scheduler_title_row">' +
-                            '<th class="scheduler-first-column">Mitarbeiter</th>'+
-                            '<th class="scheduler-second-column" >Geräte</th>'
+                            '<th class="scheduler-first-column" id="scheduler_employee_label">'+this.employee_label+'</th>'+
+                            '<th class="scheduler-second-column" id="scheduler_asset_label">'+this.asset_label+'</th>'
 
           let spacer_row = '<tr id="scheduler_spacer_row">'+
                                 '<th class="scheduler-first-column"></th>'+
@@ -104,6 +107,7 @@ class Scheduler{
             body += row;
         })
 
+        body += '<tr><th colspan="2" id="scheduler_subcontractor_label">'+this.subcontractor_label+'</th><th colspan="100"></th></tr>'
         $.each(this.subcontractor_data, (key,value) => {
             let row = '<tr id="s'+value.id_company+'">' +
                             '<td class="scheduler-first-column">'+value.company_internal_alias+'</td> '+
@@ -126,7 +130,7 @@ class Scheduler{
         let footer = '<tfoot>'
 
         footer += '<tr id="open_task_row">' +
-                        '<td colspan="2">Open Tasks</td>'+
+                        '<th colspan="2" id="scheduler_open_task_label">'+this.open_task_label+'</th>'+
                         '<td id="task_lane_o" colspan="100"></td>' +
                     '</tr>'
 
@@ -142,7 +146,7 @@ class Scheduler{
             let body = this.draw_body();
             let footer = this.draw_footer();
             //* draw the grid of the new table object
-            let table_grid = '<div id="scheduler_container" style="overflow:scroll;"><table id="schedule_table" class="table">'+header+body+footer+'</table></div>';
+            let table_grid = '<div id="scheduler_container" style="overflow:scroll; min-height:100%; height:100%;"><table id="schedule_table" class="table" style="height:100%">'+header+body+footer+'</table></div>';
             $(this.container).append(table_grid);
       }
 

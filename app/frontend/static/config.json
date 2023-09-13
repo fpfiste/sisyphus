@@ -1,10 +1,321 @@
 
 
 {
+  "translations": {
+        "sidebar_title_planning": {"en": "Planning", "ch": "Planung"},
+        "sidebar_title_schedule": {"en": "Schedule", "ch": "Kalender"},
+        "sidebar_title_operations": {"en": "Operations", "ch": "Tagesgeschäft"},
+        "sidebar_title_projects": {"en": "Projects", "ch": "Projekte"},
+        "sidebar_title_tasks": {"en": "Tasks", "ch": "Aufträge"},
+        "sidebar_title_sales": {"en": "Sales", "ch": "Verkäufe"},
+        "sidebar_title_master_data": {"en": "Master Data", "ch": "Stammdaten"},
+        "sidebar_title_companies": {"en": "Companies", "ch": "Unternehmen"},
+        "sidebar_title_employees": {"en": "Employees", "ch": "Mitarbeiter"},
+        "sidebar_title_assets": {"en": "Assets", "ch": "Maschinen & Anlagen"},
+        "sidebar_title_task_templates": {"en": "Task templates", "ch": "Auftragsvorlagen"},
+        "sidebar_title_finances": {"en": "Finance", "ch": "Finanzen"},
+        "sidebar_title_payment_conditions": {"en": "Payment Conditions", "ch": "Zahlungsbedingungen"},
+        "sidebar_title_invoices": {"en": "Invoices", "ch": "Rechnungen"},
+        "sidebar_title_billing": {"en": "Billing", "ch": "Verrechnung"},
+        "btn_create" : {"en": "Add", "ch": "Hinzufügen"},
+        "btn_add" : {"en": "Add", "ch": "Hinzufügen"},
+        "btn_reset" : {"en": "Reset", "ch": "Zurücksetzen"},
+        "btn_filter" : {"en": "Fitler", "ch": "Filtern"},
+        "btn_quit_create" : {"en": "Quit", "ch": "Verlassen"},
+        "btn_quit_update" : {"en": "Quit", "ch": "Verlassen"},
+        "btn_save" : {"en": "Save", "ch": "Speichern"},
+        "btn_delete" : {"en": "Delete", "ch": "Löschen"},
+        "btn_close_task" : {"en": "Close Task", "ch": "Abschliessen"},
+        "modal_add_title": {"en": "Create", "ch": "Hinzufügen"},
+        "modal_update_title": {"en": "Update", "ch": "Aktualisieren"},
+        "scheduler_employee_label": {"en": "Employees" ,"ch":  "Mitarbeiter"},
+        "scheduler_asset_label": {"en": "Assets" ,"ch":  "Ressourcen"},
+        "scheduler_subcontractor_label": {"en": "Subcontractor" ,"ch":  "Subunternehmer"},
+        "scheduler_open_task_label": {"en": "Open Tasks" ,"ch":  "Offene Aufträge"}
+
+
+
+  },
+
+
+
   "pages": {
+    "/schedule": {
+      "title": {"en": "Schedule", "ch": "Kalender"},
+      "ajax_url" : "/api/tasks/",
+      "js": "/static/js/pages/schedule.js",
+      "template" : "frontend/pages/schedule.html",
+      "pk" : "id_task",
+      "fields": {
+        "task_template": {
+          "title": {
+            "en": "Template",
+            "ch": "Vorlage"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/task-template",
+          "min": "",
+          "max": "",
+          "pk_field": "id_task_template",
+          "display_field": "task_description"
+        },
+        "id_task": {
+          "title": {
+            "en": "Task ID",
+            "ch": "Auftrag Nr."
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "fk_project": {
+          "title": {
+            "en": "Related Project",
+            "ch": "Projekt"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/projects",
+          "min": "",
+          "max": "",
+          "pk_field": "id_project",
+          "display_field": "project_name"
+        },
+        "task_date_from": {
+          "title": {
+            "en": "Start Date",
+            "ch": "Start Datum"
+          },
+          "display_type": "text",
+          "input_type": "date",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "task_time_from": {
+          "title": {
+            "en": "Start Time",
+            "ch": "Start Zeit"
+          },
+          "display_type": "text",
+          "input_type": "time",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "task_date_to": {
+          "title": {
+            "en": "End Date",
+            "ch": "End Datum"
+          },
+          "display_type": "text",
+          "input_type": "date",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "task_time_to": {
+          "title": {
+            "en": "End Time",
+            "ch": "End Zeit"
+          },
+          "display_type": "text",
+          "input_type": "time",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "amount": {
+          "title": {
+            "en": "Amount",
+            "ch": "Menge"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "99999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "unit_price": {
+          "title": {
+            "en": "Price per unit",
+            "ch": "Preis pro Einheit"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "9999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "task_description": {
+          "title": {
+            "en": "Description",
+            "ch": "Beschreibung"
+          },
+          "display_type": "text",
+          "input_type": "text",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "fk_task_state": {
+          "title": {
+            "en": "Task status",
+            "ch": "Auftragsstatus"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/task-state",
+          "min": "",
+          "max": "",
+          "pk_field": "id_task_state",
+          "display_field": "task_state"
+      },
+        "fk_invoice": {
+          "title": {
+            "en": "Invoice",
+            "ch": "Rechnung"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/invoices",
+          "min": "",
+          "max": "",
+          "pk_field": "id_invoice",
+          "display_field": "invoicde_date"
+        },
+        "fk_unit": {
+          "title": {
+            "en": "Unit",
+            "ch": "Einheit"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/units",
+          "min": "",
+          "max": "",
+          "pk_field": "id_unit",
+          "display_field": "unit"
+        },
+        "internal_info": {
+          "title": {
+            "en": "Internal info",
+            "ch": "Interne Information"
+          },
+          "display_type": "text",
+          "input_type": "text",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "customer_reference": {
+          "title": {
+            "en": "Reference",
+            "ch": "Referenz"
+          },
+          "display_type": "text",
+          "input_type": "text",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "fk_employee_1": {
+          "title": {
+            "en": "Employee 1",
+            "ch": "Mitarbeiter 1"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/employees",
+          "min": "",
+          "max": "",
+          "pk_field": "id_employee",
+          "display_field": "employee_internal_alias"
+        },
+        "fk_employee_2": {
+          "title": {
+            "en": "Employee 1",
+            "ch": "Mitarbeiter 1"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/employees",
+          "min": "",
+          "max": "",
+          "pk_field": "id_employee",
+          "display_field": "employee_internal_alias"
+        },
+        "fk_asset_1": {
+          "title": {
+            "en": "Asset 1",
+            "ch": "Gerät 1"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/assets",
+          "min": "",
+          "max": "",
+          "pk_field": "id_asset",
+          "display_field": "asset_internal_alias"
+        },
+        "fk_asset_2": {
+          "title": {
+            "en": "Asset 2",
+            "ch": "Gerät 2"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/assets",
+          "min": "",
+          "max": "",
+          "pk_field": "id_asset",
+          "display_field": "asset_internal_alias"
+        },
+        "fk_subcontractor": {
+          "title": {
+            "en": "Subcontractor",
+            "ch": "Subunternehmer"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/companies",
+          "api_filter": "is_subcontractor=1",
+          "min": "",
+          "max": "",
+          "pk_field": "id_company",
+          "display_field": "company_internal_alias"
+        }
+      }
+
+
+
+},
     "/companies": {
-      "title": {"en": "Companies", "de": "Unternehmen"},
-      "ajax_url" : "/api/companies",
+      "title": {"en": "Companies", "ch": "Unternehmen"},
+      "ajax_url" : "/api/companies/",
       "js": "/static/js/pages/organizations.js",
       "template" : "frontend/pages/table.html",
       "table_id" : "company_table",
@@ -13,7 +324,7 @@
         "id_company": {
           "title": {
             "en": "Company ID",
-            "de": "Unternehmens Nr."
+            "ch": "Unternehmens Nr."
           },
           "display_type": "text",
           "input_type": "text",
@@ -26,7 +337,7 @@
         "company_name": {
           "title": {
             "en": "Company",
-            "de": "Firma"
+            "ch": "Firma"
           },
           "display_type": "text",
           "input_type": "text",
@@ -39,7 +350,7 @@
         "company_internal_alias": {
           "title": {
             "en": "Alias",
-            "de": "Alias"
+            "ch": "Alias"
           },
           "display_type": "text",
           "input_type": "text",
@@ -52,7 +363,7 @@
         "company_street": {
           "title": {
             "en": "Street",
-            "de": "Strasse"
+            "ch": "Strasse"
           },
           "display_type": "text",
           "input_type": "text",
@@ -65,7 +376,7 @@
         "company_zipcode": {
           "title": {
             "en": "Zipcode",
-            "de": "PLZ"
+            "ch": "PLZ"
           },
           "display_type": "text",
           "input_type": "text",
@@ -78,7 +389,7 @@
         "company_city": {
           "title": {
             "en": "City",
-            "de": "Stadt"
+            "ch": "Stadt"
           },
           "display_type": "text",
           "input_type": "text",
@@ -91,7 +402,7 @@
         "company_country": {
           "title": {
             "en": "Country",
-            "de": "Land"
+            "ch": "Land"
           },
           "display_type": "text",
           "input_type": "text",
@@ -104,7 +415,7 @@
         "fk_sys_rec_status": {
           "title": {
             "en": "Status",
-            "de": "Status"
+            "ch": "Status"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -117,7 +428,7 @@
         "company_email": {
           "title": {
             "en": "Email",
-            "de": "Email"
+            "ch": "Email"
           },
           "display_type": "text",
           "input_type": "text",
@@ -130,11 +441,11 @@
         "is_customer": {
           "title": {
             "en": "Customer",
-            "de": "Kunde"
+            "ch": "Kunde"
           },
           "display_type": "checkbox",
           "input_type": "select",
-          "options": {"0": {"en": "No", "de": "Nein"}, "1": {"en":  "Yes", "de":  "Ja"}},
+          "options": {"0": {"en": "No", "ch": "Nein"}, "1": {"en":  "Yes", "ch":  "Ja"}},
           "min": "",
           "max": "",
           "pk_field":"",
@@ -143,11 +454,11 @@
         "is_supplier": {
           "title": {
             "en": "Supplier",
-            "de": "Lieferant"
+            "ch": "Lieferant"
           },
           "display_type": "checkbox",
           "input_type": "select",
-          "options": {"0": {"en": "No", "de": "Nein"}, "1": {"en":  "Yes", "de":  "Ja"}},
+          "options": {"0": {"en": "No", "ch": "Nein"}, "1": {"en":  "Yes", "ch":  "Ja"}},
           "min": "",
           "max": "",
           "pk_field":"",
@@ -156,11 +467,11 @@
         "is_subcontractor": {
           "title": {
             "en": "Subcontractor",
-            "de": "Subunternehmer"
+            "ch": "Subunternehmer"
           },
           "display_type": "checkbox",
           "input_type": "select",
-           "options": {"0": {"en": "No", "de": "Nein"}, "1": {"en":  "Yes", "de":  "Ja"}},
+           "options": {"0": {"en": "No", "ch": "Nein"}, "1": {"en":  "Yes", "ch":  "Ja"}},
           "min": "",
           "max": "",
           "pk_field":"",
@@ -171,8 +482,8 @@
 
     },
     "/projects": {
-      "title": {"en": "Projects", "de": "Projekte"},
-      "ajax_url" : "/api/projects",
+      "title": {"en": "Projects", "ch": "Projekte"},
+      "ajax_url" : "/api/projects/",
       "js": "/static/js/pages/projects.js",
       "template" : "frontend/pages/table.html",
       "table_id" : "project_table",
@@ -181,7 +492,7 @@
         "id_project": {
           "title": {
             "en": "Project ID",
-            "de": "Projekt Nr."
+            "ch": "Projekt Nr."
           },
           "display_type": "text",
           "input_type": "text",
@@ -194,7 +505,7 @@
         "project_name": {
           "title": {
             "en": "Project",
-            "de": "Projekt"
+            "ch": "Projekt"
           },
           "display_type": "text",
           "input_type": "text",
@@ -207,7 +518,7 @@
         "fk_customer": {
           "title": {
             "en": "Customer",
-            "de": "Kunde"
+            "ch": "Kunde"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -220,7 +531,7 @@
         "planned_start_date": {
           "title": {
             "en": "Start (planned)",
-            "de": "Start (geplant)"
+            "ch": "Start (geplant)"
           },
           "display_type": "text",
           "input_type": "date",
@@ -233,7 +544,7 @@
         "planned_end_date": {
           "title": {
             "en": "End (planned)",
-            "de": "Ende (geplant)"
+            "ch": "Ende (geplant)"
           },
           "display_type": "text",
           "input_type": "date",
@@ -246,7 +557,7 @@
         "effective_start_date": {
           "title": {
             "en": "Start (effective)",
-            "de": "Start (effektiv)"
+            "ch": "Start (effektiv)"
           },
           "display_type": "text",
           "input_type": "date",
@@ -259,7 +570,7 @@
         "effective_end_date": {
           "title": {
             "en": "End (effective)",
-            "de": "Ende (effektiv)"
+            "ch": "Ende (effektiv)"
           },
           "display_type": "text",
           "input_type": "date",
@@ -275,8 +586,8 @@
 
     },
     "/employees": {
-      "title": {"en": "Employees", "de": "Mitarbeiter"},
-      "ajax_url" : "/api/employees",
+      "title": {"en": "Employees", "ch": "Mitarbeiter"},
+      "ajax_url" : "/api/employees/",
       "js": "/static/js/pages/employees.js",
       "template" : "frontend/pages/table.html",
       "table_id" : "employee_table",
@@ -285,7 +596,7 @@
         "id_employee": {
           "title": {
             "en": "Employee ID",
-            "de": "Mitarbeiter Nr."
+            "ch": "Mitarbeiter Nr."
           },
           "display_type": "text",
           "input_type": "number",
@@ -298,7 +609,7 @@
         "employee_first_name": {
           "title": {
             "en": "Firstname",
-            "de": "Vorname"
+            "ch": "Vorname"
           },
           "display_type": "text",
           "input_type": "text",
@@ -311,7 +622,7 @@
         "employee_last_name": {
           "title": {
             "en": "Lastname",
-            "de": "Nachname"
+            "ch": "Nachname"
           },
           "display_type": "text",
           "input_type": "text",
@@ -324,7 +635,7 @@
         "employee_street": {
           "title": {
             "en": "Street",
-            "de": "Strasse"
+            "ch": "Strasse"
           },
           "display_type": "text",
           "input_type": "text",
@@ -337,7 +648,7 @@
         "employee_zipcode": {
           "title": {
             "en": "Zipcode",
-            "de": "PLZ"
+            "ch": "PLZ"
           },
           "display_type": "text",
           "input_type": "text",
@@ -350,7 +661,7 @@
         "employee_city": {
           "title": {
             "en": "City",
-            "de": "Stadt"
+            "ch": "Stadt"
           },
           "display_type": "text",
           "input_type": "text",
@@ -363,7 +674,7 @@
         "employee_email": {
           "title": {
             "en": "Email",
-            "de": "Email"
+            "ch": "Email"
           },
           "display_type": "text",
           "input_type": "text",
@@ -376,7 +687,7 @@
         "fk_sys_rec_status": {
           "title": {
             "en": "Status",
-            "de": "Status"
+            "ch": "Status"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -389,7 +700,7 @@
         "employee_cell_phone": {
           "title": {
             "en": "Mobile",
-            "de": "Telefon"
+            "ch": "Telefon"
           },
           "display_type": "text",
           "input_type": "text",
@@ -402,7 +713,7 @@
         "employee_birthday": {
           "title": {
             "en": "Date of Birth",
-            "de": "Geburtsdatum"
+            "ch": "Geburtsdatum"
           },
           "display_type": "text",
           "input_type": "date",
@@ -414,7 +725,7 @@
         "employee_internal_alias": {
           "title": {
             "en": "Alias",
-            "de": "Alias"
+            "ch": "Alias"
           },
           "display_type": "text",
           "input_type": "text",
@@ -426,7 +737,7 @@
         "fk_employee_type": {
           "title": {
             "en": "Employee Type",
-            "de": "Mitarbeiter Typ"
+            "ch": "Mitarbeiter Typ"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -441,8 +752,8 @@
 
     },
     "/assets": {
-      "title": {"en": "Assets", "de": "Maschinen / Anlagen"},
-      "ajax_url" : "/api/assets",
+      "title": {"en": "Assets", "ch": "Maschinen & Anlagen"},
+      "ajax_url" : "/api/assets/",
       "js": "/static/js/pages/assets.js",
       "template" : "frontend/pages/table.html",
       "table_id" : "asset_table",
@@ -451,7 +762,7 @@
         "id_asset": {
           "title": {
             "en": "Asset ID",
-            "de": "Nr."
+            "ch": "Nr."
           },
           "display_type": "text",
           "input_type": "number",
@@ -464,7 +775,7 @@
         "fk_asset_type": {
           "title": {
             "en": "Asset type",
-            "de": "Typ"
+            "ch": "Typ"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -477,7 +788,7 @@
         "asset_description": {
           "title": {
             "en": "Description",
-            "de": "Beschreibung"
+            "ch": "Beschreibung"
           },
           "display_type": "text",
           "input_type": "text",
@@ -490,7 +801,7 @@
         "asset_internal_alias": {
           "title": {
             "en": "Alias",
-            "de": "Alias"
+            "ch": "Alias"
           },
           "display_type": "text",
           "input_type": "text",
@@ -503,7 +814,7 @@
         "year_of_production": {
           "title": {
             "en": "Year of production",
-            "de": "Baujahr"
+            "ch": "Baujahr"
           },
           "display_type": "text",
           "input_type": "number",
@@ -516,7 +827,7 @@
          "fk_sys_rec_status": {
           "title": {
             "en": "Status",
-            "de": "Status"
+            "ch": "Status"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -530,161 +841,9 @@
 
 
     },
-    "/employees/absences": {
-      "title": {"en": "Employee absences", "de": "Mitarbeiter-Absenzhen"},
-      "ajax_url" : "/api/employees/absences",
-      "js": "/static/js/pages/employee_absences.js",
-      "template" : "frontend/pages/table.html",
-      "table_id" : "employee_absence_table",
-      "pk" : "id_employee_absence",
-      "fields": {
-        "id_employee_absence": {
-          "title": {
-            "en": "Absence ID",
-            "de": "Absenz Nr."
-          },
-          "display_type": "text",
-          "input_type": "number",
-          "api_endpoint": "",
-          "min": "0",
-          "max": "999999999",
-          "pk_field": "",
-          "display_field": ""
-        },
-        "employee_absence_from": {
-          "title": {
-            "en": "From",
-            "de": "Von"
-          },
-          "display_type": "text",
-          "input_type": "datetime-local",
-          "min": "",
-          "max": "",
-          "pk_field": "",
-          "display_field": ""
-        },
-        "employee_absence_to": {
-          "title": {
-            "en": "To",
-            "de": "Bis"
-          },
-          "display_type": "text",
-          "input_type": "datetime-local",
-          "api_endpoint": "",
-          "min": "",
-          "max": "",
-          "pk_field": "",
-          "display_field": ""
-        },
-         "fk_employee": {
-          "title": {
-            "en": "Employee",
-            "de": "Mitarbeiter"
-          },
-          "display_type": "fk_field",
-          "input_type": "select",
-          "api_endpoint": "/api/employees",
-          "min": "",
-          "max": "",
-          "pk_field": "id_employee",
-          "display_field": "employee_internal_alias"
-        },
-         "fk_employee_absence_code": {
-          "title": {
-            "en": "Absence Code",
-            "de": "Absenz Code"
-          },
-          "display_type": "fk_field",
-          "input_type": "select",
-          "api_endpoint": "/api/employees/absences/codes",
-          "min": "",
-          "max": "",
-          "pk_field": "id_employee_absence_code",
-          "display_field": "employee_absence_code"
-        }
-      }
-
-
-    },
-    "/assets/absences": {
-      "title": {"en": "Asset absences", "de": "Anlage-Absenzen"},
-      "ajax_url" : "/api/assets/absences",
-      "js": "/static/js/pages/asset_absences.js",
-      "template" : "frontend/pages/table.html",
-      "table_id" : "asset_absence_table",
-      "pk" : "id_asset_absence",
-      "fields": {
-        "id_asset_absence": {
-          "title": {
-            "en": "Absence ID",
-            "de": "Absenz Nr."
-          },
-          "display_type": "text",
-          "input_type": "number",
-          "api_endpoint": "",
-          "min": "0",
-          "max": "999999999",
-          "pk_field": "",
-          "display_field": ""
-        },
-        "asset_absence_from": {
-          "title": {
-            "en": "From",
-            "de": "Von"
-          },
-          "display_type": "text",
-          "input_type": "datetime-local",
-          "min": "",
-          "max": "",
-          "pk_field": "",
-          "display_field": ""
-        },
-        "asset_absence_to": {
-          "title": {
-            "en": "To",
-            "de": "Bis"
-          },
-          "display_type": "text",
-          "input_type": "datetime-local",
-          "api_endpoint": "",
-          "min": "",
-          "max": "",
-          "pk_field": "",
-          "display_field": ""
-        },
-        "fk_asset": {
-          "title": {
-            "en": "Asset",
-            "de": "Anlage"
-          },
-          "display_type": "fk_field",
-          "input_type": "select",
-          "api_endpoint": "/api/assets",
-          "min": "",
-          "max": "",
-          "pk_field": "id_asset",
-          "display_field": "asset_internal_alias"
-        },
-        "fk_asset_absence_code": {
-          "title": {
-            "en": "Absence Code",
-            "de": "Absenz Code"
-          },
-          "display_type": "fk_field",
-          "input_type": "select",
-          "api_endpoint": "/api/assets/absences/codes",
-          "min": "",
-          "max": "",
-          "pk_field": "id_asset_absence_code",
-          "display_field": "asset_absence_code"
-        }
-      }
-
-
-  },
     "/sales": {
-      "title": {"en": "Sales", "de": "Verkäufe"},
-      "ajax_url" : "/api/sales",
+      "title": {"en": "Sales", "ch": "Verkäufe"},
+      "ajax_url" : "/api/sales/",
       "js": "/static/js/pages/sales.js",
       "template" : "frontend/pages/table.html",
       "table_id" : "sales_table",
@@ -693,7 +852,7 @@
         "id_sale": {
           "title": {
             "en": "Sale ID",
-            "de": "Verkaufs Nr."
+            "ch": "Verkaufs Nr."
           },
           "display_type": "text",
           "input_type": "number",
@@ -706,7 +865,7 @@
         "sale_timestamp": {
           "title": {
             "en": "Timestamp",
-            "de": "Zeitpunkt"
+            "ch": "Zeitpunkt"
           },
           "display_type": "text",
           "input_type": "datetime-local",
@@ -718,7 +877,7 @@
         "fk_project": {
           "title": {
             "en": "Related Project",
-            "de": "Projekt"
+            "ch": "Projekt"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -731,7 +890,7 @@
         "sale_amount": {
           "title": {
             "en": "Amount",
-            "de": "Menge"
+            "ch": "Menge"
           },
           "display_type": "text",
           "input_type": "number",
@@ -744,7 +903,7 @@
         "sale_unit_price": {
           "title": {
             "en": "Unit price",
-            "de": "Stückpreis"
+            "ch": "Stückpreis"
           },
           "display_type": "text",
           "input_type": "number",
@@ -757,7 +916,7 @@
         "sale_reference": {
           "title": {
             "en": "Reference",
-            "de": "Referenz"
+            "ch": "Referenz"
           },
           "display_type": "text",
           "input_type": "text",
@@ -770,7 +929,7 @@
         "fk_unit": {
           "title": {
             "en": "Unit",
-            "de": "Einheit"
+            "ch": "Einheit"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -783,7 +942,7 @@
         "fk_invoice": {
           "title": {
             "en": "Invoice",
-            "de": "Rechnung"
+            "ch": "Rechnung"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -798,17 +957,17 @@
 
 },
     "/tasks": {
-      "title": {"en": "Tasks", "de": "Aufträge"},
-      "ajax_url" : "/api/tasks",
+      "title": {"en": "Tasks", "ch": "Aufträge"},
+      "ajax_url" : "/api/tasks/",
       "js": "/static/js/pages/tasks.js",
-      "template" : "frontend/pages/schedule.html",
+      "template" : "frontend/pages/table.html",
       "table_id" : "tasks_table",
       "pk" : "id_task",
       "fields": {
         "task_template": {
           "title": {
             "en": "Template",
-            "de": "Vorlage"
+            "ch": "Vorlage"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -821,7 +980,7 @@
         "id_task": {
           "title": {
             "en": "Task ID",
-            "de": "Auftrag Nr."
+            "ch": "Auftrag Nr."
           },
           "display_type": "text",
           "input_type": "number",
@@ -834,7 +993,7 @@
         "fk_project": {
           "title": {
             "en": "Related Project",
-            "de": "Projekt"
+            "ch": "Projekt"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -847,7 +1006,7 @@
         "task_date_from": {
           "title": {
             "en": "Start Date",
-            "de": "Start Datum"
+            "ch": "Start Datum"
           },
           "display_type": "text",
           "input_type": "date",
@@ -860,7 +1019,7 @@
         "task_time_from": {
           "title": {
             "en": "Start Time",
-            "de": "Start Zeit"
+            "ch": "Start Zeit"
           },
           "display_type": "text",
           "input_type": "time",
@@ -873,7 +1032,7 @@
         "task_date_to": {
           "title": {
             "en": "End Date",
-            "de": "End Datum"
+            "ch": "End Datum"
           },
           "display_type": "text",
           "input_type": "date",
@@ -886,7 +1045,7 @@
         "task_time_to": {
           "title": {
             "en": "End Time",
-            "de": "End Zeit"
+            "ch": "End Zeit"
           },
           "display_type": "text",
           "input_type": "time",
@@ -899,7 +1058,7 @@
         "amount": {
           "title": {
             "en": "Amount",
-            "de": "Menge"
+            "ch": "Menge"
           },
           "display_type": "text",
           "input_type": "number",
@@ -912,7 +1071,7 @@
         "unit_price": {
           "title": {
             "en": "Price per unit",
-            "de": "Preis pro Einheit"
+            "ch": "Preis pro Einheit"
           },
           "display_type": "text",
           "input_type": "number",
@@ -925,7 +1084,7 @@
         "task_description": {
           "title": {
             "en": "Description",
-            "de": "Beschreibung"
+            "ch": "Beschreibung"
           },
           "display_type": "text",
           "input_type": "text",
@@ -938,7 +1097,7 @@
         "fk_task_state": {
           "title": {
             "en": "Task status",
-            "de": "Auftragsstatus"
+            "ch": "Auftragsstatus"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -951,7 +1110,7 @@
         "fk_invoice": {
           "title": {
             "en": "Invoice",
-            "de": "Rechnung"
+            "ch": "Rechnung"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -964,7 +1123,7 @@
         "fk_unit": {
           "title": {
             "en": "Unit",
-            "de": "Einheit"
+            "ch": "Einheit"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -977,7 +1136,7 @@
         "internal_info": {
           "title": {
             "en": "Internal info",
-            "de": "Interne Information"
+            "ch": "Interne Information"
           },
           "display_type": "text",
           "input_type": "text",
@@ -990,7 +1149,7 @@
         "customer_reference": {
           "title": {
             "en": "Reference",
-            "de": "Referenz"
+            "ch": "Referenz"
           },
           "display_type": "text",
           "input_type": "text",
@@ -1003,7 +1162,7 @@
         "fk_employee_1": {
           "title": {
             "en": "Employee 1",
-            "de": "Mitarbeiter 1"
+            "ch": "Mitarbeiter 1"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -1016,7 +1175,7 @@
         "fk_employee_2": {
           "title": {
             "en": "Employee 1",
-            "de": "Mitarbeiter 1"
+            "ch": "Mitarbeiter 1"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -1029,7 +1188,7 @@
         "fk_asset_1": {
           "title": {
             "en": "Asset 1",
-            "de": "Gerät 1"
+            "ch": "Gerät 1"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -1042,7 +1201,7 @@
         "fk_asset_2": {
           "title": {
             "en": "Asset 2",
-            "de": "Gerät 2"
+            "ch": "Gerät 2"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -1055,7 +1214,7 @@
         "fk_subcontractor": {
           "title": {
             "en": "Subcontractor",
-            "de": "Subunternehmer"
+            "ch": "Subunternehmer"
           },
           "display_type": "fk_field",
           "input_type": "select",
@@ -1066,6 +1225,242 @@
           "pk_field": "id_company",
           "display_field": "company_internal_alias"
         }
+      }
+
+
+
+},
+    "/templates": {
+      "title": {"en": "Task Templates", "ch": "Auftrags-Vorlagen"},
+      "ajax_url" : "/api/templates/",
+      "js": "/static/js/pages/templates.js",
+      "template" : "frontend/pages/table.html",
+      "table_id" : "tasks_table",
+      "pk" : "id_task_template",
+      "fields": {
+        "id_task_template": {
+          "title": {
+            "en": "Template ID",
+            "ch": "Vorlagen Nr."
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "fk_project": {
+          "title": {
+            "en": "Related Project",
+            "ch": "Projekt"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/projects",
+          "min": "",
+          "max": "",
+          "pk_field": "id_project",
+          "display_field": "project_name"
+        },
+        "amount": {
+          "title": {
+            "en": "Amount",
+            "ch": "Menge"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "99999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "unit_price": {
+          "title": {
+            "en": "Price per unit",
+            "ch": "Preis pro Einheit"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "9999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "task_description": {
+          "title": {
+            "en": "Description",
+            "ch": "Beschreibung"
+          },
+          "display_type": "text",
+          "input_type": "text",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "fk_unit": {
+          "title": {
+            "en": "Unit",
+            "ch": "Einheit"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/units",
+          "min": "",
+          "max": "",
+          "pk_field": "id_unit",
+          "display_field": "unit"
+        }
+      }
+
+
+
+},
+    "/terms": {
+      "title": {"en": "Payment Conditions", "ch": "Zahlungsbedingungen"},
+      "ajax_url" : "/api/paymentconditions/",
+      "js": "/static/js/pages/terms.js",
+      "template" : "frontend/pages/table.html",
+      "table_id" : "tasks_table",
+      "pk" : "id_payment_condition",
+      "fields": {
+        "id_payment_condition": {
+          "title": {
+            "en": "Condition ID",
+            "ch": "Bedingungs Nr."
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "fk_currency": {
+          "title": {
+            "en": "Currency",
+            "ch": "Währung"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/currencies",
+          "min": "",
+          "max": "",
+          "pk_field": "id_currency",
+          "display_field": "currency"
+        },
+        "vat": {
+          "title": {
+            "en": "VAT",
+            "ch": "MWST"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "99999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "due_days": {
+          "title": {
+            "en": "Due (Days)",
+            "ch": "Zahluzngsfrist (Tage)"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "9999999999",
+          "pk_field": "",
+          "display_field": ""
+        }
+
+      }
+
+
+
+},
+    "/invoices": {
+      "title": {"en": "Invoices", "ch": "Rechnungen"},
+      "ajax_url" : "/api/invoices/",
+      "js": "/static/js/pages/invoices.js",
+      "template" : "frontend/pages/table.html",
+      "table_id" : "tasks_table",
+      "pk" : "id_invoice",
+      "fields": {
+        "id_invoice": {
+          "title": {
+            "en": "Invoice ID",
+            "ch": "Rechnungs Nr."
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "fk_invoice_state": {
+          "title": {
+            "en": "Invoice State",
+            "ch": "Rechnungs-Status"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/invoice-states",
+          "min": "",
+          "max": "",
+          "pk_field": "id_invoice_state",
+          "display_field": "invoice_state"
+        },
+        "fk_payment_condition": {
+          "title": {
+            "en": "Payment-Condition",
+            "ch": "Zahlungsbedingungen"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/paymentconditions",
+          "min": "",
+          "max": "",
+          "pk_field": "id_payment_condition",
+          "display_field": "id_payment_condition"
+        },
+        "invoice_date": {
+          "title": {
+            "en": "Invoice Date",
+            "ch": "Rechnungsdatum"
+          },
+          "display_type": "text",
+          "input_type": "date",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "invoice_text": {
+          "title": {
+            "en": "Invoice Text",
+            "ch": "Rechnungstext"
+          },
+          "display_type": "text",
+          "input_type": "text",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        }
+
       }
 
 

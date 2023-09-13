@@ -2,6 +2,8 @@
 $(document).ready(function(){
     let page_config
     let url = '/sales'
+    let lang_cookie = Cookies.get('sisyphus_language');
+
 
 
 
@@ -23,6 +25,7 @@ $(document).ready(function(){
                         fields: page_config['fields'],
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
+                        language: lang_cookie
                     })
 
 
@@ -33,6 +36,7 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:false,
             fields: page_config['fields'],
+            language: lang_cookie
 
 
     })
@@ -43,7 +47,8 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             exclude: ['id_sale', 'fk_invoice'],
-            required : ['sale_timestamp', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_reference', 'fk_unit']
+            required : ['sale_timestamp', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_reference', 'fk_unit'],
+            language: lang_cookie
 
     })
     let update_form = new BootstrapForm({
@@ -53,11 +58,12 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             disabled : ['id_sale', 'fk_invoice'],
-            required : ['id_sale', 'sale_timestamp', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_reference', 'fk_unit']
+            required : ['id_sale', 'sale_timestamp', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_reference', 'fk_unit'],
+            language: lang_cookie
 
     })
 
-    // build components
+   // build components
     table.build();
     filter_form.build();
     create_form.build();
@@ -67,74 +73,26 @@ $(document).ready(function(){
     // add evetn listeners
     $( "#btn_filter" ).on( "click", function() {
       let query_params = $('#filter_form').serialize();
-      $.ajax({
-        url: window.location.origin +page_config['ajax_url'] + '?' + query_params,
-        success: function (result) {
-            table.data = result;
-            table.build();
-            $( "#"+page_config['table_id']+" tr" ).on( "dblclick", function() {
-        let record_id =  $(this).attr('data-row-pk');
-
-        $.ajax({
-            url: window.location.origin + page_config['ajax_url'] + '/' + record_id,
-            success: function (result) {
-
-                $.each(result, (key, value)=>{
-                    if (value === true){
-                        value = 1;
-                    } else if (value === false){
-                        value = 0;
-                    }
-                    $('#update_form #'+ key).val(value);
-                });
-
-                $('#update_modal').modal('show');
-            }
-            })
-    } );
-        }
+      table.query_params = '?' + query_params
+      table.build();
     });
 
-    });
-
-    $( "#btn_form_reset" ).on( "click", function() {
+    $( "#btn_reset" ).on( "click", function() {
         $('#filter_form').trigger("reset");
         $('#btn_filter').click();
-
-
     });
 
     $( "#btn_add" ).on( "click", function() {
-        create_form.submit();
+        let url = page_config['ajax_url']
+        create_form.submit(url, 'POST')
     });
 
-    $( "#"+page_config['table_id']+" tr").on( "dblclick", function() {
-        let record_id =  $(this).attr('data-row-pk');
-projects
-        $.ajax({
-            url: window.location.origin + page_config['ajax_url'] + '/' + record_id,
-            success: function (result) {
-
-
-                $.each(result, (key, value)=>{
-
-                    if (value === true){
-                        value = 1;
-                    } else if (value === false){
-                        value = 0;
-                    }
-                    $('#update_form #'+ key).val(value);
-                });
-
-                $('#update_modal').modal('show');
-            }
-            })
-    } );
 
 
     $( "#btn_save" ).on( "click", function() {
         let pk = $('#update_form #' + page_config['pk']).val()
-        update_form.submit(pk);
+        let url = page_config['ajax_url'] +pk + '/'
+        update_form.submit(url, 'PUT');
     });
 
 

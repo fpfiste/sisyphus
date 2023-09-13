@@ -2,7 +2,7 @@
 
 class BootstrapDataTable{
 
-      constructor({container, id, fields, pk_field, ajax_url, exclude}) {
+      constructor({container, id, fields, pk_field, ajax_url, exclude=[], language}) {
           this.container = container;
           this.id = 'detail_table';
           this.fields = fields;
@@ -10,6 +10,7 @@ class BootstrapDataTable{
           this.ajax_url = ajax_url;
           this.query_params = ''
           this.exclude = exclude;
+          this.language = language;
           this.build_grid()
 
       }
@@ -71,13 +72,13 @@ class BootstrapDataTable{
 
       draw_header() {
 
-        let header = '<thead>'
+        let header = '<thead style="position:sticky; top:0; background:white;">'
 
         $.each(this.fields,(key,value) => {
             if (this.exclude.includes(key)) {
                 return
             } else {
-                header += '<th>'+value.title.de+'</th>'
+                header += '<th>'+value.title[this.language]+'</th>'
             }
         });
         console.log(header)
@@ -108,7 +109,7 @@ class BootstrapDataTable{
 
 
             //* create the row wrapper for the current record
-            let row = '<tr data-row-pk="'+element[this.pk_field]+'"data-row-url="'+this.ajax_url + '/' +element[this.pk_field] +'">';
+            let row = '<tr data-row-pk="'+element[this.pk_field]+'"data-row-url="'+this.ajax_url  +element[this.pk_field] +'/">';
 
             //* loop all elements of the current record
             $.each(this.fields,(field,config) => {
