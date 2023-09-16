@@ -2,13 +2,13 @@
 
 class BootstrapDataTable{
 
-      constructor({container, id, fields, pk_field, ajax_url, exclude=[], language}) {
+      constructor({container, id, fields, pk_field, ajax_url, query_params = '', exclude=[], language}) {
           this.container = container;
-          this.id = 'detail_table';
+          this.id = id;
           this.fields = fields;
           this.pk_field = pk_field;
           this.ajax_url = ajax_url;
-          this.query_params = ''
+          this.query_params = query_params
           this.exclude = exclude;
           this.language = language;
           this.build_grid()
@@ -37,12 +37,12 @@ class BootstrapDataTable{
          return element;
       };
 
-      checkbox_field(checked) {
-
+      checkbox_field(checked, disabled) {
+        console.log(checked)
         if (checked) {
-             return  '<td><input type="checkbox" checked disabled/></td>'
+             return  '<td><input type="checkbox" checked '+disabled+'/></td>'
         } else {
-             return  '<td><input type="checkbox" disabled/></td>'
+             return  '<td><input type="checkbox" '+disabled+'/></td>'
         }
 
 
@@ -92,7 +92,7 @@ class BootstrapDataTable{
             let header = this.draw_header()
             console.log(header)
             //* draw the grid of the new table object
-            let table_grid = '<div id="table_container" style="overflow:auto; white-space:nowrap; height:100%;"><table class="table table-striped table-hover table-bordered table-lg" id="detail_table">'+header+'<tbody></tbody></table></div>';
+            let table_grid = '<div id="table_container" style="overflow:auto; white-space:nowrap; height:100%;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'">'+header+'<tbody></tbody></table></div>';
             $(this.container).append(table_grid);
 
       }
@@ -122,12 +122,14 @@ class BootstrapDataTable{
                 //* get corresponding field based on the field name from the data object
                 //* continue if the fieldname is url
 
-               if (element[field] == null) {
+               if (config.display_type == 'action_checkbox'){
+                    row += this.checkbox_field(element[field], config.disabled)
+               } else if (element[field] == null) {
                 row += '<td></td>'
                } else if(config.display_type == 'text') {
                     row += this.text_field(element[field])
                 } else if (config.display_type == 'checkbox') {
-                    row += this.checkbox_field(element[field])
+                    row += this.checkbox_field(element[field], config.disabled)
                 } else if (config.display_type == 'fk_field') {
                     row += this.fk_field(config.api_endpoint, config.display_field, element[field])
 
@@ -155,7 +157,7 @@ class BootstrapDataTable{
 
       draw_event_handlers() {
 
-            $("#detail_table tr").on( "dblclick", function() {
+            $("#"+this.id +" tr").on( "dblclick", function() {
 
 
                 let url = $(this).attr('data-row-url');
@@ -163,6 +165,7 @@ class BootstrapDataTable{
                 url: url,
 
                 success: function (result) {
+                   $('#update_form').trigger("reset");
                    $.each(result, (key, value)=>{
                         if (value === true){
                             value = 1;

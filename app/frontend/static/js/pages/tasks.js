@@ -3,17 +3,16 @@ $(document).ready(function(){
     let page_config
     let url = '/tasks'
     let lang_cookie = Cookies.get('sisyphus_language');
-
     //*** read the config file ***//
     $.ajax({
-          url: '/static/config.json',
+          url: '/_config',
           async: false,
           dataType: 'json',
           success: function (response) {
             page_config = response['pages'][url]
+            translations = response['translations']
           }
     });
-
 
 
     // create table instance
@@ -23,7 +22,7 @@ $(document).ready(function(){
                         fields: page_config['fields'],
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
-                        exclude: ['task_template','fk_employee_1', 'fk_employee_2', 'fk_asset_1', 'fk_asset_2', 'fk_subcontractor', 'fk_invoice', 'fk_project', 'fk_task_state', 'fk_unit'],
+                        exclude: ['task_template','fk_employee_1', 'fk_employee_2', 'fk_asset_1', 'fk_asset_2', 'fk_subcontractor', 'fk_invoice', 'fk_project', 'fk_task_state', 'fk_unit', 'fk_currency', 'fk_vat'],
                         language: lang_cookie
                     })
 
@@ -46,7 +45,7 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            exclude: ['id_task', 'fk_invoi console.log(this.fields)ce'],
+            exclude: ['id_task', 'fk_invoice'],
             required : ['fk_project',  'task_description'],
             disabled : ['fk_task_state'],
             language: lang_cookie
@@ -97,6 +96,60 @@ $(document).ready(function(){
         update_form.submit(url, 'PUT');
     });
 
+    $( "#task_template" ).on( "change", function() {
+        let template_id = $(this).val();
 
+        $('#create_form').trigger("reset");
+
+        let url = '/api/templates/'+ template_id + '/'
+
+        $.ajax({
+           url: url,
+           type: 'GET',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           success: function(response) {
+
+              $('#task_template').val(template_id);
+              $.each(response, (key, value)=>{
+                $('#'+ key).val(value)
+
+              })
+           },
+           error: function(error){
+            console.log(error)
+           }
+        });
+    });
+
+    $('#btn_close_task').on('click', function() {
+        update_form.required = ['id_task', 'fk_project', 'task_date_from', 'task_date_to', 'task_time_from', 'task_time_to', 'amount', 'unit_price', 'task_description', 'fk_unit', 'fk_employee_1', 'fk_currency', 'fk_vat']
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = '/api/tasks/' + pk + '/close/'
+        update_form.submit(url, 'PUT');
+    })
+
+    $('#update_modal').on('show.bs.modal', function() {
+        let task_status = $('#update_form #fk_task_state').val()
+        console.log(task_status)
+        if (
+            (task_status == "4") ||
+            (task_status == "5") ||
+            (task_status == "-1")
+        ){
+                $('#update_form').find(':input').prop('disabled', true)
+                $('#btn_delete').prop('disabled', true)
+                $('#btn_close_task').prop('disabled', true)
+                $('#btn_save').prop('disabled', true)
+
+        } else {
+            $('#update_form').find(':input').prop('disabled', false)
+            $('#update_form #id_task').prop('disabled', true);
+            $('#update_form #fk_task_state').prop('disabled', true);
+            $('#btn_delete').prop('disabled', false)
+            $('#btn_close_task').prop('disabled', false)
+            $('#btn_save').prop('disabled', false)
+        }
+
+    })
 
 });

@@ -25,12 +25,12 @@
 
 
 	<link href="/static/components/table/table.css" rel="stylesheet">
-	<script src="/static/components/table/table.js"></script>
-	<script src="/static/components/form.js"></script>
+	<script type="application/javascript" src="/static/components/table/table.js"></script>
+	<script type="application/javascript" src="/static/components/form.js"></script>
 	<link href="/static/components/scheduler/scheduler.css" rel="stylesheet">
-	<script src="/static/components/scheduler/scheduler.js"></script>
+	<script type="application/javascript" src="/static/components/scheduler/scheduler.js"></script>
     {% load static %}
-    {%load crispy_forms_tags %}
+
 
     <title>{% block small_title %}Title{% endblock %}</title>
 
@@ -92,9 +92,10 @@
 						</li>
 
 					<li class="sidebar-header" id="sidebar_title_finances"></li>
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="{% url 'terms' %}">
-             				<i class="fa-solid fa-gears"></i><span class="align-middle" id="sidebar_title_payment_conditions"></span>
+
+						<li class="sidebar-item">
+						<a class="sidebar-link" href="{% url 'billing' %}">
+              				<i class="fa-solid fa-coins"></i><span class="align-middle" id="sidebar_title_billing"></span>
             			</a>
 					</li>
 					<li class="sidebar-item">
@@ -103,11 +104,7 @@
             			</a>
 					</li>
 
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="ui-forms.html">
-              				<i class="fa-solid fa-coins"></i><span class="align-middle" id="sidebar_title_billing"></span>
-            			</a>
-					</li>
+
 
 				</ul>
 
@@ -165,11 +162,8 @@
 
 </div>
 
-<script src="/static/js/index.js"></script>
-		<script>
-			let page_config = {{page_config | safe}}
-		</script>
-<script src="{{page_config.js}}"></script>
+<script type="text/javascript" src="/static/js/index.js"></script>
+<script type="text/javascript" src="{{page_config.js}}"></script>
 
 </body>
 

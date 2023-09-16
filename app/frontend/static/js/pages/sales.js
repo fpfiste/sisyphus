@@ -6,16 +6,17 @@ $(document).ready(function(){
 
 
 
-
     //*** read the config file ***//
     $.ajax({
-          url: '/static/config.json',
+          url: '/_config',
           async: false,
           dataType: 'json',
           success: function (response) {
             page_config = response['pages'][url]
+            translations = response['translations']
           }
     });
+
 
 
     // create table instance
@@ -25,6 +26,7 @@ $(document).ready(function(){
                         fields: page_config['fields'],
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
+                        exclude: ['fk_invoice'],
                         language: lang_cookie
                     })
 
@@ -36,6 +38,7 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:false,
             fields: page_config['fields'],
+            exclude: ['sale_description', 'fk_invoice'],
             language: lang_cookie
 
 
@@ -46,8 +49,8 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            exclude: ['id_sale', 'fk_invoice'],
-            required : ['sale_timestamp', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_reference', 'fk_unit'],
+            exclude: ['id_sale', 'fk_invoice', 'fk_sales_status'],
+            required : ['sale_date', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_description', 'fk_unit'],
             language: lang_cookie
 
     })
@@ -57,8 +60,9 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            disabled : ['id_sale', 'fk_invoice'],
-            required : ['id_sale', 'sale_timestamp', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_reference', 'fk_unit'],
+            exclude: ['fk_invoice'],
+            disabled : ['id_sale', 'fk_invoice', 'fk_sales_status'],
+            required : ['id_sale', 'sale_date', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_reference', 'fk_unit'],
             language: lang_cookie
 
     })
@@ -95,6 +99,37 @@ $(document).ready(function(){
         update_form.submit(url, 'PUT');
     });
 
+    $('#btn_close_task').on('click', function() {
+        update_form.required = ['id_sale', 'fk_project', 'sale_date', 'sale_time','sale_amount', 'sale_unit_price', 'fk_unit', 'fk_vat', 'fk_currency', 'sale_description']
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = '/api/sales/' + pk + '/close/'
+        update_form.submit(url, 'PUT');
+    })
+
+    $('#update_modal').on('show.bs.modal', function() {
+        let task_status = $('#update_form #fk_sales_status').val()
+        console.log(task_status)
+        if (
+            (task_status == "3") ||
+            (task_status == "2") ||
+            (task_status == "-1")
+        ){
+
+                $('#update_form').find(':input').prop('disabled', true)
+                $('#btn_delete').prop('disabled', true)
+                $('#btn_close_task').prop('disabled', true)
+                $('#btn_save').prop('disabled', true)
+
+        } else {
+            $('#update_form').find(':input').prop('disabled', false)
+            $('#update_form #id_sale').prop('disabled', true);
+            $('#update_form #fk_sales_status').prop('disabled', true);
+            $('#btn_delete').prop('disabled', false)
+            $('#btn_close_task').prop('disabled', false)
+            $('#btn_save').prop('disabled', false)
+        }
+
+    })
 
 
 });

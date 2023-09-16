@@ -6,8 +6,9 @@ $(document).ready(function(){
     let lang_cookie = Cookies.get('sisyphus_language');
 
     //*** read the config file ***//
+    //*** read the config file ***//
     $.ajax({
-          url: '/static/config.json',
+          url: '/_config',
           async: false,
           dataType: 'json',
           success: function (response) {
@@ -36,6 +37,7 @@ $(document).ready(function(){
             fields: page_config['fields'],
             exclude: ['id_task', 'fk_invoice', 'fk_task_state'],
             required : ['fk_project', 'task_description'],
+            language: lang_cookie
 
 
     })
@@ -47,8 +49,8 @@ $(document).ready(function(){
             fields: page_config['fields'],
             exclude: ['fk_invoice', 'task_template', 'fk_invoice'],
             disabled : ['id_task', 'fk_task_state'],
-            required : ['id_task', 'fk_project', 'task_description']
-
+            required : ['id_task', 'fk_project', 'task_description'],
+            language: lang_cookie
     })
 
 
@@ -56,7 +58,30 @@ $(document).ready(function(){
     create_form.build();
     update_form.build();
 
+    $( "#task_template" ).on( "change", function() {
+        let template_id = $(this).val();
 
+        $('#create_form').trigger("reset");
+
+        let url = '/api/templates/'+ template_id + '/'
+
+        $.ajax({
+           url: url,
+           type: 'GET',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           success: function(response) {
+
+              $('#task_template').val(template_id);
+              $.each(response, (key, value)=>{
+                $('#'+ key).val(value)
+
+              })
+           },
+           error: function(error){
+            console.log(error)
+           }
+        });
+    });
 
     $( "#btn_reset" ).on( "click", function() {
         $('#filter_form').trigger("reset");
@@ -72,7 +97,7 @@ $(document).ready(function(){
 
     $( "#btn_save" ).on( "click", function() {
         let pk = $('#update_form #' + page_config['pk']).val()
-        let url = page_config['ajax_url'] + '/' +pk + '/'
+        let url = page_config['ajax_url'] +pk + '/'
          update_form.submit(url, 'PUT');
     });
 

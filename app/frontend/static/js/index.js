@@ -2,14 +2,14 @@ $(document).ready(function(){
     let page = window.location.pathname;
 
     $.ajax({
-          url: '/static/config.json',
+          url: '/_config',
           dataType: 'json',
           success: function (response) {
             let lang_cookie = Cookies.get('sisyphus_language');
             $.each(response['translations'], (key, value)=> {
                 $('#' + key).text(value[lang_cookie])
             })
-            console.log(lang_cookie)
+            console.log(page)
             let page_title = response['pages'][page]['title'][lang_cookie]
             console.log(page_title)
             $('#page_title').text(page_title);

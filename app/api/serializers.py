@@ -83,10 +83,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
         model = Invoices
         fields = '__all__'
 
-class PaymentConditionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PaymentConditions
-        fields = '__all__'
+
 
 class ProjectsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -125,4 +122,19 @@ class TaskSerializer(serializers.ModelSerializer):
 class UnitSerializer(serializers.ModelSerializer):
     class Meta:
         model = Units
+        fields = '__all__'
+
+class VATSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vat
+        fields = '__all__'
+
+class SalesStateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalesState
+        fields = '__all__'
+
+class InvoiceTermsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InvoiceTerms
         fields = '__all__'

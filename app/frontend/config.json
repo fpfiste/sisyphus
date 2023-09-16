@@ -32,9 +32,6 @@
         "scheduler_asset_label": {"en": "Assets" ,"ch":  "Ressourcen"},
         "scheduler_subcontractor_label": {"en": "Subcontractor" ,"ch":  "Subunternehmer"},
         "scheduler_open_task_label": {"en": "Open Tasks" ,"ch":  "Offene Aufträge"}
-
-
-
   },
 
 
@@ -445,7 +442,9 @@
           },
           "display_type": "checkbox",
           "input_type": "select",
+          "disabled": "disabled",
           "options": {"0": {"en": "No", "ch": "Nein"}, "1": {"en":  "Yes", "ch":  "Ja"}},
+
           "min": "",
           "max": "",
           "pk_field":"",
@@ -458,6 +457,7 @@
           },
           "display_type": "checkbox",
           "input_type": "select",
+          "disabled": "disabled",
           "options": {"0": {"en": "No", "ch": "Nein"}, "1": {"en":  "Yes", "ch":  "Ja"}},
           "min": "",
           "max": "",
@@ -471,6 +471,7 @@
           },
           "display_type": "checkbox",
           "input_type": "select",
+          "disabled": "disabled",
            "options": {"0": {"en": "No", "ch": "Nein"}, "1": {"en":  "Yes", "ch":  "Ja"}},
           "min": "",
           "max": "",
@@ -862,13 +863,37 @@
           "pk_field": "",
           "display_field": ""
         },
-        "sale_timestamp": {
+        "sale_date": {
           "title": {
             "en": "Timestamp",
             "ch": "Zeitpunkt"
           },
           "display_type": "text",
-          "input_type": "datetime-local",
+          "input_type": "date",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "sale_time": {
+          "title": {
+            "en": "Timestamp",
+            "ch": "Zeitpunkt"
+          },
+          "display_type": "text",
+          "input_type": "time",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "sale_description": {
+          "title": {
+            "en": "Description",
+            "ch": "Beschreibung"
+          },
+          "display_type": "text",
+          "input_type": "text",
           "min": "",
           "max": "",
           "pk_field": "",
@@ -926,6 +951,19 @@
           "pk_field": "",
           "display_field": ""
         },
+        "fk_sales_status": {
+          "title": {
+            "en": "Sales status",
+            "ch": "Verkaufsstatus"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/sales-state",
+          "min": "",
+          "max": "",
+          "pk_field": "id_sales_state",
+          "display_field": "sales_state"
+      },
         "fk_unit": {
           "title": {
             "en": "Unit",
@@ -951,6 +989,32 @@
           "max": "",
           "pk_field": "id_invoice",
           "display_field": "invoicde_date"
+        },
+        "fk_currency": {
+          "title": {
+            "en": "Currency",
+            "ch": "Währung"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/currencies",
+          "min": "",
+          "max": "",
+          "pk_field": "id_currency",
+          "display_field": "currency_abbreviation"
+        },
+        "fk_vat": {
+          "title": {
+            "en": "VAT",
+            "ch": "MWST"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/vat",
+          "min": "",
+          "max": "",
+          "pk_field": "id_vat",
+          "display_field": "vat_title"
         }
       }
 
@@ -971,7 +1035,7 @@
           },
           "display_type": "fk_field",
           "input_type": "select",
-          "api_endpoint": "/api/task-template",
+          "api_endpoint": "/api/templates",
           "min": "",
           "max": "",
           "pk_field": "id_task_template",
@@ -1068,6 +1132,19 @@
           "pk_field": "",
           "display_field": ""
         },
+        "fk_unit": {
+          "title": {
+            "en": "Unit",
+            "ch": "Einheit"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/units",
+          "min": "",
+          "max": "",
+          "pk_field": "id_unit",
+          "display_field": "unit"
+        },
         "unit_price": {
           "title": {
             "en": "Price per unit",
@@ -1080,6 +1157,32 @@
           "max": "9999999999",
           "pk_field": "",
           "display_field": ""
+        },
+        "fk_currency": {
+          "title": {
+            "en": "Currency",
+            "ch": "Währung"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/currencies",
+          "min": "",
+          "max": "",
+          "pk_field": "id_currency",
+          "display_field": "currency_abbreviation"
+        },
+        "fk_vat": {
+          "title": {
+            "en": "VAT",
+            "ch": "MWST"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/vat",
+          "min": "",
+          "max": "",
+          "pk_field": "id_vat",
+          "display_field": "vat_title"
         },
         "task_description": {
           "title": {
@@ -1119,19 +1222,6 @@
           "max": "",
           "pk_field": "id_invoice",
           "display_field": "invoicde_date"
-        },
-        "fk_unit": {
-          "title": {
-            "en": "Unit",
-            "ch": "Einheit"
-          },
-          "display_type": "fk_field",
-          "input_type": "select",
-          "api_endpoint": "/api/units",
-          "min": "",
-          "max": "",
-          "pk_field": "id_unit",
-          "display_field": "unit"
         },
         "internal_info": {
           "title": {
@@ -1315,32 +1405,6 @@
           "max": "",
           "pk_field": "id_unit",
           "display_field": "unit"
-        }
-      }
-
-
-
-},
-    "/terms": {
-      "title": {"en": "Payment Conditions", "ch": "Zahlungsbedingungen"},
-      "ajax_url" : "/api/paymentconditions/",
-      "js": "/static/js/pages/terms.js",
-      "template" : "frontend/pages/table.html",
-      "table_id" : "tasks_table",
-      "pk" : "id_payment_condition",
-      "fields": {
-        "id_payment_condition": {
-          "title": {
-            "en": "Condition ID",
-            "ch": "Bedingungs Nr."
-          },
-          "display_type": "text",
-          "input_type": "number",
-          "api_endpoint": "",
-          "min": "0",
-          "max": "999999999",
-          "pk_field": "",
-          "display_field": ""
         },
         "fk_currency": {
           "title": {
@@ -1353,35 +1417,21 @@
           "min": "",
           "max": "",
           "pk_field": "id_currency",
-          "display_field": "currency"
+          "display_field": "currency_abbreviation"
         },
-        "vat": {
+        "fk_vat": {
           "title": {
             "en": "VAT",
             "ch": "MWST"
           },
-          "display_type": "text",
-          "input_type": "number",
-          "api_endpoint": "",
-          "min": "0",
-          "max": "99999999",
-          "pk_field": "",
-          "display_field": ""
-        },
-        "due_days": {
-          "title": {
-            "en": "Due (Days)",
-            "ch": "Zahluzngsfrist (Tage)"
-          },
-          "display_type": "text",
-          "input_type": "number",
-          "api_endpoint": "",
-          "min": "0",
-          "max": "9999999999",
-          "pk_field": "",
-          "display_field": ""
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/vat",
+          "min": "",
+          "max": "",
+          "pk_field": "id_vat",
+          "display_field": "vat_title"
         }
-
       }
 
 
@@ -1461,6 +1511,176 @@
           "display_field": ""
         }
 
+      }
+
+
+
+},
+    "/billing": {
+      "title": {"en": "Billing", "ch": "Verrechnung"},
+      "ajax_url" : "/api/tasks/?fk_task_state=4",
+      "js": "/static/js/pages/billing.js",
+      "template" : "frontend/pages/billing.html",
+      "table_id" : "tasks_table",
+      "pk" : "id_invoice",
+      "fields": {
+        "select_position": {
+          "title": {
+            "en": "Choose",
+            "ch": "Wählen"
+          },
+          "display_type": "action_checkbox",
+          "input_type": "select",
+          "disabled": "",
+          "options": {"0": {"en": "No", "ch": "Nein"}, "1": {"en":  "Yes", "ch":  "Ja"}},
+          "min": "",
+          "max": "",
+          "pk_field":"",
+          "display_field": ""
+        },
+        "fk_project": {
+          "title": {
+            "en": "Project",
+            "ch": "Projekt"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/projects",
+          "min": "",
+          "max": "",
+          "pk_field": "id_project",
+          "display_field": "project_name"
+        },
+        "fk_vat": {
+          "title": {
+            "en": "VAT",
+            "ch": "MWST"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/vat",
+          "min": "",
+          "max": "",
+          "pk_field": "id_vat",
+          "display_field": "vat_title"
+        },
+        "fk_currency": {
+          "title": {
+            "en": "Currency",
+            "ch": "Währung"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/currencies",
+          "min": "",
+          "max": "",
+          "pk_field": "id_currency",
+          "display_field": "currency_abbreviation"
+        },
+        "fk_invoice_terms": {
+          "title": {
+            "en": "Terms",
+            "ch": "Bedingungen"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/invoiceterms",
+          "min": "",
+          "max": "",
+          "pk_field": "id_invoice_term",
+          "display_field": "term_title"
+        },
+        "invoice_text": {
+          "title": {
+            "en": "Invoice Text",
+            "ch": "Rechnungstext"
+          },
+          "display_type": "text",
+          "input_type": "text",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "id_task": {
+          "title": {
+            "en": "Task ID",
+            "ch": "Auftrags NR"
+          },
+          "display_type": "text",
+          "input_type": "text",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "id_sale": {
+          "title": {
+            "en": "Sale ID",
+            "ch": "Verkaufs Nr."
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "sale_amount": {
+          "title": {
+            "en": "Amount",
+            "ch": "Menge"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "9999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "sale_unit_price": {
+          "title": {
+            "en": "Unit price",
+            "ch": "Stückpreis"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "amount": {
+        "title": {
+          "en": "Amount",
+          "ch": "Menge"
+        },
+        "display_type": "text",
+        "input_type": "number",
+        "api_endpoint": "",
+        "min": "0",
+        "max": "99999999",
+        "pk_field": "",
+        "display_field": ""
+      },
+       "unit_price": {
+        "title": {
+          "en": "Price per unit",
+          "ch": "Preis pro Einheit"
+        },
+        "display_type": "text",
+        "input_type": "number",
+        "api_endpoint": "",
+        "min": "0",
+        "max": "9999999999",
+        "pk_field": "",
+        "display_field": ""
+      }
       }
 
 

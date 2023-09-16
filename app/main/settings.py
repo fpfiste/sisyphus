@@ -28,6 +28,9 @@ DEBUG = int(os.environ.get("DEBUG", default=1))
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(' ')
 # Application definition
 
+
+CSRF_TRUSTED_ORIGINS = ["http://0.0.0.0:1337"]
+
 INSTALLED_APPS = [
 
     'django.contrib.admin',
@@ -39,15 +42,9 @@ INSTALLED_APPS = [
     'frontend.apps.FrontendConfig',
     'api.apps.ApiConfig',
     'rest_framework',
-    'rest_framework.authtoken',
-    'crispy_forms',
-    'crispy_bootstrap4',
 
 ]
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
-BOOTSTRAP5 = {
-    'include_jquery': True,
-}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -122,7 +119,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = ('Europe/Zurich')
 
 USE_I18N = True
 
@@ -132,8 +129,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 

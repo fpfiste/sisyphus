@@ -1,0 +1,59 @@
+{% extends 'frontend/base.html' %}
+
+{% block title%}{{page_config.title}}{% endblock %}
+
+{% block content %}
+
+
+				<h1 class="h3 mb-3" id="page_title"></h1>
+
+
+                <div class="card" style="height:100%;">
+
+                    <div class="card-body" style="height:95%;">
+                        <div class="row" style="max-height: 80vh;">
+                            <div class="col-3" style="height:100%;">
+                                <div class="card-header" style="height:5%">
+                                         Invoice
+                                     </div>
+                                <div class="card-body" style="height:95%">
+                                    <div id="form_container" style="height:95%"></div>
+                                </div>
+						    </div>
+                            <div class="col-9" style="height:100%;">
+                                 <div class="row" style="max-height: 50%;">
+                                     <div class="card-header" style="height:10%">
+                                         Sales
+                                     </div>
+                                     <div class="card-body" style="height:95%">
+                                        <div id="sales_billing" style="height:90%;"></div>
+                                     </div>
+                                 </div>
+                                <hr />
+                                <div class="row" style="max-height: 50%;">
+                                    <div class="card-header" style="height:10%">
+                                         Tasks
+                                     </div>
+                                     <div id="task_billing" style="height:90%;"></div>
+                                </div>
+						    </div>
+                        </div>
+                        <div class="card-footer" style="height:5%;">
+                            <button type="button" id="btn_reset" class="btn btn-secondary"></button>
+                            <button type="button" id="btn_add" class="btn btn-danger"></button>
+
+                        </div>
+
+							</div>
+
+
+
+                </div>
+
+
+
+
+
+
+
+{% endblock %}

@@ -1,8 +1,9 @@
 #!/bin/sh
 
-if [ "$DATABASE" = "postgres" ]
+if [ "$DATABASE" = "sisyphus" ]
+
 then
-    echo "Waiting for postgres..."
+    echo "Waiting for sisyphus..."
 
     while ! nc -z $SQL_HOST $SQL_PORT; do
       sleep 0.1
@@ -12,6 +13,7 @@ then
 fi
 
 python manage.py migrate
-echo "Migrations completed..."
+
 python manage.py runserver 0.0.0.0:8000
-exec "$@"
+
+

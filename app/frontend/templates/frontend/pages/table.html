@@ -11,23 +11,8 @@
                     <div class="col-3" style="height:100%;">
 							<div class="card" style="height:100%;">
 
-								<div class="card-body" style="95%;">
-									<div id="form_filter_container"></div>
-
-									      {% csrf_token %}
-									<!--
-                                              <form id="filter_form">
-												  {% for value in page_config.fields.form %}
-												  <div class="form-group">
-
-													{{value.input | safe}}
-												  </div>
-
-
-												  {% endfor %}
-
-
-												</form>-->
+								<div class="card-body" style="height:95%;">
+									<div id="form_filter_container" style="height:100%"></div>
 
 								</div>
 								<div class="card-footer" style="height:5%;">
@@ -107,6 +92,8 @@
 			  </div>
 			  <div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="btn_quit_update"></button>
+				  <button type="button" id="btn_delete" class="btn btn-danger"></button>
+				  <button type="button" id="btn_close_task" class="btn btn-danger"></button>
 				<button type="button" id="btn_save" class="btn btn-danger"></button>
 			  </div>
 			</div>

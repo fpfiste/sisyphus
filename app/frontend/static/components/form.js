@@ -114,9 +114,10 @@ class BootstrapForm{
 
 
       build(){
-        let form = '<form id="'+this.id+'" class="needs-validation" style="overflow:auto;"></div>';
+      let field = ''
+        let csrf_token = Cookies.get('csrftoken');
+        let form = '<form id="'+this.id+'" class="needs-validation" style="overflow:auto; height:100%;"></form>';
         $(this.container).append(form);
-        let field = ''
 
         let skip = this.exclude;
         let req = this.required;
@@ -135,7 +136,7 @@ class BootstrapForm{
         }
 
         $.each(this.fields,(key,value) => {
-        console.log(value)
+
             if (skip.includes(key)){
                 return;
             }
@@ -147,6 +148,8 @@ class BootstrapForm{
             if (disabled.includes(key)){
                 value.disabled = true;
 
+            } else {
+                value.disabled = false;
             }
             if (value.input_type == 'select'){
 
@@ -234,6 +237,7 @@ class BootstrapForm{
         $.ajax({
            url: url,
            type: method,
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            data:array,
            success: function(response) {
 

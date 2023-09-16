@@ -8,13 +8,15 @@ $(document).ready(function(){
 
     //*** read the config file ***//
     $.ajax({
-          url: '/static/config.json',
+          url: '/_config',
           async: false,
           dataType: 'json',
           success: function (response) {
             page_config = response['pages'][url]
+            translations = response['translations']
           }
     });
+
 
 
     // create table instance
