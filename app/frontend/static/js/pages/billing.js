@@ -151,11 +151,11 @@ $(document).ready(function(){
            data:data,
 
            success: function(response) {
-                var blob=new Blob([data]);
-                var link=document.createElement('a');
-                link.href=window.URL.createObjectURL(blob);
-                link.download="invoice.pdf";
-                link.click();
+
+                var doc = window.open(response['file_url'], '_blank');
+                location.reload();
+                doc.focus();
+
            },
            error: function(error){
             console.log(error)

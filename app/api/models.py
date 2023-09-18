@@ -176,8 +176,8 @@ class InvoiceTexts(models.Model):
 
 class Invoices(models.Model):
     id_invoice = models.AutoField(primary_key=True)
-    invoice_date = models.DateField(blank=True, null=True)
-    invoice_text = models.CharField()
+    invoice_date = models.DateField()
+    invoice_text = models.CharField(null=True, blank=True)
     fk_invoice_state = models.ForeignKey(InvoiceStates, models.DO_NOTHING, db_column='fk_invoice_state')
     fk_invoice_terms = models.ForeignKey(InvoiceTerms, models.DO_NOTHING, db_column='fk_invoice_terms')
 

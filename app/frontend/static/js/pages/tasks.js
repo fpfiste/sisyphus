@@ -128,6 +128,24 @@ $(document).ready(function(){
         update_form.submit(url, 'PUT');
     })
 
+    $('#btn_print').on('click', function() {
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = '/api/tasks/' + pk + '/pdf/'
+        $.ajax({
+           url: url,
+           type: 'GET',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           success: function(response) {
+                console.log(response)
+                window.open(response['file_url'], '_blank').focus();
+
+           },
+           error: function(error){
+            console.log(error)
+           }
+        });
+    })
+
     $('#update_modal').on('show.bs.modal', function() {
         let task_status = $('#update_form #fk_task_state').val()
         console.log(task_status)

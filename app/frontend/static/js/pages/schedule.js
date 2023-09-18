@@ -108,4 +108,23 @@ $(document).ready(function(){
          update_form.submit(url, 'DELETE');
     });
 
+    $('#btn_print').on('click', function() {
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = '/api/tasks/' + pk + '/pdf/'
+        $.ajax({
+           url: url,
+           type: 'GET',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           success: function(response) {
+                console.log(response)
+                window.open(response['file_url'], '_blank').focus();
+
+           },
+           error: function(error){
+            console.log(error)
+           }
+        });
+    })
+
+
 });

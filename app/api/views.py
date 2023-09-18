@@ -1,13 +1,15 @@
+import os
+
 from django.db.models import Q
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from api.components import InvoiceDoc
+from main import settings
 from .serializers import *
 import datetime as dt
-
+from api.components import Invoice, DeliveryNote
 
 
 
@@ -305,7 +307,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         sales = []
         tasks = []
         request.data._mutable = True
-
+        print(request)
         if 'sales[]' in request.data and len(request.data['sales[]']) > 0:
             sales = Sales.objects.filter(id_sale__in=request.data.pop('sales[]'))
         if 'tasks[]' in request.data and len(request.data['tasks[]']) > 0:
@@ -315,6 +317,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             return Response({'message':'Can not create an invoice without tasks or sales to bill.'}, status=status.HTTP_400_BAD_REQUEST)
 
         request.data['fk_invoice_state'] = 1
+        request.data['invoice_date'] = dt.date.today().strftime('%Y-%m-%d')
         serializer = InvoiceSerializer(data=request.data)
 
         if not serializer.is_valid():
@@ -334,9 +337,60 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             task.fk_invoice = serializer.instance
             task.save()
 
-        doc = InvoiceDoc(serializer.instance, tasks, sales)
-        response =  FileResponse(doc.draw(), as_attachment=True, filename="hello.pdf")
-        return response
+        invoice = serializer.instance
+        vat = Vat.objects.get(id_vat=request.data['fk_vat'])
+        currency = Currencies.objects.get(id_currency=request.data['fk_currency'])
+        terms = InvoiceTerms.objects.get(id_invoice_term=request.data['fk_invoice_terms'])
+        project = Projects.objects.get(id_project=request.data['fk_project'])
+
+
+        doc = Invoice(invoice.pk,  invoice.invoice_date, invoice.invoice_text, vat.vat, currency.currency_abbreviation, currency.currency_account_nr, terms.due_days, language='de',output_path=settings.TMP_FOLDER)
+
+
+        doc.set_logo(logo_path=settings.LOGO_PATH,
+                     logo_width=settings.LOGO_WIDTH,
+                     logo_height=settings.LOGO_HEIGHT,
+                     logo_x=settings.LOGO_X_OFFSET,
+                     logo_y=settings.LOGO_Y_OFFSET
+                     )
+
+        customer = project.fk_customer
+
+        doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
+                         customer.company_city, customer.company_country)
+
+        company_detail = settings.COMPANY
+        company_detail['agent'] = request.user
+
+        doc.set_company(**company_detail)
+
+        for task in tasks:
+            doc.add_position(
+                position_id=task.id_task,
+                date = str(task.task_date_to),
+                reference_text=task.customer_reference,
+                description=task.task_description,
+                unit=task.fk_unit.unit,
+                amount=task.amount,
+                unit_price=task.unit_price
+            )
+
+        for sale in sales:
+            doc.add_position(
+                position_id=sale.id_sale,
+                date = str(sale.sale_date),
+                reference_text=sale.customer_reference,
+                description=sale.sale_description,
+                unit=sale.fk_unit.unit,
+                amount=sale.sale_amount,
+                unit_price=sale.sale_unit_price
+            )
+        doc.draw()
+
+        url = '/static/tmp/' + os.path.basename(doc.file_name)
+
+        return Response({'file_url': url}, status=status.HTTP_200_OK)
+
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
@@ -614,8 +668,6 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
-
-
     @action(detail=False, methods=['GET'])
     def getOpenTasks(self, request):
 
@@ -654,6 +706,48 @@ class TaskViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'Task can not be closed due to missing data'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['GET'])
+    def pdf(self, request, pk):
+
+        doc = DeliveryNote('de', output_path=settings.TMP_FOLDER)
+        print(os.path.join(settings.BASE_DIR,'frontend', 'static','img', 'doc_header.jpg'))
+
+        doc.set_logo(logo_path=os.path.join(settings.BASE_DIR,'frontend','static', 'img', 'doc_header.jpg'),
+                     logo_width=settings.LOGO_WIDTH,
+                     logo_height=settings.LOGO_HEIGHT,
+                     logo_x=settings.LOGO_X_OFFSET,
+                     logo_y=settings.LOGO_Y_OFFSET
+                     )
+
+        task = Tasks.objects.get(pk=pk)
+        customer = task.fk_project.fk_customer
+
+        doc.set_customer(10, customer.company_name, customer.company_street, customer.company_zipcode, customer.company_city, customer.company_country)
+
+        company_detail = settings.COMPANY
+        company_detail['agent'] = request.user
+
+
+        doc.set_company(**company_detail)
+
+        doc.add_position(
+            task.id_task,
+            task.task_date_to,
+            task.task_time_to,
+            task.task_description,
+            task.fk_unit.unit,
+            task.amount,
+
+            task.customer_reference
+
+        )
+
+        doc.draw()
+
+        url = '/static/tmp/' + os.path.basename(doc.file_name)
+
+        return Response({'file_url': url}, status=status.HTTP_200_OK)
 
 class UnitViewSet(viewsets.ModelViewSet):
     """

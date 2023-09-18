@@ -130,8 +130,36 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'frontend', 'static')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+TMP_FOLDER = os.path.join(STATIC_ROOT, 'tmp')
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+### Document Header
+
+LOGO_PATH = os.path.join(STATIC_ROOT, 'img', 'doc_header.png')
+LOGO_WIDTH = 30
+LOGO_HEIGHT = 30
+LOGO_X_OFFSET = 130
+LOGO_Y_OFFSET = 5
+
+
+COMPANY = {
+            'name': 'Pfister Transporte AG',
+            'address' : 'Buchsistrasse 10',
+            'pcode' : '3380',
+            'city' : 'Wangen an der Aare',
+            'country' : 'CH',
+            'email' : 'info@pfister-transporte.ch',
+            'phone' : '+41 32 631 21 88',
+            'vat_number' : '07AABCS1429B1Z'
+        }

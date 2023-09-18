@@ -6,7 +6,7 @@ class Scheduler{
           this.container = container;
           this.id = id;
           this.data = data
-          this.employee_url = '/api/employees/';
+          this.employee_url = '/api/employees/?fk_sys_rec_status=1';
           this.subcontractor_url = '/api/companies?is_subcontractor=1'
           this.asset_url = '/api/assets';
           this.task_url = '/api/tasks/listday/';
