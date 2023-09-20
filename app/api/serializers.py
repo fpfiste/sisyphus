@@ -38,6 +38,13 @@ class CompanySerializer(serializers.ModelSerializer):
         model = Companies
         fields = '__all__'
 
+class CountrySerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = Countries
+        fields = '__all__'
+
 
 class CurrencySerializer(serializers.ModelSerializer):
     class Meta:

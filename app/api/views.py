@@ -1,18 +1,20 @@
 import os
+from itertools import chain
+from operator import attrgetter
 
+from django.db import transaction
 from django.db.models import Q
-from django.http import FileResponse, HttpResponse
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from main import settings
+from .components.docwriter.schedule import SchedulePDF
 from .serializers import *
 import datetime as dt
 from api.components import Invoice, DeliveryNote
 
-
-
+print()
 class AssetAbsenceCodesViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -110,29 +112,57 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
     def create(self, request):
         serializer = CompanySerializer(data=request.data)
+
         serializer.is_valid()
+
+
         if not serializer.is_valid():
             return Response({'message': 'Something is wrong with your input'}, status=status.HTTP_400_BAD_REQUEST)
 
-        self.perform_create(serializer)
+        with transaction.atomic():
+            self.perform_create(serializer)
 
-        project_data = {
-                'fk_customer' : serializer.instance.pk,
-                'project_name' : request.data['company_name'] + ' - Default',
-                'planned_start_date' : dt.datetime.now().strftime('%Y-%m-%d'),
-                'planned_end_date' : '9999-12-31'
-        }
+            project_data = {
+                    'fk_customer' : serializer.instance.pk,
+                    'project_name' : request.data['company_name'] + ' - Default',
+                    'start_date' : dt.datetime.now().strftime('%Y-%m-%d'),
+                    'end_date' : '9999-12-31',
+                    'fk_sys_rec_status' : 1
+            }
 
-        project_serializer = ProjectsSerializer(data=project_data)
+            project_serializer = ProjectsSerializer(data=project_data)
 
-        project_serializer.is_valid()
-        if not project_serializer.is_valid():
-            return Response({'message': 'Something is wrong with your input'}, status=status.HTTP_400_BAD_REQUEST)
+            project_serializer.is_valid()
+            print(project_serializer.errors)
 
-        project_serializer.save()
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+            if not project_serializer.is_valid():
+                return Response({'message': 'Something is wrong with your input'}, status=status.HTTP_400_BAD_REQUEST)
+
+            project_serializer.save()
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+class CountryViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Countries.objects.all()
+    serializer_class = CountrySerializer
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = Countries.objects.all()
+        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
+        data = queryset.filter(**params).order_by('-pk')
+        return data
 
 
 
@@ -307,7 +337,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         sales = []
         tasks = []
         request.data._mutable = True
-        print(request)
+
         if 'sales[]' in request.data and len(request.data['sales[]']) > 0:
             sales = Sales.objects.filter(id_sale__in=request.data.pop('sales[]'))
         if 'tasks[]' in request.data and len(request.data['tasks[]']) > 0:
@@ -318,34 +348,129 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
         request.data['fk_invoice_state'] = 1
         request.data['invoice_date'] = dt.date.today().strftime('%Y-%m-%d')
-        serializer = InvoiceSerializer(data=request.data)
 
-        if not serializer.is_valid():
+        with transaction.atomic():
+            serializer = InvoiceSerializer(data=request.data)
 
-            return Response({'message': 'Something is wrong with your input'},
-                            status=status.HTTP_400_BAD_REQUEST)
+            if not serializer.is_valid():
 
-        serializer.save()
+                return Response({'message': 'Something is wrong with your input'},
+                                status=status.HTTP_400_BAD_REQUEST)
 
-        for sale in sales:
-            #sale.fk_sales_status = SalesState.objects.get(id_sales_state=3)
-            sale.fk_invoice = serializer.instance
-            sale.save()
+            serializer.save()
 
-        for task in tasks:
-            #task.fk_task_state = TaskStates.objects.get(id_task_state=5)
-            task.fk_invoice = serializer.instance
-            task.save()
+            for sale in sales:
+                sale.fk_sales_status = SalesState.objects.get(id_sales_state=2)
+                sale.fk_invoice = serializer.instance
+                sale.save()
 
-        invoice = serializer.instance
-        vat = Vat.objects.get(id_vat=request.data['fk_vat'])
-        currency = Currencies.objects.get(id_currency=request.data['fk_currency'])
-        terms = InvoiceTerms.objects.get(id_invoice_term=request.data['fk_invoice_terms'])
-        project = Projects.objects.get(id_project=request.data['fk_project'])
+            for task in tasks:
+                task.fk_task_state = TaskStates.objects.get(id_task_state=5)
+                task.fk_invoice = serializer.instance
+                task.save()
+
+            invoice = serializer.instance
+            vat = Vat.objects.get(id_vat=request.data['fk_vat'])
+            currency = Currencies.objects.get(id_currency=request.data['fk_currency'])
+            terms = InvoiceTerms.objects.get(id_invoice_term=request.data['fk_invoice_terms'])
+            project = Projects.objects.get(id_project=request.data['fk_project'])
 
 
-        doc = Invoice(invoice.pk,  invoice.invoice_date, invoice.invoice_text, vat.vat, currency.currency_abbreviation, currency.currency_account_nr, terms.due_days, language='de',output_path=settings.TMP_FOLDER)
+            doc = Invoice(invoice.pk,  invoice.invoice_date, invoice.invoice_text, vat.vat, currency.currency_abbreviation, currency.currency_account_nr, terms.due_days, language='de',output_path=settings.TMP_FOLDER)
 
+
+            doc.set_logo(logo_path=settings.LOGO_PATH,
+                         logo_width=settings.LOGO_WIDTH,
+                         logo_height=settings.LOGO_HEIGHT,
+                         logo_x=settings.LOGO_X_OFFSET,
+                         logo_y=settings.LOGO_Y_OFFSET
+                         )
+
+            customer = project.fk_customer
+
+            doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
+                             customer.company_city, customer.fk_country.country_code)
+
+            company_detail = settings.COMPANY
+            company_detail['agent'] = request.user
+
+            doc.set_company(**company_detail)
+
+            for task in tasks:
+                doc.add_position(
+                    position_id=task.id_task,
+                    date = str(task.task_date_to),
+                    reference_text=task.customer_reference,
+                    description=task.task_description,
+                    unit=task.fk_unit.unit,
+                    amount=task.amount,
+                    unit_price=task.unit_price
+                )
+
+            for sale in sales:
+                doc.add_position(
+                    position_id=sale.id_sale,
+                    date = str(sale.sale_date),
+                    reference_text=sale.sale_reference,
+                    description=sale.sale_description,
+                    unit=sale.fk_unit.unit,
+                    amount=sale.sale_amount,
+                    unit_price=sale.sale_unit_price
+                )
+            doc.draw()
+
+            url = '/static/tmp/' + os.path.basename(doc.file_name)
+
+            return Response({'file_url': url}, status=status.HTTP_200_OK)
+
+    def destroy(self, request, pk):
+        request.data._mutable = True
+
+        print(request.data)
+
+        request.data['fk_sales_status'] = "-1"
+        instance = Invoices.objects.get(id_invoice=pk)
+
+        if instance.fk_invoice_state.id_invoice_state >= 2:
+            return Response({'message': 'Invoice was already booked'}, status=status.HTTP_403_FORBIDDEN)
+
+        with transaction.atomic():
+            instance.fk_invoice_state = InvoiceStates.objects.get(id_invoice_state=-1)
+            instance.save()
+
+            serializer = self.get_serializer(instance)
+
+            Tasks.objects.filter(fk_invoice=pk).update(fk_invoice=None, fk_task_state=3)
+            Sales.objects.filter(fk_invoice=pk).update(fk_invoice=None, fk_sales_status=1)
+
+
+
+
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['GET'])
+    def pdf(self, request, pk):
+
+        invoice = Invoices.objects.get(id_invoice=pk)
+        tasks = Tasks.objects.filter(fk_invoice=invoice)
+        sales = Sales.objects.filter(fk_invoice=invoice)
+
+        positions = list(chain(tasks, sales))
+
+        vat = positions[0].fk_vat
+        currency = positions[0].fk_currency
+        terms = invoice.fk_invoice_terms
+        project = positions[0].fk_project
+
+        doc = Invoice(invoice.pk,
+                      invoice.invoice_date,
+                      invoice.invoice_text,
+                      vat.vat,
+                      currency.currency_abbreviation,
+                      currency.currency_account_nr,
+                      terms.due_days,
+                      language='de',
+                      output_path=settings.TMP_FOLDER)
 
         doc.set_logo(logo_path=settings.LOGO_PATH,
                      logo_width=settings.LOGO_WIDTH,
@@ -357,7 +482,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         customer = project.fk_customer
 
         doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
-                         customer.company_city, customer.company_country)
+                         customer.company_city, customer.fk_country.country_code)
 
         company_detail = settings.COMPANY
         company_detail['agent'] = request.user
@@ -367,7 +492,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         for task in tasks:
             doc.add_position(
                 position_id=task.id_task,
-                date = str(task.task_date_to),
+                date=str(task.task_date_to),
                 reference_text=task.customer_reference,
                 description=task.task_description,
                 unit=task.fk_unit.unit,
@@ -378,7 +503,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         for sale in sales:
             doc.add_position(
                 position_id=sale.id_sale,
-                date = str(sale.sale_date),
+                date=str(sale.sale_date),
                 reference_text=sale.customer_reference,
                 description=sale.sale_description,
                 unit=sale.fk_unit.unit,
@@ -463,6 +588,29 @@ class SalesViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    def destroy(self, request, pk):
+        request.data._mutable = True
+
+        print(request.data)
+
+
+
+        request.data['fk_sales_status'] = "-1"
+        instance = Sales.objects.get(id_sale = pk)
+
+
+        if instance.fk_sales_status.id_sales_state >= 2:
+            return Response({'message': 'Sale was already billed'}, status=status.HTTP_403_FORBIDDEN)
+
+        instance.fk_sales_status = SalesState.objects.get(id_sales_state=-1)
+        instance.save()
+
+        serializer = self.get_serializer(instance)
+
+
+
+        return Response(serializer.data)
+
     @action(detail=True, methods=['PUT'])
     def close(self, request,pk):
         sale = Sales.objects.get(id_sale=pk)
@@ -483,6 +631,47 @@ class SalesViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response({'message': 'Sale can not be closed due to missing data'}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['GET'])
+    def pdf(self, request, pk):
+
+        doc = DeliveryNote('de', output_path=settings.TMP_FOLDER)
+
+        doc.set_logo(logo_path=settings.LOGO_PATH,
+                     logo_width=settings.LOGO_WIDTH,
+                     logo_height=settings.LOGO_HEIGHT,
+                     logo_x=settings.LOGO_X_OFFSET,
+                     logo_y=settings.LOGO_Y_OFFSET
+                     )
+
+        sale = Sales.objects.get(pk=pk)
+        customer = sale.fk_project.fk_customer
+
+        doc.set_customer(10, customer.company_name, customer.company_street, customer.company_zipcode, customer.company_city, customer.fk_country.country_code)
+
+        company_detail = settings.COMPANY
+        company_detail['agent'] = request.user
+
+
+        doc.set_company(**company_detail)
+
+        doc.add_position(
+            sale.id_sale,
+            sale.sale_date,
+            sale.sale_time,
+            sale.sale_description,
+            sale.fk_unit.unit,
+            sale.sale_amount,
+
+            sale.sale_reference
+
+        )
+
+        doc.draw()
+
+        url = '/static/tmp/' + os.path.basename(doc.file_name)
+
+        return Response({'file_url': url}, status=status.HTTP_200_OK)
 
 class SysRecStateViewSet(viewsets.ModelViewSet):
     """
@@ -515,10 +704,22 @@ class TaskStateViewSet(viewsets.ModelViewSet):
         Optionally restricts the returned purchases to a given user,
         by filtering against a `username` query parameter in the URL.
         """
+
+        planned_tasks = Tasks.objects.filter(fk_task_state = 2)
+        timestamp = dt.datetime.now()
+
+        for i in planned_tasks:
+            task_ts = dt.datetime.combine(i.task_date_to, i.task_time_to)
+
+            if task_ts < timestamp:
+                i.fk_task_state = TaskStates.objects.get(id_task_state=3)
+
+
         queryset = TaskStates.objects.all()
         params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
         data = queryset.filter(**params).order_by('-pk')
         return data
+
 
 
 
@@ -548,15 +749,36 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, pk):
         task = Tasks.objects.get(id_task=pk)
-        serializer = TaskSerializer(instance=task)
 
+        if task.task_date_to != None and task.task_time_to != None and task.fk_task_state.id_task_state == 2:
+            ts_task = dt.datetime.combine(task.task_date_to, task.task_time_to)
+            ts_now = dt.datetime.now()
+
+            if ts_task < ts_now:
+                task.fk_task_state = TaskStates.objects.get(id_task_state = 3)
+                task.save()
+        serializer = TaskSerializer(instance=task)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 
     def get_queryset(self):
         """
         Optionally restricts the returned purchases to a given user,
         by filtering against a `username` query parameter in the URL.
         """
+
+        tasks = Tasks.objects.filter(fk_task_state__id_task_state=2)
+
+        for task in tasks:
+            if task.task_date_to != None and task.task_time_to != None and task.fk_task_state.id_task_state == 2:
+                ts_task = dt.datetime.combine(task.task_date_to, task.task_time_to)
+                ts_now = dt.datetime.now()
+
+                if ts_task < ts_now:
+                    task.fk_task_state = TaskStates.objects.get(id_task_state=3)
+                    task.save()
+
         queryset = Tasks.objects.all()
 
         params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken' and key != 'invoice_text'])
@@ -574,7 +796,27 @@ class TaskViewSet(viewsets.ModelViewSet):
     def create(self, request):
 
         request.data._mutable = True
-        request.data['fk_task_state'] = "1"
+
+        date_from = request.data.get('task_date_from')
+        date_to = request.data.get('task_date_to')
+        time_from = request.data.get('task_time_from')
+        time_to = request.data.get('task_time_to')
+        employee = request.data.get('fk_employee_1')
+        state = request.data.get('fk_task_state')
+
+
+
+        if (date_from != '') and (date_to != '') and (time_from != '') and (time_to != '') and (employee != ''):
+            request.data['fk_task_state'] = "2"
+
+            end_ts = dt.datetime.strptime(date_to + ' ' + time_to[:5], '%Y-%m-%d %H:%M')
+            current_ts = dt.datetime.now()
+
+            if end_ts < current_ts:
+
+                request.data['fk_task_state'] = "3"
+        else:
+            request.data['fk_task_state'] = "1"
 
 
         serializer = self.get_serializer(data=request.data)
@@ -631,18 +873,23 @@ class TaskViewSet(viewsets.ModelViewSet):
     def destroy(self, request, pk):
         request.data._mutable = True
 
+        print(request.data)
+
+
 
         request.data['fk_task_state'] = "-1"
-        instance = self.get_object()
+        instance = Tasks.objects.get(id_task = pk)
+
 
         if instance.fk_task_state_id >= 4:
             return Response({'message': 'Task already billed'}, status=status.HTTP_403_FORBIDDEN)
 
-        serializer = self.get_serializer(instance, data=request.data)
+        instance.fk_task_state = TaskStates.objects.get(id_task_state=-1)
+        instance.save()
 
-        serializer.is_valid()
+        serializer = self.get_serializer(instance)
 
-        self.perform_update(serializer)
+
 
         return Response(serializer.data)
 
@@ -711,9 +958,8 @@ class TaskViewSet(viewsets.ModelViewSet):
     def pdf(self, request, pk):
 
         doc = DeliveryNote('de', output_path=settings.TMP_FOLDER)
-        print(os.path.join(settings.BASE_DIR,'frontend', 'static','img', 'doc_header.jpg'))
 
-        doc.set_logo(logo_path=os.path.join(settings.BASE_DIR,'frontend','static', 'img', 'doc_header.jpg'),
+        doc.set_logo(logo_path=settings.LOGO_PATH,
                      logo_width=settings.LOGO_WIDTH,
                      logo_height=settings.LOGO_HEIGHT,
                      logo_x=settings.LOGO_X_OFFSET,
@@ -723,7 +969,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         task = Tasks.objects.get(pk=pk)
         customer = task.fk_project.fk_customer
 
-        doc.set_customer(10, customer.company_name, customer.company_street, customer.company_zipcode, customer.company_city, customer.company_country)
+        doc.set_customer(10, customer.company_name, customer.company_street, customer.company_zipcode, customer.company_city, customer.fk_country.country_code)
 
         company_detail = settings.COMPANY
         company_detail['agent'] = request.user
@@ -745,6 +991,54 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         doc.draw()
 
+        url = '/static/tmp/' + os.path.basename(doc.file_name)
+
+        return Response({'file_url': url}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'])
+    def printSchedule(self, request):
+        date = request.query_params.get('date')
+
+        if date == None:
+            return Response({'message': 'No date was specified'}, status=status.HTTP_400_BAD_REQUEST)
+
+        tasks = Tasks.objects.filter(
+            Q(task_date_from=date) |
+            Q(task_date_to=date) |
+            Q(task_date_from__lt=date, task_date_to__gt=date)
+
+        )
+
+        tasks = tasks.filter(fk_employee_1__isnull=False, task_time_from__isnull=False,
+                             task_time_to__isnull=False).order_by('task_date_from', 'task_time_from')
+
+        doc = SchedulePDF(date, 'ch', output_path=settings.TMP_FOLDER)
+
+        for task in tasks:
+
+            if task.fk_employee_1 != None:
+                doc.add_employee(task.fk_employee_1.id_employee, task.fk_employee_1.employee_internal_alias)
+            if task.fk_employee_2 != None:
+                doc.add_employee(task.fk_employee_2.id_employee, task.fk_employee_2.employee_internal_alias)
+            if task.fk_subcontractor != None:
+                doc.add_subcontractor(task.fk_subcontractor.id_subcontractor, task.fk_subcontractor.company_internal_alias)
+
+            doc.add_task(
+                task.id_task,
+                task.task_description,
+                task.task_date_from,
+                task.task_time_from,
+                task.task_date_to,
+                task.task_time_to,
+                task.fk_employee_1.id_employee if task.fk_employee_1 != None else None,
+                task.fk_employee_2.id_employee if task.fk_employee_2 != None else None,
+                task.fk_asset_1.id_asset if task.fk_asset_1 != None else None,
+                task.fk_asset_2.id_asset if task.fk_asset_1 != None else None,
+                task.fk_subcontractor.id_company if task.fk_subcontractor != None else None
+            )
+
+
+        doc.draw()
         url = '/static/tmp/' + os.path.basename(doc.file_name)
 
         return Response({'file_url': url}, status=status.HTTP_200_OK)

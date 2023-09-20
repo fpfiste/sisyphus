@@ -18,7 +18,8 @@ class Scheduler{
           this.asset_label= asset_label
           this.subcontractor_label = subcontractor_label
           this.open_task_label = open_task_label
-
+          this.show_subus = (Cookies.get('show_subus') ==='true') ? true : false;
+          console.log(this.show_subus)
           this.build_grid()
       }
 
@@ -58,8 +59,27 @@ class Scheduler{
 
           let header = '<thead style="position:sticky; top:0;">'
           let input_row =  '<tr id="scheduler_input_row">' +
-                                '<th><input type="date" id="scheduler_date_input" class="scheduler-first-column" value="'+this.schedule_date+'"/></th>'+
-                                '<th class="scheduler-second-column"><button><i class="fa-solid fa-chevron-left"></i></button><button><i class="fa-solid fa-chevron-right"></i></button></th>'+
+                                '<th colspan ="2">'+
+                                    '<div class="row">' +
+                                        '<div class="col">' +
+                                            '<input type="date"  id="scheduler_date_input" class="scheduler-first-column" value="'+this.schedule_date+'"/>'+
+                                        '</div>' +
+                                        '<div class="col">' +
+                                            '<button  id="scheduler_prev_date"><i class="fa-solid fa-chevron-left"></i></button>'+
+                                            '<button  id="scheduler_next_date"><i class="fa-solid fa-chevron-right"></i></button>' +
+                                         '</div>' +
+                                    '</div>' +
+                                    '<div class="row">' +
+                                        '<div class="col">' +
+                                            '<div class="form-check">' +
+                                                '<input class="form-check-input" type="checkbox" value="" id="show_subus"'+ ((this.show_subus === true) ? 'checked' : '')+ '>' +
+                                                '<label class="form-check-label" for="show_subus">' + this.subcontractor_label + '</label>' +
+                                            '</div>' +
+                                        '</div>' +
+                                    '</div>' +
+                                '</th>'+
+                                '<th colspan="100"></th>'+
+
                            '</tr>'
 
 
@@ -107,8 +127,10 @@ class Scheduler{
             body += row;
         })
 
-        body += '<tr><th colspan="2" id="scheduler_subcontractor_label">'+this.subcontractor_label+'</th><th colspan="100"></th></tr>'
-        $.each(this.subcontractor_data, (key,value) => {
+
+        if (this.show_subus) {
+            body += '<tr id="scheduler_sub_contractor_header"><th colspan="2" id="scheduler_subcontractor_label">'+this.subcontractor_label+'</th><th colspan="100"></th></tr>'
+          $.each(this.subcontractor_data, (key,value) => {
             let row = '<tr id="s'+value.id_company+'">' +
                             '<td class="scheduler-first-column">'+value.company_internal_alias+'</td> '+
                             '<td id="resource_lane_s'+value.id_company+'">'+
@@ -120,6 +142,10 @@ class Scheduler{
                         '</tr>'
             body += row;
         })
+
+        }
+
+
 
 
         body += '</tbody>'
@@ -169,9 +195,10 @@ class Scheduler{
         }
 
         let left_offset_h = (startDate - this.scheduleDateStart) / 1000 / 60 / 60;
-
+        let lane_height = $('#task_lane_'+row_id).height()
+        console.log(lane_height)
         let left_offset_px = width_of_time_table / 24 * left_offset_h;
-        let task_span = '<li><span class="task scheduled_task badge badge-primary" style = "box-sizing: border-box; margin-left:' + left_offset_px + 'px; width:' + event_box_width + 'px" data-row-pk="'+task_id+'">'+ task_title +'</span></li>'
+        let task_span = '<li><span class="task scheduled_task badge badge-primary" style = "box-sizing: border-box; margin-left:' + left_offset_px + 'px; width:' + event_box_width + 'px;" data-row-pk="'+task_id+'">'+ task_title +'</span></li>'
         let task_lane = $('#task_lane_'+row_id + ' ul').append(task_span);
 
         asset_1 = this.get_asset(asset_1);
@@ -261,9 +288,32 @@ class Scheduler{
                     })
     } );
 
+            $('#show_subus').on('change', ()=> {
+                console.log(this.show_subus)
+                this.show_subus = !this.show_subus;
+                Cookies.set('show_subus', this.show_subus);
+                this.build();
+            })
 
+            $('#scheduler_prev_date').on('click', ()=> {
+                let d = new Date(this.schedule_date)
+                console.log(d.toISOString())
+                d.setDate(d.getDate() - 1)
+                let date = d.toISOString().split('T')[0];
+                this.schedule_date = date;
+                Cookies.set('scheduler_date', date);
+                this.build();
+            })
 
-
+            $('#scheduler_next_date').on('click', ()=> {
+                let d = new Date(this.schedule_date)
+                console.log(d.toISOString())
+                d.setDate(d.getDate() + 1)
+                let date = d.toISOString().split('T')[0];
+                this.schedule_date = date;
+                Cookies.set('scheduler_date', date);
+                this.build();
+            })
 
       }
 

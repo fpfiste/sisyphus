@@ -4,7 +4,7 @@ $(document).ready(function(){
     let url = '/templates'
     let lang_cookie = Cookies.get('sisyphus_language');
 
-
+    $('#btn_print, #btn_close_task').remove();
 
     //*** read the config file ***//
     $.ajax({
@@ -101,6 +101,10 @@ $(document).ready(function(){
         update_form.submit(url, 'PUT');
     });
 
-
+    $( "#btn_delete" ).on( "click", function() {
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = page_config['ajax_url'] +pk + '/'
+        update_form.submit(url, 'DELETE');
+    });
 
 });

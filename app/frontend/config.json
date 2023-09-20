@@ -22,6 +22,8 @@
         "btn_reset" : {"en": "Reset", "ch": "Zurücksetzen"},
         "btn_print" : {"en": "Print", "ch": "Drucken"},
         "btn_filter" : {"en": "Fitler", "ch": "Filtern"},
+        "btn_print_schedule" : {"en": "Export Schedule", "ch": "Kalender drucken"},
+        "btn_print_deliverynotes" : {"en": "Export Delivery Notes", "ch": "Lieferscheine drucken"},
         "btn_quit_create" : {"en": "Quit", "ch": "Verlassen"},
         "btn_quit_update" : {"en": "Quit", "ch": "Verlassen"},
         "btn_save" : {"en": "Save", "ch": "Speichern"},
@@ -397,18 +399,18 @@
           "pk_field": "",
           "display_field": ""
         },
-        "company_country": {
+        "fk_country": {
           "title": {
             "en": "Country",
             "ch": "Land"
           },
-          "display_type": "text",
-          "input_type": "text",
-          "api_endpoint": "",
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/countries",
           "min": "",
           "max": "",
-          "pk_field": "",
-          "display_field": ""
+          "pk_field": "id_country",
+          "display_field": "country_code"
         },
         "fk_sys_rec_status": {
           "title": {
@@ -530,7 +532,7 @@
           "pk_field": "id_company",
           "display_field": "company_internal_alias"
         },
-        "planned_start_date": {
+        "start_date": {
           "title": {
             "en": "Start (planned)",
             "ch": "Start (geplant)"
@@ -543,7 +545,7 @@
           "pk_field": "",
           "display_field": ""
         },
-        "planned_end_date": {
+        "end_date": {
           "title": {
             "en": "End (planned)",
             "ch": "Ende (geplant)"
@@ -556,33 +558,19 @@
           "pk_field": "",
           "display_field": ""
         },
-        "effective_start_date": {
+        "fk_sys_rec_status": {
           "title": {
-            "en": "Start (effective)",
-            "ch": "Start (effektiv)"
+            "en": "Status",
+            "ch": "Status"
           },
-          "display_type": "text",
-          "input_type": "date",
-          "api_endpoint": "",
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/sysrecstate",
           "min": "",
           "max": "",
-          "pk_field": "",
-          "display_field": ""
-        },
-        "effective_end_date": {
-          "title": {
-            "en": "End (effective)",
-            "ch": "Ende (effektiv)"
-          },
-          "display_type": "text",
-          "input_type": "date",
-          "api_endpoint": "",
-          "min": "",
-          "max": "",
-          "pk_field": "",
-          "display_field": ""
+          "pk_field": "id_sys_rec_status",
+          "display_field": "sys_rec_status"
         }
-
       }
 
 
@@ -672,6 +660,19 @@
           "max": "",
           "pk_field": "",
           "display_field": ""
+        },
+        "fk_country": {
+          "title": {
+            "en": "Country",
+            "ch": "Land"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/countries",
+          "min": "",
+          "max": "",
+          "pk_field": "id_country",
+          "display_field": "country_code"
         },
         "employee_email": {
           "title": {
@@ -1472,18 +1473,18 @@
           "pk_field": "id_invoice_state",
           "display_field": "invoice_state"
         },
-        "fk_payment_condition": {
+        "fk_invoice_terms": {
           "title": {
             "en": "Payment-Condition",
             "ch": "Zahlungsbedingungen"
           },
           "display_type": "fk_field",
           "input_type": "select",
-          "api_endpoint": "/api/paymentconditions",
+          "api_endpoint": "/api/invoiceterms",
           "min": "",
           "max": "",
-          "pk_field": "id_payment_condition",
-          "display_field": "id_payment_condition"
+          "pk_field": "id_invoice_term",
+          "display_field": "term_title"
         },
         "invoice_date": {
           "title": {

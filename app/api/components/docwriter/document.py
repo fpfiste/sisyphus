@@ -20,6 +20,7 @@ class Document():
         self.company = None
         self.positions = []
         self.file_name = os.path.join(self.output_path, f'{self.document_type}-{self.document_id}.pdf')
+        self.page_counter = 0
 
 
     def set_logo(self, logo_path:str='',  logo_width=550, logo_height=120, logo_x=0, logo_y=0):
@@ -86,11 +87,13 @@ class Document():
 
 
 
-        c.setFont("Helvetica", 11)
+        c.setFont("Helvetica", 6)
 
-        c.drawString(12 * cm, 6 * cm, self.customer['name'])
-        c.drawString(12 * cm, 6.5 * cm, self.customer['address'])
-        c.drawString(12 * cm, 7 * cm, f'{self.customer["pcode"]} {self.customer["city"]}')
+        c.drawString(13 * cm, 6 * cm, f'{self.company["name"]}, {self.company["address"]}, {self.company["pcode"]}-{self.company["city"]}')
+        c.setFont("Helvetica", 11)
+        c.drawString(13 * cm, 6.5 * cm, self.customer['name'])
+        c.drawString(13 * cm, 7 * cm, self.customer['address'])
+        c.drawString(13 * cm, 7.5 * cm, f'{self.customer["pcode"]} {self.customer["city"]}')
 
         c.setFont("Helvetica", 8)
         c.drawString(2 * cm, 6 * cm,  self.company['name'])

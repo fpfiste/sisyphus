@@ -132,3 +132,7 @@ dmypy.json
 .pyre/
 
 files/
+
+app/frontend/static/admin/
+app/frontend/static/rest_framework/
+*.pdf

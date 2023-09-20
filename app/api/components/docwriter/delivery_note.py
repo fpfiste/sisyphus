@@ -11,12 +11,12 @@ class DeliveryNote(Document):
     def add_position(self, position_id,date,  time, description, unit, amount, reference):
         task = {
             'position_id': position_id,
-            'date': date,
-            'time':time,
-            'description': description,
-            'unit' : unit,
-            'amount' : amount,
-            'reference' : reference
+            'date': date if date != None else '',
+            'time':time if time != None else '',
+            'description': description if description != None else '',
+            'unit' : unit if unit != None else '',
+            'amount' : amount if amount != None else '',
+            'reference' : reference if reference != None else ''
         }
 
         self.document_id = position_id

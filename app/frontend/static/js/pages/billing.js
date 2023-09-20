@@ -24,7 +24,7 @@ $(document).ready(function(){
                         id: 'sales_billing_table',
                         fields: page_config['fields'],
                         ajax_url: '/api/sales/',
-                        query_params: '?fk_sales_status=2',
+                        query_params: '?fk_sales_status=1',
                         pk_field: 'id_sale',
                         language: lang_cookie,
                         exclude: ['fk_project', 'invoice_text', 'id_task', 'amount', 'unit_price']
@@ -86,7 +86,7 @@ $(document).ready(function(){
     $('#fk_project, #fk_vat, #fk_currency').on('change', function() {
       let query_params = $('#create_form').serialize();
       console.log(query_params)
-      sales_table.query_params = '?' + query_params + '&fk_sales_status=2'
+      sales_table.query_params = '?' + query_params + '&fk_sales_status=1'
       task_table.query_params = '?' + query_params +'&fk_task_state=4'
       sales_table.build();
       task_table.build();

@@ -116,15 +116,30 @@ $(document).ready(function(){
            type: 'GET',
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
-                console.log(response)
                 window.open(response['file_url'], '_blank').focus();
-
            },
            error: function(error){
             console.log(error)
            }
         });
     })
+
+
+    $('#btn_print_schedule').on('click', function() {
+        let url = '/api/tasks/printSchedule/?date=' + scheduler.schedule_date
+        $.ajax({
+           url: url,
+           type: 'GET',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           success: function(response) {
+                window.open(response['file_url'], '_blank').focus();
+           },
+           error: function(error){
+            console.log(error)
+           }
+        });
+    })
+
 
 
 });

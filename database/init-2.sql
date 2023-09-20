@@ -1,6 +1,28 @@
 -- DROP SCHEMA public;
 
 
+
+-- DROP SEQUENCE public.asset_absence_codes_id_asset_absence_code_seq;
+
+CREATE SEQUENCE public.asset_absence_codes_id_asset_absence_code_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
+
+
+
+-- DROP SEQUENCE public.asset_absences_id_asset_absence_seq;
+
+CREATE SEQUENCE public.asset_absences_id_asset_absence_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
 -- DROP SEQUENCE public.asset_types_id_asset_type_seq;
 
 CREATE SEQUENCE public.asset_types_id_asset_type_seq
@@ -10,12 +32,6 @@ CREATE SEQUENCE public.asset_types_id_asset_type_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.asset_types_id_asset_type_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.asset_types_id_asset_type_seq TO hello_django;
-
 -- DROP SEQUENCE public.assets_id_asset_seq;
 
 CREATE SEQUENCE public.assets_id_asset_seq
@@ -25,12 +41,6 @@ CREATE SEQUENCE public.assets_id_asset_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.assets_id_asset_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.assets_id_asset_seq TO hello_django;
-
 -- DROP SEQUENCE public.auth_group_id_seq;
 
 CREATE SEQUENCE public.auth_group_id_seq
@@ -40,12 +50,6 @@ CREATE SEQUENCE public.auth_group_id_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.auth_group_id_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.auth_group_id_seq TO hello_django;
-
 -- DROP SEQUENCE public.auth_group_permissions_id_seq;
 
 CREATE SEQUENCE public.auth_group_permissions_id_seq
@@ -55,12 +59,6 @@ CREATE SEQUENCE public.auth_group_permissions_id_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.auth_group_permissions_id_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.auth_group_permissions_id_seq TO hello_django;
-
 -- DROP SEQUENCE public.auth_permission_id_seq;
 
 CREATE SEQUENCE public.auth_permission_id_seq
@@ -70,12 +68,6 @@ CREATE SEQUENCE public.auth_permission_id_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.auth_permission_id_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.auth_permission_id_seq TO hello_django;
-
 -- DROP SEQUENCE public.auth_user_groups_id_seq;
 
 CREATE SEQUENCE public.auth_user_groups_id_seq
@@ -85,12 +77,6 @@ CREATE SEQUENCE public.auth_user_groups_id_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.auth_user_groups_id_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.auth_user_groups_id_seq TO hello_django;
-
 -- DROP SEQUENCE public.auth_user_id_seq;
 
 CREATE SEQUENCE public.auth_user_id_seq
@@ -100,12 +86,6 @@ CREATE SEQUENCE public.auth_user_id_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.auth_user_id_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.auth_user_id_seq TO hello_django;
-
 -- DROP SEQUENCE public.auth_user_user_permissions_id_seq;
 
 CREATE SEQUENCE public.auth_user_user_permissions_id_seq
@@ -115,42 +95,33 @@ CREATE SEQUENCE public.auth_user_user_permissions_id_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.companies_id_company_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.auth_user_user_permissions_id_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.auth_user_user_permissions_id_seq TO hello_django;
-
--- DROP SEQUENCE public.curency_id_currency_seq;
-
-CREATE SEQUENCE public.curency_id_currency_seq
+CREATE SEQUENCE public.companies_id_company_seq
 	INCREMENT BY 1
 	MINVALUE 1
 	MAXVALUE 2147483647
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.countries_id_country_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.curency_id_currency_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.curency_id_currency_seq TO hello_django;
-
--- DROP SEQUENCE public.customer_invoice_text_id_customer_invoice_text_seq;
-
-CREATE SEQUENCE public.customer_invoice_text_id_customer_invoice_text_seq
+CREATE SEQUENCE public.countries_id_country_seq
 	INCREMENT BY 1
 	MINVALUE 1
 	MAXVALUE 2147483647
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.currencies_id_currency_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.customer_invoice_text_id_customer_invoice_text_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.customer_invoice_text_id_customer_invoice_text_seq TO hello_django;
-
+CREATE SEQUENCE public.currencies_id_currency_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
 -- DROP SEQUENCE public.django_admin_log_id_seq;
 
 CREATE SEQUENCE public.django_admin_log_id_seq
@@ -160,12 +131,6 @@ CREATE SEQUENCE public.django_admin_log_id_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.django_admin_log_id_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.django_admin_log_id_seq TO hello_django;
-
 -- DROP SEQUENCE public.django_content_type_id_seq;
 
 CREATE SEQUENCE public.django_content_type_id_seq
@@ -175,12 +140,6 @@ CREATE SEQUENCE public.django_content_type_id_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.django_content_type_id_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.django_content_type_id_seq TO hello_django;
-
 -- DROP SEQUENCE public.django_migrations_id_seq;
 
 CREATE SEQUENCE public.django_migrations_id_seq
@@ -190,128 +149,78 @@ CREATE SEQUENCE public.django_migrations_id_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.employee_absence_codes_id_employee_absence_code_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.django_migrations_id_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.django_migrations_id_seq TO hello_django;
-
--- DROP SEQUENCE public.employee_absence_code_id_employee_absence_code_seq;
-
-CREATE SEQUENCE public.employee_absence_code_id_employee_absence_code_seq
+CREATE SEQUENCE public.employee_absence_codes_id_employee_absence_code_seq
 	INCREMENT BY 1
 	MINVALUE 1
 	MAXVALUE 2147483647
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.employee_absences_id_employee_absence_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.employee_absence_code_id_employee_absence_code_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.employee_absence_code_id_employee_absence_code_seq TO hello_django;
-
--- DROP SEQUENCE public.employee_absence_id_employee_absence_seq;
-
-CREATE SEQUENCE public.employee_absence_id_employee_absence_seq
+CREATE SEQUENCE public.employee_absences_id_employee_absence_seq
 	INCREMENT BY 1
 	MINVALUE 1
 	MAXVALUE 2147483647
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.employee_types_id_employee_type_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.employee_absence_id_employee_absence_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.employee_absence_id_employee_absence_seq TO hello_django;
-
--- DROP SEQUENCE public.employee_id_employee_seq;
-
-CREATE SEQUENCE public.employee_id_employee_seq
+CREATE SEQUENCE public.employee_types_id_employee_type_seq
 	INCREMENT BY 1
 	MINVALUE 1
 	MAXVALUE 2147483647
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.employees_id_employee_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.employee_id_employee_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.employee_id_employee_seq TO hello_django;
-
--- DROP SEQUENCE public.employee_type_employee_type_seq;
-
-CREATE SEQUENCE public.employee_type_employee_type_seq
+CREATE SEQUENCE public.employees_id_employee_seq
 	INCREMENT BY 1
 	MINVALUE 1
 	MAXVALUE 2147483647
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.invoice_states_id_invoice_state_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.employee_type_employee_type_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.employee_type_employee_type_seq TO hello_django;
-
--- DROP SEQUENCE public.invoice_id_invoice_seq;
-
-CREATE SEQUENCE public.invoice_id_invoice_seq
+CREATE SEQUENCE public.invoice_states_id_invoice_state_seq
 	INCREMENT BY 1
 	MINVALUE 1
 	MAXVALUE 2147483647
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.invoice_terms_id_invoice_term_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.invoice_id_invoice_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.invoice_id_invoice_seq TO hello_django;
-
--- DROP SEQUENCE public.invoice_status_id_invoice_status_seq;
-
-CREATE SEQUENCE public.invoice_status_id_invoice_status_seq
+CREATE SEQUENCE public.invoice_terms_id_invoice_term_seq
 	INCREMENT BY 1
 	MINVALUE 1
 	MAXVALUE 2147483647
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.invoice_texts_id_invoice_text_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.invoice_status_id_invoice_status_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.invoice_status_id_invoice_status_seq TO hello_django;
-
--- DROP SEQUENCE public.newtable_id_customer_seq;
-
-CREATE SEQUENCE public.newtable_id_customer_seq
+CREATE SEQUENCE public.invoice_texts_id_invoice_text_seq
 	INCREMENT BY 1
 	MINVALUE 1
 	MAXVALUE 2147483647
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.invoices_id_invoice_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.newtable_id_customer_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.newtable_id_customer_seq TO hello_django;
-
--- DROP SEQUENCE public.payment_conditions_id_payment_condition_seq;
-
-CREATE SEQUENCE public.payment_conditions_id_payment_condition_seq
-	NO MINVALUE
-	NO MAXVALUE;
-
--- Permissions
-
-ALTER SEQUENCE public.payment_conditions_id_payment_condition_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.payment_conditions_id_payment_condition_seq TO hello_django;
-
+CREATE SEQUENCE public.invoices_id_invoice_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
 -- DROP SEQUENCE public.projects_id_project_seq;
 
 CREATE SEQUENCE public.projects_id_project_seq
@@ -321,12 +230,6 @@ CREATE SEQUENCE public.projects_id_project_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.projects_id_project_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.projects_id_project_seq TO hello_django;
-
 -- DROP SEQUENCE public.sales_id_sale_seq;
 
 CREATE SEQUENCE public.sales_id_sale_seq
@@ -336,57 +239,15 @@ CREATE SEQUENCE public.sales_id_sale_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.sales_state_id_sales_state_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.sales_id_sale_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.sales_id_sale_seq TO hello_django;
-
--- DROP SEQUENCE public.service_states_id_service_state_seq;
-
-CREATE SEQUENCE public.service_states_id_service_state_seq
+CREATE SEQUENCE public.sales_state_id_sales_state_seq
 	INCREMENT BY 1
 	MINVALUE 1
 	MAXVALUE 2147483647
 	START 1
 	CACHE 1
 	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.service_states_id_service_state_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.service_states_id_service_state_seq TO hello_django;
-
--- DROP SEQUENCE public.service_templates_id_service_template_seq;
-
-CREATE SEQUENCE public.service_templates_id_service_template_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
-	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.service_templates_id_service_template_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.service_templates_id_service_template_seq TO hello_django;
-
--- DROP SEQUENCE public.services_id_service_seq;
-
-CREATE SEQUENCE public.services_id_service_seq
-	INCREMENT BY 1
-	MINVALUE 1
-	MAXVALUE 2147483647
-	START 1
-	CACHE 1
-	NO CYCLE;
-
--- Permissions
-
-ALTER SEQUENCE public.services_id_service_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.services_id_service_seq TO hello_django;
-
 -- DROP SEQUENCE public.sys_rec_states_id_sys_rec_status_seq;
 
 CREATE SEQUENCE public.sys_rec_states_id_sys_rec_status_seq
@@ -396,12 +257,33 @@ CREATE SEQUENCE public.sys_rec_states_id_sys_rec_status_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.task_states_id_task_state_seq;
 
--- Permissions
+CREATE SEQUENCE public.task_states_id_task_state_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
+-- DROP SEQUENCE public.task_templates_id_task_template_seq;
 
-ALTER SEQUENCE public.sys_rec_states_id_sys_rec_status_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.sys_rec_states_id_sys_rec_status_seq TO hello_django;
+CREATE SEQUENCE public.task_templates_id_task_template_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
+-- DROP SEQUENCE public.tasks_id_task_seq;
 
+CREATE SEQUENCE public.tasks_id_task_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;
 -- DROP SEQUENCE public.units_id_unit_seq;
 
 CREATE SEQUENCE public.units_id_unit_seq
@@ -411,29 +293,31 @@ CREATE SEQUENCE public.units_id_unit_seq
 	START 1
 	CACHE 1
 	NO CYCLE;
+-- DROP SEQUENCE public.vat_id_vat_seq;
 
--- Permissions
-
-ALTER SEQUENCE public.units_id_unit_seq OWNER TO hello_django;
-GRANT ALL ON SEQUENCE public.units_id_unit_seq TO hello_django;
--- public.asset_absence_codes definition
+CREATE SEQUENCE public.vat_id_vat_seq
+	INCREMENT BY 1
+	MINVALUE 1
+	MAXVALUE 2147483647
+	START 1
+	CACHE 1
+	NO CYCLE;-- public.asset_absence_codes definition
 
 -- Drop table
 
 -- DROP TABLE public.asset_absence_codes;
 
 CREATE TABLE public.asset_absence_codes (
-	id_asset_absence_code int4 NOT NULL DEFAULT nextval('employee_absence_code_id_employee_absence_code_seq'::regclass),
+	id_asset_absence_code int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	asset_absence_code varchar NOT NULL,
 	asset_absence_code_abbreviation varchar NOT NULL,
-	CONSTRAINT asset_absence_code_pk PRIMARY KEY (id_asset_absence_code)
+	CONSTRAINT asset_absence_codes_pkey PRIMARY KEY (id_asset_absence_code)
 );
 
--- Permissions
-
-ALTER TABLE public.asset_absence_codes OWNER TO hello_django;
-GRANT ALL ON TABLE public.asset_absence_codes TO hello_django;
-
+COPY public.asset_absence_codes
+FROM '/docker-entrypoint-initdb.d/asset_absence_codes.csv'
+DELIMITER ','
+CSV HEADER;
 
 -- public.asset_types definition
 
@@ -442,18 +326,15 @@ GRANT ALL ON TABLE public.asset_absence_codes TO hello_django;
 -- DROP TABLE public.asset_types;
 
 CREATE TABLE public.asset_types (
-	id_asset_type serial4 NOT NULL,
+	id_asset_type int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	asset_type varchar NOT NULL,
-	max_capacity numeric NULL,
-	CONSTRAINT asset_types_pk PRIMARY KEY (id_asset_type)
+	CONSTRAINT asset_types_pkey PRIMARY KEY (id_asset_type)
 );
 
--- Permissions
-
-ALTER TABLE public.asset_types OWNER TO hello_django;
-GRANT ALL ON TABLE public.asset_types TO hello_django;
-
-
+COPY public.asset_types
+FROM '/docker-entrypoint-initdb.d/asset_types.csv'
+DELIMITER ','
+CSV HEADER;
 -- public.auth_group definition
 
 -- Drop table
@@ -467,11 +348,6 @@ CREATE TABLE public.auth_group (
 	CONSTRAINT auth_group_pkey PRIMARY KEY (id)
 );
 CREATE INDEX auth_group_name_a6ea08ec_like ON public.auth_group USING btree (name varchar_pattern_ops);
-
--- Permissions
-
-ALTER TABLE public.auth_group OWNER TO hello_django;
-GRANT ALL ON TABLE public.auth_group TO hello_django;
 
 
 -- public.auth_user definition
@@ -497,11 +373,28 @@ CREATE TABLE public.auth_user (
 );
 CREATE INDEX auth_user_username_6821ab7c_like ON public.auth_user USING btree (username varchar_pattern_ops);
 
--- Permissions
+COPY public.auth_user
+FROM '/docker-entrypoint-initdb.d/auth_user.csv'
+DELIMITER ','
+CSV HEADER;
+-- public.countries definition
 
-ALTER TABLE public.auth_user OWNER TO hello_django;
-GRANT ALL ON TABLE public.auth_user TO hello_django;
+-- Drop table
 
+-- DROP TABLE public.countries;
+
+CREATE TABLE public.countries (
+	id_country serial4 NOT NULL,
+	country varchar NOT NULL,
+	country_code varchar(3) NOT NULL,
+	CONSTRAINT countries_pk PRIMARY KEY (id_country),
+	CONSTRAINT countries_un UNIQUE (country)
+);
+
+COPY public.countries
+FROM '/docker-entrypoint-initdb.d/countries.csv'
+DELIMITER ','
+CSV HEADER;
 
 -- public.currencies definition
 
@@ -510,19 +403,17 @@ GRANT ALL ON TABLE public.auth_user TO hello_django;
 -- DROP TABLE public.currencies;
 
 CREATE TABLE public.currencies (
-	id_currency int4 NOT NULL DEFAULT nextval('curency_id_currency_seq'::regclass),
+	id_currency int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	currency varchar NOT NULL,
 	currency_abbreviation varchar NOT NULL,
 	currency_account_nr varchar NOT NULL,
-	CONSTRAINT curency_pk PRIMARY KEY (id_currency)
+	CONSTRAINT currencies_pkey PRIMARY KEY (id_currency)
 );
 
--- Permissions
-
-ALTER TABLE public.currencies OWNER TO hello_django;
-GRANT ALL ON TABLE public.currencies TO hello_django;
-
-
+COPY public.currencies
+FROM '/docker-entrypoint-initdb.d/currencies.csv'
+DELIMITER ','
+CSV HEADER;
 -- public.django_content_type definition
 
 -- Drop table
@@ -537,12 +428,10 @@ CREATE TABLE public.django_content_type (
 	CONSTRAINT django_content_type_pkey PRIMARY KEY (id)
 );
 
--- Permissions
-
-ALTER TABLE public.django_content_type OWNER TO hello_django;
-GRANT ALL ON TABLE public.django_content_type TO hello_django;
-
-
+COPY public.django_content_type
+FROM '/docker-entrypoint-initdb.d/django_content_type.csv'
+DELIMITER ','
+CSV HEADER;
 -- public.django_migrations definition
 
 -- Drop table
@@ -556,11 +445,6 @@ CREATE TABLE public.django_migrations (
 	applied timestamptz NOT NULL,
 	CONSTRAINT django_migrations_pkey PRIMARY KEY (id)
 );
-
--- Permissions
-
-ALTER TABLE public.django_migrations OWNER TO hello_django;
-GRANT ALL ON TABLE public.django_migrations TO hello_django;
 
 
 -- public.django_session definition
@@ -578,11 +462,6 @@ CREATE TABLE public.django_session (
 CREATE INDEX django_session_expire_date_a5c62663 ON public.django_session USING btree (expire_date);
 CREATE INDEX django_session_session_key_c0390e0f_like ON public.django_session USING btree (session_key varchar_pattern_ops);
 
--- Permissions
-
-ALTER TABLE public.django_session OWNER TO hello_django;
-GRANT ALL ON TABLE public.django_session TO hello_django;
-
 
 -- public.employee_absence_codes definition
 
@@ -591,17 +470,17 @@ GRANT ALL ON TABLE public.django_session TO hello_django;
 -- DROP TABLE public.employee_absence_codes;
 
 CREATE TABLE public.employee_absence_codes (
-	id_employee_absence_code int4 NOT NULL DEFAULT nextval('employee_absence_code_id_employee_absence_code_seq'::regclass),
+	id_employee_absence_code int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	employee_absence_code varchar NOT NULL,
 	employee_absence_code_abbreviation varchar NOT NULL,
-	CONSTRAINT employee_absence_code_pk PRIMARY KEY (id_employee_absence_code)
+	CONSTRAINT employee_absence_codes_pkey PRIMARY KEY (id_employee_absence_code)
 );
 
--- Permissions
-
-ALTER TABLE public.employee_absence_codes OWNER TO hello_django;
-GRANT ALL ON TABLE public.employee_absence_codes TO hello_django;
-
+COPY public.employee_absence_codes
+FROM '/docker-entrypoint-initdb.d/employee_absence_codes.csv'
+DELIMITER ','
+CSV HEADER;
+-- public.django_
 
 -- public.employee_types definition
 
@@ -610,17 +489,16 @@ GRANT ALL ON TABLE public.employee_absence_codes TO hello_django;
 -- DROP TABLE public.employee_types;
 
 CREATE TABLE public.employee_types (
-	id_employee_type int4 NOT NULL DEFAULT nextval('employee_type_employee_type_seq'::regclass),
+	id_employee_type int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	employee_type_description varchar NOT NULL,
-	CONSTRAINT employee_type_pk PRIMARY KEY (id_employee_type)
+	CONSTRAINT employee_types_pkey PRIMARY KEY (id_employee_type)
 );
 
--- Permissions
 
-ALTER TABLE public.employee_types OWNER TO hello_django;
-GRANT ALL ON TABLE public.employee_types TO hello_django;
-
-
+COPY public.employee_types
+FROM '/docker-entrypoint-initdb.d/employee_types.csv'
+DELIMITER ','
+CSV HEADER;
 -- public.invoice_states definition
 
 -- Drop table
@@ -628,111 +506,15 @@ GRANT ALL ON TABLE public.employee_types TO hello_django;
 -- DROP TABLE public.invoice_states;
 
 CREATE TABLE public.invoice_states (
-	id_invoice_state int4 NOT NULL DEFAULT nextval('invoice_status_id_invoice_status_seq'::regclass),
+	id_invoice_state int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	invoice_state varchar NOT NULL,
-	invoice_state_abbreviation int4 NOT NULL,
-	CONSTRAINT invoice_status_pk PRIMARY KEY (id_invoice_state)
+	CONSTRAINT invoice_states_pkey PRIMARY KEY (id_invoice_state)
 );
 
--- Permissions
-
-ALTER TABLE public.invoice_states OWNER TO hello_django;
-GRANT ALL ON TABLE public.invoice_states TO hello_django;
-
-
--- public.sys_rec_states definition
-
--- Drop table
-
--- DROP TABLE public.sys_rec_states;
-
-CREATE TABLE public.sys_rec_states (
-	id_sys_rec_status serial4 NOT NULL,
-	sys_rec_status varchar NOT NULL,
-	entity varchar NULL,
-	CONSTRAINT sys_rec_states_pk PRIMARY KEY (id_sys_rec_status)
-);
-
--- Permissions
-
-ALTER TABLE public.sys_rec_states OWNER TO hello_django;
-GRANT ALL ON TABLE public.sys_rec_states TO hello_django;
-
-
--- public.task_states definition
-
--- Drop table
-
--- DROP TABLE public.task_states;
-
-CREATE TABLE public.task_states (
-	id_task_state int4 NOT NULL DEFAULT nextval('service_states_id_service_state_seq'::regclass),
-	task_state varchar NOT NULL,
-	CONSTRAINT service_states_pk PRIMARY KEY (id_task_state)
-);
-
--- Permissions
-
-ALTER TABLE public.task_states OWNER TO hello_django;
-GRANT ALL ON TABLE public.task_states TO hello_django;
-
-
--- public.units definition
-
--- Drop table
-
--- DROP TABLE public.units;
-
-CREATE TABLE public.units (
-	id_unit serial4 NOT NULL,
-	unit varchar NOT NULL,
-	unit_abbreviation varchar NOT NULL,
-	CONSTRAINT units_pk PRIMARY KEY (id_unit)
-);
-
--- Permissions
-
-ALTER TABLE public.units OWNER TO hello_django;
-GRANT ALL ON TABLE public.units TO hello_django;
-
-
--- public.vat definition
-
--- Drop table
-
--- DROP TABLE public.vat;
-
-CREATE TABLE public.vat (
-	id_vat serial4 NOT NULL,
-	vat numeric(3, 3) NOT NULL,
-	vat_title varchar NOT NULL,
-	CONSTRAINT vat_pk PRIMARY KEY (id_vat)
-);
-
--- Permissions
-
-ALTER TABLE public.vat OWNER TO hello_django;
-GRANT ALL ON TABLE public.vat TO hello_django;
-
-
--- public.sales_state definition
-
--- Drop table
-
--- DROP TABLE public.sales_state;
-
-CREATE TABLE public.sales_state (
-	id_sales_state serial4 NOT NULL,
-	sales_state varchar NOT NULL,
-	CONSTRAINT sales_state_pk PRIMARY KEY (id_sales_state)
-);
-
--- Permissions
-
-ALTER TABLE public.sales_state OWNER TO hello_django;
-GRANT ALL ON TABLE public.sales_state TO hello_django;
-
-
+COPY public.invoice_states
+FROM '/docker-entrypoint-initdb.d/invoice_states.csv'
+DELIMITER ','
+CSV HEADER;
 -- public.invoice_terms definition
 
 -- Drop table
@@ -740,18 +522,103 @@ GRANT ALL ON TABLE public.sales_state TO hello_django;
 -- DROP TABLE public.invoice_terms;
 
 CREATE TABLE public.invoice_terms (
-	id_invoice_term serial4 NOT NULL,
+	id_invoice_term int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	due_days int4 NOT NULL,
 	term_title varchar NOT NULL,
-	CONSTRAINT invoice_terms_pk PRIMARY KEY (id_invoice_term)
+	CONSTRAINT invoice_terms_due_days_key UNIQUE (due_days),
+	CONSTRAINT invoice_terms_pkey PRIMARY KEY (id_invoice_term)
 );
 
--- Permissions
+COPY public.invoice_terms
+FROM '/docker-entrypoint-initdb.d/invoice_terms.csv'
+DELIMITER ','
+CSV HEADER;
+-- public.sales_state definition
 
-ALTER TABLE public.invoice_terms OWNER TO hello_django;
-GRANT ALL ON TABLE public.invoice_terms TO hello_django;
+-- Drop table
 
+-- DROP TABLE public.sales_state;
 
+CREATE TABLE public.sales_state (
+	id_sales_state int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
+	sales_state varchar NOT NULL,
+	CONSTRAINT sales_state_pkey PRIMARY KEY (id_sales_state),
+	CONSTRAINT sales_state_sales_state_key UNIQUE (sales_state)
+);
+CREATE INDEX sales_state_sales_state_a193d641_like ON public.sales_state USING btree (sales_state varchar_pattern_ops);
+
+COPY public.sales_state
+FROM '/docker-entrypoint-initdb.d/sales_state.csv'
+DELIMITER ','
+CSV HEADER;
+-- public.sys_rec_states definition
+
+-- Drop table
+
+-- DROP TABLE public.sys_rec_states;
+
+CREATE TABLE public.sys_rec_states (
+	id_sys_rec_status int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
+	sys_rec_status varchar NOT NULL,
+	entity varchar NULL,
+	CONSTRAINT sys_rec_states_pkey PRIMARY KEY (id_sys_rec_status)
+);
+
+COPY public.sys_rec_states
+FROM '/docker-entrypoint-initdb.d/sys_rec_states.csv'
+DELIMITER ','
+CSV HEADER;
+-- public.task_states definition
+
+-- Drop table
+
+-- DROP TABLE public.task_states;
+
+CREATE TABLE public.task_states (
+	id_task_state int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
+	task_state varchar NOT NULL,
+	CONSTRAINT task_states_pkey PRIMARY KEY (id_task_state)
+);
+
+COPY public.task_states
+FROM '/docker-entrypoint-initdb.d/task_states.csv'
+DELIMITER ','
+CSV HEADER;
+-- public.units definition
+
+-- Drop table
+
+-- DROP TABLE public.units;
+
+CREATE TABLE public.units (
+	id_unit int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
+	unit varchar NOT NULL,
+	unit_abbreviation varchar NOT NULL,
+	CONSTRAINT units_pkey PRIMARY KEY (id_unit)
+);
+
+COPY public.units
+FROM '/docker-entrypoint-initdb.d/units.csv'
+DELIMITER ','
+CSV HEADER;
+-- public.vat definition
+
+-- Drop table
+
+-- DROP TABLE public.vat;
+
+CREATE TABLE public.vat (
+	id_vat int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
+	vat numeric(3, 3) NOT NULL,
+	vat_title varchar NOT NULL,
+	CONSTRAINT vat_pkey PRIMARY KEY (id_vat),
+	CONSTRAINT vat_vat_key UNIQUE (vat)
+);
+
+COPY public.vat
+FROM '/docker-entrypoint-initdb.d/vat.csv'
+DELIMITER ','
+CSV HEADER;
 -- public.assets definition
 
 -- Drop table
@@ -759,21 +626,18 @@ GRANT ALL ON TABLE public.invoice_terms TO hello_django;
 -- DROP TABLE public.assets;
 
 CREATE TABLE public.assets (
-	id_asset serial4 NOT NULL,
-	fk_asset_type int4 NOT NULL,
+	id_asset int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	asset_description varchar NOT NULL,
 	asset_internal_alias varchar NOT NULL,
 	year_of_production int4 NULL,
+	fk_asset_type int4 NOT NULL,
 	fk_sys_rec_status int4 NOT NULL,
-	CONSTRAINT assets_pk PRIMARY KEY (id_asset),
-	CONSTRAINT assets_fk FOREIGN KEY (fk_asset_type) REFERENCES public.asset_types(id_asset_type),
-	CONSTRAINT assets_rec_status FOREIGN KEY (fk_sys_rec_status) REFERENCES public.sys_rec_states(id_sys_rec_status)
+	CONSTRAINT assets_pkey PRIMARY KEY (id_asset),
+	CONSTRAINT assets_fk_asset_type_88e64c56_fk_asset_types_id_asset_type FOREIGN KEY (fk_asset_type) REFERENCES public.asset_types(id_asset_type) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT assets_fk_sys_rec_status_9f557fd4_fk_sys_rec_s FOREIGN KEY (fk_sys_rec_status) REFERENCES public.sys_rec_states(id_sys_rec_status) DEFERRABLE INITIALLY DEFERRED
 );
-
--- Permissions
-
-ALTER TABLE public.assets OWNER TO hello_django;
-GRANT ALL ON TABLE public.assets TO hello_django;
+CREATE INDEX assets_fk_asset_type_88e64c56 ON public.assets USING btree (fk_asset_type);
+CREATE INDEX assets_fk_sys_rec_status_9f557fd4 ON public.assets USING btree (fk_sys_rec_status);
 
 
 -- public.auth_permission definition
@@ -793,12 +657,10 @@ CREATE TABLE public.auth_permission (
 );
 CREATE INDEX auth_permission_content_type_id_2f476e4b ON public.auth_permission USING btree (content_type_id);
 
--- Permissions
-
-ALTER TABLE public.auth_permission OWNER TO hello_django;
-GRANT ALL ON TABLE public.auth_permission TO hello_django;
-
-
+COPY public.auth_permission
+FROM '/docker-entrypoint-initdb.d/auth_permission.csv'
+DELIMITER ','
+CSV HEADER;
 -- public.auth_user_groups definition
 
 -- Drop table
@@ -816,11 +678,6 @@ CREATE TABLE public.auth_user_groups (
 );
 CREATE INDEX auth_user_groups_group_id_97559544 ON public.auth_user_groups USING btree (group_id);
 CREATE INDEX auth_user_groups_user_id_6a12ed8b ON public.auth_user_groups USING btree (user_id);
-
--- Permissions
-
-ALTER TABLE public.auth_user_groups OWNER TO hello_django;
-GRANT ALL ON TABLE public.auth_user_groups TO hello_django;
 
 
 -- public.auth_user_user_permissions definition
@@ -841,33 +698,6 @@ CREATE TABLE public.auth_user_user_permissions (
 CREATE INDEX auth_user_user_permissions_permission_id_1fbb5f2c ON public.auth_user_user_permissions USING btree (permission_id);
 CREATE INDEX auth_user_user_permissions_user_id_a95ead1b ON public.auth_user_user_permissions USING btree (user_id);
 
--- Permissions
-
-ALTER TABLE public.auth_user_user_permissions OWNER TO hello_django;
-GRANT ALL ON TABLE public.auth_user_user_permissions TO hello_django;
-
-
--- public.authtoken_token definition
-
--- Drop table
-
--- DROP TABLE public.authtoken_token;
-
-CREATE TABLE public.authtoken_token (
-	"key" varchar(40) NOT NULL,
-	created timestamptz NOT NULL,
-	user_id int4 NOT NULL,
-	CONSTRAINT authtoken_token_pkey PRIMARY KEY (key),
-	CONSTRAINT authtoken_token_user_id_key UNIQUE (user_id),
-	CONSTRAINT authtoken_token_user_id_35299eff_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES public.auth_user(id) DEFERRABLE INITIALLY DEFERRED
-);
-CREATE INDEX authtoken_token_key_10f0b77e_like ON public.authtoken_token USING btree (key varchar_pattern_ops);
-
--- Permissions
-
-ALTER TABLE public.authtoken_token OWNER TO hello_django;
-GRANT ALL ON TABLE public.authtoken_token TO hello_django;
-
 
 -- public.companies definition
 
@@ -876,29 +706,25 @@ GRANT ALL ON TABLE public.authtoken_token TO hello_django;
 -- DROP TABLE public.companies;
 
 CREATE TABLE public.companies (
-	id_company int4 NOT NULL DEFAULT nextval('newtable_id_customer_seq'::regclass),
+	id_company int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	company_name varchar NOT NULL,
 	company_street varchar NOT NULL,
 	company_zipcode varchar NOT NULL,
-	company_country varchar NOT NULL,
+	fk_country int4 NOT NULL,
 	company_city varchar NOT NULL,
 	company_internal_alias varchar NOT NULL,
-	fk_sys_rec_status int4 NOT NULL,
 	company_email varchar NULL,
 	is_customer bool NULL,
 	is_supplier bool NULL,
 	is_subcontractor bool NULL,
-	CONSTRAINT newtable_pk PRIMARY KEY (id_company),
-	CONSTRAINT newtable_un UNIQUE (company_internal_alias),
-	CONSTRAINT companies_fk FOREIGN KEY (fk_sys_rec_status) REFERENCES public.sys_rec_states(id_sys_rec_status)
+	fk_sys_rec_status int4 NOT NULL,
+	CONSTRAINT companies_company_internal_alias_key UNIQUE (company_internal_alias),
+	CONSTRAINT companies_pkey PRIMARY KEY (id_company),
+	CONSTRAINT companies_fk FOREIGN KEY (fk_country) REFERENCES public.countries(id_country),
+	CONSTRAINT companies_fk_sys_rec_status_d804c5ea_fk_sys_rec_s FOREIGN KEY (fk_sys_rec_status) REFERENCES public.sys_rec_states(id_sys_rec_status) DEFERRABLE INITIALLY DEFERRED
 );
-
-
-
--- Permissions
-
-ALTER TABLE public.companies OWNER TO hello_django;
-GRANT ALL ON TABLE public.companies TO hello_django;
+CREATE INDEX companies_company_internal_alias_47763c3e_like ON public.companies USING btree (company_internal_alias varchar_pattern_ops);
+CREATE INDEX companies_fk_sys_rec_status_d804c5ea ON public.companies USING btree (fk_sys_rec_status);
 
 
 -- public.django_admin_log definition
@@ -924,11 +750,6 @@ CREATE TABLE public.django_admin_log (
 CREATE INDEX django_admin_log_content_type_id_c4bce8eb ON public.django_admin_log USING btree (content_type_id);
 CREATE INDEX django_admin_log_user_id_c564eba6 ON public.django_admin_log USING btree (user_id);
 
--- Permissions
-
-ALTER TABLE public.django_admin_log OWNER TO hello_django;
-GRANT ALL ON TABLE public.django_admin_log TO hello_django;
-
 
 -- public.employees definition
 
@@ -937,7 +758,7 @@ GRANT ALL ON TABLE public.django_admin_log TO hello_django;
 -- DROP TABLE public.employees;
 
 CREATE TABLE public.employees (
-	id_employee int4 NOT NULL DEFAULT nextval('employee_id_employee_seq'::regclass),
+	id_employee int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	employee_first_name varchar NOT NULL,
 	employee_last_name varchar NOT NULL,
 	employee_street varchar NOT NULL,
@@ -946,21 +767,21 @@ CREATE TABLE public.employees (
 	employee_email varchar NOT NULL,
 	employee_cell_phone varchar NOT NULL,
 	employee_birthday date NOT NULL,
-	employee_salary numeric NULL,
-	fk_employee_type int4 NOT NULL,
-	employee_fte numeric NULL DEFAULT 1,
+	employee_salary numeric(11, 2) NULL,
+	employee_fte numeric(3, 2) NULL,
 	employee_internal_alias varchar NOT NULL,
+	fk_employee_type int4 NOT NULL,
 	fk_sys_rec_status int4 NOT NULL,
-	CONSTRAINT employee_pk PRIMARY KEY (id_employee),
-	CONSTRAINT employee_un UNIQUE (employee_internal_alias),
-	CONSTRAINT employees_fk FOREIGN KEY (fk_sys_rec_status) REFERENCES public.sys_rec_states(id_sys_rec_status),
-	CONSTRAINT fk_employee_type FOREIGN KEY (fk_employee_type) REFERENCES public.employee_types(id_employee_type)
+	fk_country int4 NOT NULL,
+	CONSTRAINT employees_employee_internal_alias_key UNIQUE (employee_internal_alias),
+	CONSTRAINT employees_pkey PRIMARY KEY (id_employee),
+	CONSTRAINT employees_fk FOREIGN KEY (fk_country) REFERENCES public.countries(id_country),
+	CONSTRAINT employees_fk_employee_type_236e57e4_fk_employee_ FOREIGN KEY (fk_employee_type) REFERENCES public.employee_types(id_employee_type) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT employees_fk_sys_rec_status_f319e4a4_fk_sys_rec_s FOREIGN KEY (fk_sys_rec_status) REFERENCES public.sys_rec_states(id_sys_rec_status) DEFERRABLE INITIALLY DEFERRED
 );
-
--- Permissions
-
-ALTER TABLE public.employees OWNER TO hello_django;
-GRANT ALL ON TABLE public.employees TO hello_django;
+CREATE INDEX employees_employee_internal_alias_5fdb54d3_like ON public.employees USING btree (employee_internal_alias varchar_pattern_ops);
+CREATE INDEX employees_fk_employee_type_236e57e4 ON public.employees USING btree (fk_employee_type);
+CREATE INDEX employees_fk_sys_rec_status_f319e4a4 ON public.employees USING btree (fk_sys_rec_status);
 
 
 -- public.invoice_texts definition
@@ -970,17 +791,13 @@ GRANT ALL ON TABLE public.employees TO hello_django;
 -- DROP TABLE public.invoice_texts;
 
 CREATE TABLE public.invoice_texts (
-	id_invoice_text int4 NOT NULL DEFAULT nextval('customer_invoice_text_id_customer_invoice_text_seq'::regclass),
+	id_invoice_text int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	invoice_text varchar NOT NULL,
 	fk_customer int4 NOT NULL,
-	CONSTRAINT customer_invoice_text_pk PRIMARY KEY (id_invoice_text),
-	CONSTRAINT customer_invoice_text_fk FOREIGN KEY (fk_customer) REFERENCES public.companies(id_company)
+	CONSTRAINT invoice_texts_pkey PRIMARY KEY (id_invoice_text),
+	CONSTRAINT invoice_texts_fk_customer_765c2502_fk_companies_id_company FOREIGN KEY (fk_customer) REFERENCES public.companies(id_company) DEFERRABLE INITIALLY DEFERRED
 );
-
--- Permissions
-
-ALTER TABLE public.invoice_texts OWNER TO hello_django;
-GRANT ALL ON TABLE public.invoice_texts TO hello_django;
+CREATE INDEX invoice_texts_fk_customer_765c2502 ON public.invoice_texts USING btree (fk_customer);
 
 
 -- public.invoices definition
@@ -990,20 +807,17 @@ GRANT ALL ON TABLE public.invoice_texts TO hello_django;
 -- DROP TABLE public.invoices;
 
 CREATE TABLE public.invoices (
-	id_invoice int4 NOT NULL DEFAULT nextval('invoice_id_invoice_seq'::regclass),
-	invoice_date date NULL,
+	id_invoice int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
+	invoice_date date NOT NULL,
 	invoice_text varchar NULL,
 	fk_invoice_state int4 NOT NULL,
 	fk_invoice_terms int4 NOT NULL,
-	CONSTRAINT invoices_pk PRIMARY KEY (id_invoice),
-	CONSTRAINT invoices_fk FOREIGN KEY (fk_invoice_terms) REFERENCES public.invoice_terms(id_invoice_term),
-	CONSTRAINT invoices_fk_2 FOREIGN KEY (fk_invoice_state) REFERENCES public.invoice_states(id_invoice_state)
+	CONSTRAINT invoices_pkey PRIMARY KEY (id_invoice),
+	CONSTRAINT invoices_fk_invoice_state_e9e847ba_fk_invoice_s FOREIGN KEY (fk_invoice_state) REFERENCES public.invoice_states(id_invoice_state) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT invoices_fk_invoice_terms_3036695b_fk_invoice_t FOREIGN KEY (fk_invoice_terms) REFERENCES public.invoice_terms(id_invoice_term) DEFERRABLE INITIALLY DEFERRED
 );
-
--- Permissions
-
-ALTER TABLE public.invoices OWNER TO hello_django;
-GRANT ALL ON TABLE public.invoices TO hello_django;
+CREATE INDEX invoices_fk_invoice_state_e9e847ba ON public.invoices USING btree (fk_invoice_state);
+CREATE INDEX invoices_fk_invoice_terms_3036695b ON public.invoices USING btree (fk_invoice_terms);
 
 
 -- public.projects definition
@@ -1013,21 +827,17 @@ GRANT ALL ON TABLE public.invoices TO hello_django;
 -- DROP TABLE public.projects;
 
 CREATE TABLE public.projects (
-	id_project serial4 NOT NULL,
+	id_project int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	project_name varchar NOT NULL,
+	start_date date NOT NULL,
+	end_date date NOT NULL,
 	fk_customer int4 NOT NULL,
-	planned_start_date date NOT NULL,
-	planned_end_date date NOT NULL,
-	effective_start_date date NULL,
-	effective_end_date date NULL,
-	CONSTRAINT projects_pk PRIMARY KEY (id_project),
-	CONSTRAINT projects_fk FOREIGN KEY (fk_customer) REFERENCES public.companies(id_company)
+	fk_sys_rec_status int4 NOT NULL,
+	CONSTRAINT projects_pkey PRIMARY KEY (id_project),
+	CONSTRAINT projects_fk FOREIGN KEY (fk_sys_rec_status) REFERENCES public.sys_rec_states(id_sys_rec_status),
+	CONSTRAINT projects_fk_customer_32d0f6c7_fk_companies_id_company FOREIGN KEY (fk_customer) REFERENCES public.companies(id_company) DEFERRABLE INITIALLY DEFERRED
 );
-
--- Permissions
-
-ALTER TABLE public.projects OWNER TO hello_django;
-GRANT ALL ON TABLE public.projects TO hello_django;
+CREATE INDEX projects_fk_customer_32d0f6c7 ON public.projects USING btree (fk_customer);
 
 
 -- public.sales definition
@@ -1037,32 +847,33 @@ GRANT ALL ON TABLE public.projects TO hello_django;
 -- DROP TABLE public.sales;
 
 CREATE TABLE public.sales (
-	id_sale serial4 NOT NULL,
-	sale_date timestamp NOT NULL,
-	fk_project int4 NOT NULL,
+	id_sale int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
+	sale_date date NOT NULL,
 	sale_amount numeric(11, 2) NOT NULL,
 	sale_unit_price numeric(11, 2) NOT NULL,
 	sale_reference varchar NOT NULL,
-	fk_unit int4 NOT NULL,
-	fk_invoice int4 NULL,
 	sale_description varchar NULL,
 	sale_time time NULL,
-	fk_vat int4 NULL,
-	fk_sales_status int4 NULL,
 	fk_currency int4 NULL,
-	CONSTRAINT sales_pk PRIMARY KEY (id_sale),
-	CONSTRAINT sales_fk FOREIGN KEY (fk_project) REFERENCES public.projects(id_project),
-	CONSTRAINT sales_fk3 FOREIGN KEY (fk_invoice) REFERENCES public.invoices(id_invoice),
-	CONSTRAINT sales_fk_2 FOREIGN KEY (fk_unit) REFERENCES public.units(id_unit),
-	CONSTRAINT sales_fk_currency FOREIGN KEY (fk_currency) REFERENCES public.currencies(id_currency),
-	CONSTRAINT sales_fk_state FOREIGN KEY (fk_sales_status) REFERENCES public.sales_state(id_sales_state),
-	CONSTRAINT sales_fk_vat FOREIGN KEY (fk_vat) REFERENCES public.vat(id_vat)
+	fk_invoice int4 NULL,
+	fk_project int4 NOT NULL,
+	fk_sales_status int4 NULL,
+	fk_unit int4 NOT NULL,
+	fk_vat int4 NULL,
+	CONSTRAINT sales_pkey PRIMARY KEY (id_sale),
+	CONSTRAINT sales_fk_currency_43dcbc47_fk_currencies_id_currency FOREIGN KEY (fk_currency) REFERENCES public.currencies(id_currency) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT sales_fk_invoice_0a9cd917_fk_invoices_id_invoice FOREIGN KEY (fk_invoice) REFERENCES public.invoices(id_invoice) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT sales_fk_project_7d42e2cf_fk_projects_id_project FOREIGN KEY (fk_project) REFERENCES public.projects(id_project) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT sales_fk_sales_status_28a5058c_fk_sales_state_id_sales_state FOREIGN KEY (fk_sales_status) REFERENCES public.sales_state(id_sales_state) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT sales_fk_unit_5b0e8c1b_fk_units_id_unit FOREIGN KEY (fk_unit) REFERENCES public.units(id_unit) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT sales_fk_vat_461b945f_fk_vat_id_vat FOREIGN KEY (fk_vat) REFERENCES public.vat(id_vat) DEFERRABLE INITIALLY DEFERRED
 );
-
--- Permissions
-
-ALTER TABLE public.sales OWNER TO hello_django;
-GRANT ALL ON TABLE public.sales TO hello_django;
+CREATE INDEX sales_fk_currency_43dcbc47 ON public.sales USING btree (fk_currency);
+CREATE INDEX sales_fk_invoice_0a9cd917 ON public.sales USING btree (fk_invoice);
+CREATE INDEX sales_fk_project_7d42e2cf ON public.sales USING btree (fk_project);
+CREATE INDEX sales_fk_sales_status_28a5058c ON public.sales USING btree (fk_sales_status);
+CREATE INDEX sales_fk_unit_5b0e8c1b ON public.sales USING btree (fk_unit);
+CREATE INDEX sales_fk_vat_461b945f ON public.sales USING btree (fk_vat);
 
 
 -- public.task_templates definition
@@ -1072,25 +883,22 @@ GRANT ALL ON TABLE public.sales TO hello_django;
 -- DROP TABLE public.task_templates;
 
 CREATE TABLE public.task_templates (
-	id_task_template int4 NOT NULL DEFAULT nextval('service_templates_id_service_template_seq'::regclass),
-	fk_project int4 NOT NULL,
-	fk_unit int4 NOT NULL,
-	amount numeric NOT NULL,
-	unit_price numeric NOT NULL,
+	id_task_template int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
+	fk_project int4 NULL,
+	amount numeric(11, 2) NOT NULL,
+	unit_price numeric(11, 2) NOT NULL,
 	task_description varchar NOT NULL,
 	fk_currency int4 NULL,
+	fk_unit int4 NOT NULL,
 	fk_vat int4 NULL,
-	CONSTRAINT service_templates_pk PRIMARY KEY (id_task_template),
-	CONSTRAINT service_templates_fk_1 FOREIGN KEY (fk_unit) REFERENCES public.units(id_unit),
-	CONSTRAINT task_templates_fk FOREIGN KEY (fk_vat) REFERENCES public.vat(id_vat),
-	CONSTRAINT task_templates_fk_1 FOREIGN KEY (fk_currency) REFERENCES public.currencies(id_currency),
-	CONSTRAINT task_templates_fk_proj FOREIGN KEY (fk_project) REFERENCES public.projects(id_project)
+	CONSTRAINT task_templates_pkey PRIMARY KEY (id_task_template),
+	CONSTRAINT task_templates_fk_currency_315f0c49_fk_currencies_id_currency FOREIGN KEY (fk_currency) REFERENCES public.currencies(id_currency) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT task_templates_fk_unit_69400482_fk_units_id_unit FOREIGN KEY (fk_unit) REFERENCES public.units(id_unit) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT task_templates_fk_vat_12a8af6b_fk_vat_id_vat FOREIGN KEY (fk_vat) REFERENCES public.vat(id_vat) DEFERRABLE INITIALLY DEFERRED
 );
-
--- Permissions
-
-ALTER TABLE public.task_templates OWNER TO hello_django;
-GRANT ALL ON TABLE public.task_templates TO hello_django;
+CREATE INDEX task_templates_fk_currency_315f0c49 ON public.task_templates USING btree (fk_currency);
+CREATE INDEX task_templates_fk_unit_69400482 ON public.task_templates USING btree (fk_unit);
+CREATE INDEX task_templates_fk_vat_12a8af6b ON public.task_templates USING btree (fk_vat);
 
 
 -- public.tasks definition
@@ -1100,44 +908,49 @@ GRANT ALL ON TABLE public.task_templates TO hello_django;
 -- DROP TABLE public.tasks;
 
 CREATE TABLE public.tasks (
-	id_task int4 NOT NULL DEFAULT nextval('services_id_service_seq'::regclass),
-	fk_project int4 NOT NULL,
-	fk_task_state int4 NOT NULL,
+	id_task int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 	task_date_from date NULL,
 	task_date_to date NULL,
 	amount numeric(11, 2) NULL,
 	unit_price numeric(11, 2) NULL,
 	task_description varchar NOT NULL,
-	fk_invoice int4 NULL,
-	fk_unit int4 NULL,
 	internal_info varchar NULL,
 	customer_reference varchar NULL,
 	fk_subcontractor int4 NULL,
-	fk_employee_1 int4 NULL,
-	fk_employee_2 int4 NULL,
-	fk_asset_1 int4 NULL,
-	fk_asset_2 int4 NULL,
 	task_time_from time NULL,
 	task_time_to time NULL,
+	fk_asset_1 int4 NULL,
+	fk_asset_2 int4 NULL,
 	fk_currency int4 NULL,
+	fk_employee_1 int4 NULL,
+	fk_employee_2 int4 NULL,
+	fk_invoice int4 NULL,
+	fk_project int4 NOT NULL,
+	fk_task_state int4 NOT NULL,
+	fk_unit int4 NULL,
 	fk_vat int4 NULL,
-	CONSTRAINT services_pk PRIMARY KEY (id_task),
-	CONSTRAINT fk_asset_1 FOREIGN KEY (fk_asset_1) REFERENCES public.assets(id_asset),
-	CONSTRAINT fk_asset_2 FOREIGN KEY (fk_asset_2) REFERENCES public.assets(id_asset),
-	CONSTRAINT fk_employee_1 FOREIGN KEY (fk_employee_1) REFERENCES public.employees(id_employee),
-	CONSTRAINT fk_employee_2 FOREIGN KEY (fk_employee_2) REFERENCES public.employees(id_employee),
-	CONSTRAINT service_state FOREIGN KEY (fk_task_state) REFERENCES public.task_states(id_task_state),
-	CONSTRAINT services_fk FOREIGN KEY (fk_unit) REFERENCES public.units(id_unit),
-	CONSTRAINT services_fk3 FOREIGN KEY (fk_invoice) REFERENCES public.invoices(id_invoice),
-	CONSTRAINT tasks_fk FOREIGN KEY (fk_project) REFERENCES public.projects(id_project),
-	CONSTRAINT tasks_fk_currency FOREIGN KEY (fk_currency) REFERENCES public.currencies(id_currency),
-	CONSTRAINT tasks_fk_vat FOREIGN KEY (fk_vat) REFERENCES public.vat(id_vat)
+	CONSTRAINT tasks_pkey PRIMARY KEY (id_task),
+	CONSTRAINT tasks_fk_asset_1_477b32a9_fk_assets_id_asset FOREIGN KEY (fk_asset_1) REFERENCES public.assets(id_asset) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT tasks_fk_asset_2_96e85ef9_fk_assets_id_asset FOREIGN KEY (fk_asset_2) REFERENCES public.assets(id_asset) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT tasks_fk_currency_96170cc9_fk_currencies_id_currency FOREIGN KEY (fk_currency) REFERENCES public.currencies(id_currency) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT tasks_fk_employee_1_c9b198a4_fk_employees_id_employee FOREIGN KEY (fk_employee_1) REFERENCES public.employees(id_employee) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT tasks_fk_employee_2_1169876b_fk_employees_id_employee FOREIGN KEY (fk_employee_2) REFERENCES public.employees(id_employee) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT tasks_fk_invoice_ea3beb60_fk_invoices_id_invoice FOREIGN KEY (fk_invoice) REFERENCES public.invoices(id_invoice) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT tasks_fk_project_fee5c3c8_fk_projects_id_project FOREIGN KEY (fk_project) REFERENCES public.projects(id_project) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT tasks_fk_task_state_a8407fe2_fk_task_states_id_task_state FOREIGN KEY (fk_task_state) REFERENCES public.task_states(id_task_state) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT tasks_fk_unit_acfa1ab8_fk_units_id_unit FOREIGN KEY (fk_unit) REFERENCES public.units(id_unit) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT tasks_fk_vat_486022be_fk_vat_id_vat FOREIGN KEY (fk_vat) REFERENCES public.vat(id_vat) DEFERRABLE INITIALLY DEFERRED
 );
-
--- Permissions
-
-ALTER TABLE public.tasks OWNER TO hello_django;
-GRANT ALL ON TABLE public.tasks TO hello_django;
+CREATE INDEX tasks_fk_asset_1_477b32a9 ON public.tasks USING btree (fk_asset_1);
+CREATE INDEX tasks_fk_asset_2_96e85ef9 ON public.tasks USING btree (fk_asset_2);
+CREATE INDEX tasks_fk_currency_96170cc9 ON public.tasks USING btree (fk_currency);
+CREATE INDEX tasks_fk_employee_1_c9b198a4 ON public.tasks USING btree (fk_employee_1);
+CREATE INDEX tasks_fk_employee_2_1169876b ON public.tasks USING btree (fk_employee_2);
+CREATE INDEX tasks_fk_invoice_ea3beb60 ON public.tasks USING btree (fk_invoice);
+CREATE INDEX tasks_fk_project_fee5c3c8 ON public.tasks USING btree (fk_project);
+CREATE INDEX tasks_fk_task_state_a8407fe2 ON public.tasks USING btree (fk_task_state);
+CREATE INDEX tasks_fk_unit_acfa1ab8 ON public.tasks USING btree (fk_unit);
+CREATE INDEX tasks_fk_vat_486022be ON public.tasks USING btree (fk_vat);
 
 
 -- public.asset_absences definition
@@ -1147,20 +960,17 @@ GRANT ALL ON TABLE public.tasks TO hello_django;
 -- DROP TABLE public.asset_absences;
 
 CREATE TABLE public.asset_absences (
-	id_asset_absence int4 NOT NULL DEFAULT nextval('employee_absence_id_employee_absence_seq'::regclass),
-	asset_absence_from timestamp NOT NULL,
-	asset_absence_to timestamp NOT NULL,
+	id_asset_absence int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
+	asset_absence_from timestamptz NOT NULL,
+	asset_absence_to timestamptz NOT NULL,
 	fk_asset int4 NOT NULL,
 	fk_asset_absence_code int4 NOT NULL,
-	CONSTRAINT asset_absences_pk PRIMARY KEY (id_asset_absence),
-	CONSTRAINT asset_absences_fk FOREIGN KEY (fk_asset_absence_code) REFERENCES public.asset_absence_codes(id_asset_absence_code),
-	CONSTRAINT asset_absences_fk_1 FOREIGN KEY (fk_asset) REFERENCES public.assets(id_asset)
+	CONSTRAINT asset_absences_pkey PRIMARY KEY (id_asset_absence),
+	CONSTRAINT asset_absences_fk_asset_9b20034e_fk_assets_id_asset FOREIGN KEY (fk_asset) REFERENCES public.assets(id_asset) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT asset_absences_fk_asset_absence_cod_83dd00a8_fk_asset_abs FOREIGN KEY (fk_asset_absence_code) REFERENCES public.asset_absence_codes(id_asset_absence_code) DEFERRABLE INITIALLY DEFERRED
 );
-
--- Permissions
-
-ALTER TABLE public.asset_absences OWNER TO hello_django;
-GRANT ALL ON TABLE public.asset_absences TO hello_django;
+CREATE INDEX asset_absences_fk_asset_9b20034e ON public.asset_absences USING btree (fk_asset);
+CREATE INDEX asset_absences_fk_asset_absence_code_83dd00a8 ON public.asset_absences USING btree (fk_asset_absence_code);
 
 
 -- public.auth_group_permissions definition
@@ -1181,11 +991,6 @@ CREATE TABLE public.auth_group_permissions (
 CREATE INDEX auth_group_permissions_group_id_b120cbf9 ON public.auth_group_permissions USING btree (group_id);
 CREATE INDEX auth_group_permissions_permission_id_84c5c92e ON public.auth_group_permissions USING btree (permission_id);
 
--- Permissions
-
-ALTER TABLE public.auth_group_permissions OWNER TO hello_django;
-GRANT ALL ON TABLE public.auth_group_permissions TO hello_django;
-
 
 -- public.employee_absences definition
 
@@ -1194,55 +999,14 @@ GRANT ALL ON TABLE public.auth_group_permissions TO hello_django;
 -- DROP TABLE public.employee_absences;
 
 CREATE TABLE public.employee_absences (
-	id_employee_absence int4 NOT NULL DEFAULT nextval('employee_absence_id_employee_absence_seq'::regclass),
-	employee_absence_from timestamp NOT NULL,
-	employee_absence_to timestamp NOT NULL,
+	id_employee_absence int4 NOT NULL GENERATED BY DEFAULT AS IDENTITY,
+	employee_absence_from timestamptz NOT NULL,
+	employee_absence_to timestamptz NOT NULL,
 	fk_employee int4 NOT NULL,
 	fk_employee_absence_code int4 NOT NULL,
-	CONSTRAINT employee_absences_pk PRIMARY KEY (id_employee_absence),
-	CONSTRAINT employee_absence_fk FOREIGN KEY (fk_employee_absence_code) REFERENCES public.employee_absence_codes(id_employee_absence_code),
-	CONSTRAINT employee_absence_fk_1 FOREIGN KEY (fk_employee) REFERENCES public.employees(id_employee)
+	CONSTRAINT employee_absences_pkey PRIMARY KEY (id_employee_absence),
+	CONSTRAINT employee_absences_fk_employee_absence__0f106f50_fk_employee_ FOREIGN KEY (fk_employee_absence_code) REFERENCES public.employee_absence_codes(id_employee_absence_code) DEFERRABLE INITIALLY DEFERRED,
+	CONSTRAINT employee_absences_fk_employee_d330c4d2_fk_employees_id_employee FOREIGN KEY (fk_employee) REFERENCES public.employees(id_employee) DEFERRABLE INITIALLY DEFERRED
 );
-
--- Permissions
-
-ALTER TABLE public.employee_absences OWNER TO hello_django;
-GRANT ALL ON TABLE public.employee_absences TO hello_django;
-
-
-
-CREATE OR REPLACE FUNCTION public.f_create_default_project()
- RETURNS trigger
- LANGUAGE plpgsql
-AS $function$
-declare default_cnt integer;
-begin
-	SELECT count(*) INTO default_cnt FROM public.projects WHERE project_name = CONCAT(new.company_name, '- default');
-	RAISE NOTICE 'Value: %', default_cnt;
-
-	if new.is_customer = true and default_cnt = 0 THEN
-  		INSERT INTO public.projects (project_name, fk_customer, planned_start_date, planned_end_date) VALUES(CONCAT(new.company_name, '- default'), new.id_company, now(), '99991231');
-  	end if;
-	return new;
-END;
-$function$
-;
-
--- Permissions
-
-ALTER FUNCTION public.f_create_default_project() OWNER TO hello_django;
-GRANT ALL ON FUNCTION public.f_create_default_project() TO hello_django;
-
--- Table Triggers
-
-create trigger default_project after
-insert
-    or
-delete
-    or
-update
-    on
-    public.companies for each row execute function f_create_default_project();
--- Permissions
-
-GRANT ALL ON SCHEMA public TO hello_django;
+CREATE INDEX employee_absences_fk_employee_absence_code_0f106f50 ON public.employee_absences USING btree (fk_employee_absence_code);
+CREATE INDEX employee_absences_fk_employee_d330c4d2 ON public.employee_absences USING btree (fk_employee);

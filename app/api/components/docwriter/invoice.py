@@ -9,7 +9,8 @@ from reportlab.lib.units import cm
 from svglib.svglib import svg2rlg
 from pdfrw import PdfReader, PageMerge
 from pdfrw.buildxobj import pagexobj
-
+import locale
+import textwrap
 
 
 class Invoice(Document):
@@ -84,6 +85,7 @@ class Invoice(Document):
             return qr_code_name
     def draw(self):
         # Creating Canvas
+
         c = self.draw_template()
 
         c.drawString(2 * cm, 9 * cm, f"Datum: {self.invoice_date}")
@@ -102,10 +104,10 @@ class Invoice(Document):
         c.setFont("Helvetica-Bold", 10)
         c.drawString(2 * cm, 14.5 * cm, f'Rechnung: {self.document_id}')
 
-        c.setFont("Helvetica", 10)
+        c.setFont("Helvetica", 9)
         # c.setLineWidth(0.25)
         c.drawString(2 * cm, 16 * cm, "Datum")
-        c.drawString(4 * cm, 16 * cm, "Beschreibung")
+        c.drawString(5 * cm, 16 * cm, "Beschreibung")
         c.drawString(13 * cm, 16 * cm, "Einheit")
         c.drawRightString(16 * cm, 16 * cm, "Menge")
         c.drawRightString(17.5 * cm, 16 * cm, "Preis")
@@ -113,44 +115,49 @@ class Invoice(Document):
 
         c.line(2 * cm, 16.5 * cm, 19 * cm, 16.5 * cm)
 
-        c.setFont("Helvetica", 10)
+        c.setFont("Helvetica", 9)
 
         ypos = 17.5
         for position in self.positions:
-            c.setFont("Helvetica", 10)
+            initial_y = ypos
+            c.setFont("Helvetica", 9)
             c.drawString(2 * cm, ypos * cm, str(position['date']))
 
-            c.setFont("Helvetica-Bold", 10)
+            c.setFont("Helvetica-Bold", 9)
             c.drawString(5 * cm, ypos * cm, f'Auftrag: {position["position_id"] }')
             ypos = self.addy(ypos, c, 0.5)
-            c.setFont("Helvetica", 8)
-            c.drawString(5 * cm, ypos * cm, f'Beschreibung: {position["description"]}')
-            ypos = self.addy(ypos, c, 0.5)
+            c.setFont("Helvetica", 9)
+
+            wrapper = textwrap.TextWrapper(width=50)
+            lines = wrapper.wrap(text=position["description"])
+            for line in lines:
+                c.drawString(5 * cm, ypos * cm, f'{line}')
+                ypos = self.addy(ypos, c, 0.5)
 
             if position['reference_text'] not in (None, ''):
                 c.drawString(5 * cm, ypos * cm, f'Referenz: {position["reference_text"]}')
                 ypos = self.addy(ypos, c, 0.5)
 
-            ypos = 17.5
-            c.setFont("Helvetica", 10)
+            ypos = self.addy(ypos, c, -0.5)
+            c.setFont("Helvetica", 9)
             c.drawString(13 * cm, ypos * cm, position['unit'])
-            c.drawRightString(16 * cm, ypos * cm, "%.2f" % position["amount"])
-            c.drawRightString(17.5 * cm, ypos * cm, "%.2f" % position["unit_price"])
-            c.drawRightString(19 * cm, ypos * cm, "%.2f" % (position["amount"] * position["unit_price"]))
+            c.drawRightString(16 * cm, ypos * cm,   f"{position['amount']:,.2f}".replace(',', ''))
+            c.drawRightString(17.5 * cm, ypos * cm,  f"{position['unit_price']:,.2f}".replace(',', ''))
+            c.drawRightString(19 * cm, ypos * cm, f"{(position['amount'] * position['unit_price']):,.2f}".replace(',', ''))
 
             ypos = self.addy(ypos, c, 1)
 
-        c.setFont("Helvetica", 10)
+        c.setFont("Helvetica", 9)
 
         c.line(2 * cm, ypos * cm, 19 * cm, ypos * cm)
         ypos = self.addy(ypos, c, 1)
         c.drawString(13 * cm, ypos * cm, f'Sub-Total {self.currency}')
-        c.drawRightString(19 * cm, ypos * cm, "%.2f" % (self.net_total))
+        c.drawRightString(19 * cm, ypos * cm, f"{self.net_total:,.2f}".replace(',', ''))
         ypos = self.addy(ypos, c, 0.5)
         # c.drawString(12.5 * cm, ypos * cm, 'MWST')
 
-        c.drawString(13 * cm, ypos * cm, f'MWST ({self.vat * 100}%) {self.currency}')
-        c.drawRightString(19 * cm, ypos * cm, "%.2f" % (self.net_total * self.vat))
+        c.drawString(13 * cm, ypos * cm, f'MWST ({(self.vat * 100):.1f}%) {self.currency}')
+        c.drawRightString(19 * cm, ypos * cm,  f"{(self.net_total * self.vat):,.2f}".replace(',', ''))
 
         ypos = self.addy(ypos, c, 0.5)
         c.line(13 * cm, ypos * cm, 19 * cm, ypos * cm)

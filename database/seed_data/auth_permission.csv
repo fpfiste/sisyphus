@@ -1,0 +1,117 @@
+"id","name","content_type_id","codename"
+1,Can add log entry,1,add_logentry
+2,Can change log entry,1,change_logentry
+3,Can delete log entry,1,delete_logentry
+4,Can view log entry,1,view_logentry
+5,Can add permission,2,add_permission
+6,Can change permission,2,change_permission
+7,Can delete permission,2,delete_permission
+8,Can view permission,2,view_permission
+9,Can add group,3,add_group
+10,Can change group,3,change_group
+11,Can delete group,3,delete_group
+12,Can view group,3,view_group
+13,Can add user,4,add_user
+14,Can change user,4,change_user
+15,Can delete user,4,delete_user
+16,Can view user,4,view_user
+17,Can add content type,5,add_contenttype
+18,Can change content type,5,change_contenttype
+19,Can delete content type,5,delete_contenttype
+20,Can view content type,5,view_contenttype
+21,Can add session,6,add_session
+22,Can change session,6,change_session
+23,Can delete session,6,delete_session
+24,Can view session,6,view_session
+34,Can add vat,34,add_vat
+35,Can change vat,34,change_vat
+36,Can delete vat,34,delete_vat
+37,Can view vat,34,view_vat
+38,Can add projects,35,add_projects
+39,Can change projects,35,change_projects
+40,Can delete projects,35,delete_projects
+41,Can view projects,35,view_projects
+42,Can add asset absences,36,add_assetabsences
+43,Can change asset absences,36,change_assetabsences
+44,Can delete asset absences,36,delete_assetabsences
+45,Can view asset absences,36,view_assetabsences
+46,Can add invoice texts,37,add_invoicetexts
+47,Can change invoice texts,37,change_invoicetexts
+48,Can delete invoice texts,37,delete_invoicetexts
+49,Can view invoice texts,37,view_invoicetexts
+50,Can add currencies,38,add_currencies
+51,Can change currencies,38,change_currencies
+52,Can delete currencies,38,delete_currencies
+53,Can view currencies,38,view_currencies
+54,Can add employee absences,39,add_employeeabsences
+55,Can change employee absences,39,change_employeeabsences
+56,Can delete employee absences,39,delete_employeeabsences
+57,Can view employee absences,39,view_employeeabsences
+58,Can add companies,40,add_companies
+59,Can change companies,40,change_companies
+60,Can delete companies,40,delete_companies
+61,Can view companies,40,view_companies
+62,Can add sales state,41,add_salesstate
+63,Can change sales state,41,change_salesstate
+64,Can delete sales state,41,delete_salesstate
+65,Can view sales state,41,view_salesstate
+66,Can add units,42,add_units
+67,Can change units,42,change_units
+68,Can delete units,42,delete_units
+69,Can view units,42,view_units
+70,Can add task templates,43,add_tasktemplates
+71,Can change task templates,43,change_tasktemplates
+72,Can delete task templates,43,delete_tasktemplates
+73,Can view task templates,43,view_tasktemplates
+74,Can add invoice terms,44,add_invoiceterms
+75,Can change invoice terms,44,change_invoiceterms
+76,Can delete invoice terms,44,delete_invoiceterms
+77,Can view invoice terms,44,view_invoiceterms
+78,Can add invoice states,45,add_invoicestates
+79,Can change invoice states,45,change_invoicestates
+80,Can delete invoice states,45,delete_invoicestates
+81,Can view invoice states,45,view_invoicestates
+82,Can add tasks,46,add_tasks
+83,Can change tasks,46,change_tasks
+84,Can delete tasks,46,delete_tasks
+85,Can view tasks,46,view_tasks
+86,Can add asset types,47,add_assettypes
+87,Can change asset types,47,change_assettypes
+88,Can delete asset types,47,delete_assettypes
+89,Can view asset types,47,view_assettypes
+90,Can add assets,48,add_assets
+91,Can change assets,48,change_assets
+92,Can delete assets,48,delete_assets
+93,Can view assets,48,view_assets
+94,Can add sales,49,add_sales
+95,Can change sales,49,change_sales
+96,Can delete sales,49,delete_sales
+97,Can view sales,49,view_sales
+98,Can add asset absence codes,50,add_assetabsencecodes
+99,Can change asset absence codes,50,change_assetabsencecodes
+100,Can delete asset absence codes,50,delete_assetabsencecodes
+101,Can view asset absence codes,50,view_assetabsencecodes
+102,Can add employee absence codes,51,add_employeeabsencecodes
+103,Can change employee absence codes,51,change_employeeabsencecodes
+104,Can delete employee absence codes,51,delete_employeeabsencecodes
+105,Can view employee absence codes,51,view_employeeabsencecodes
+106,Can add employee types,52,add_employeetypes
+107,Can change employee types,52,change_employeetypes
+108,Can delete employee types,52,delete_employeetypes
+109,Can view employee types,52,view_employeetypes
+110,Can add invoices,53,add_invoices
+111,Can change invoices,53,change_invoices
+112,Can delete invoices,53,delete_invoices
+113,Can view invoices,53,view_invoices
+114,Can add employees,54,add_employees
+115,Can change employees,54,change_employees
+116,Can delete employees,54,delete_employees
+117,Can view employees,54,view_employees
+118,Can add sys rec states,55,add_sysrecstates
+119,Can change sys rec states,55,change_sysrecstates
+120,Can delete sys rec states,55,delete_sysrecstates
+121,Can view sys rec states,55,view_sysrecstates
+122,Can add task states,56,add_taskstates
+123,Can change task states,56,change_taskstates
+124,Can delete task states,56,delete_taskstates
+125,Can view task states,56,view_taskstates

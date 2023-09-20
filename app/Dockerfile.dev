@@ -24,4 +24,5 @@ COPY ./entrypoint.dev.sh /entrypoint.dev.sh
 RUN chmod +x /entrypoint.dev.sh
 
 
+
 CMD ["sh", "./entrypoint.dev.sh"]

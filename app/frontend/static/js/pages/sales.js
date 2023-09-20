@@ -4,7 +4,7 @@ $(document).ready(function(){
     let url = '/sales'
     let lang_cookie = Cookies.get('sisyphus_language');
 
-
+    $('#btn_close_task').remove();
 
     //*** read the config file ***//
     $.ajax({
@@ -62,7 +62,7 @@ $(document).ready(function(){
             fields: page_config['fields'],
             exclude: ['fk_invoice'],
             disabled : ['id_sale', 'fk_invoice', 'fk_sales_status'],
-            required : ['id_sale', 'sale_date', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_reference', 'fk_unit'],
+            required : ['id_sale', 'sale_date', 'fk_project', 'sale_amount', 'sale_unit_price', 'fk_unit'],
             language: lang_cookie
 
     })
@@ -131,5 +131,36 @@ $(document).ready(function(){
 
     })
 
+    $('#btn_print').on('click', function() {
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = '/api/sales/' + pk + '/pdf/'
+        $.ajax({
+           url: url,
+           type: 'GET',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           success: function(response) {
+                console.log(response)
+                window.open(response['file_url'], '_blank').focus();
+
+           },
+           error: function(error){
+            console.log(error)
+           }
+        });
+    })
+
+    $('#btn_delete').on('click', function() {
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = '/api/sales/' + pk + '/'
+
+        let state = $('#fk_sales_state').val()
+
+        if (state >= 2) {
+            alert('Sale cannot be deleted because it was already billed')
+            location.reload();
+        }
+
+        update_form.submit(url, 'DELETE');
+    })
 
 });

@@ -4,7 +4,7 @@ $(document).ready(function(){
     let url = '/companies'
     let lang_cookie = Cookies.get('sisyphus_language');
 
-
+    $('#btn_delete, #btn_print, #btn_close_task').remove();
     //*** read the config file ***//
     $.ajax({
           url: '/_config',

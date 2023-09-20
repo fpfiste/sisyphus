@@ -5,6 +5,7 @@ from .views import *
 
 router = routers.DefaultRouter()
 router.register(r'companies',  CompanyViewSet, basename='companies')
+router.register(r'countries',  CountryViewSet)
 router.register(r'currencies',  CurrencyViewSet)
 router.register(r'assets/absences/codes',  AssetAbsenceCodesViewSet)
 router.register(r'assets/absences',  AssetAbsenceViewSet)

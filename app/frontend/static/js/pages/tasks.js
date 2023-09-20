@@ -108,10 +108,10 @@ $(document).ready(function(){
            type: 'GET',
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
-
+              console.log(response)
               $('#task_template').val(template_id);
               $.each(response, (key, value)=>{
-                $('#'+ key).val(value)
+                $('#create_modal #'+ key).val(value)
 
               })
            },
@@ -126,6 +126,21 @@ $(document).ready(function(){
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/tasks/' + pk + '/close/'
         update_form.submit(url, 'PUT');
+    })
+
+    $('#btn_delete').on('click', function() {
+        update_form.required = ['id_task']
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = '/api/tasks/' + pk + '/'
+
+        let task_state = $('#fk_task_state').val()
+
+        if (task_state >= 4) {
+            alert('Task cannot be deleted because it was already closed or billed')
+            location.reload();
+        }
+
+        update_form.submit(url, 'DELETE');
     })
 
     $('#btn_print').on('click', function() {
@@ -145,6 +160,9 @@ $(document).ready(function(){
            }
         });
     })
+
+
+
 
     $('#update_modal').on('show.bs.modal', function() {
         let task_status = $('#update_form #fk_task_state').val()

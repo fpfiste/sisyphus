@@ -163,3 +163,5 @@ COMPANY = {
             'phone' : '+41 32 631 21 88',
             'vat_number' : '07AABCS1429B1Z'
         }
+
+

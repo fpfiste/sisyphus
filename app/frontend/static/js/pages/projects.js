@@ -4,7 +4,7 @@ $(document).ready(function(){
     let url = '/projects'
     let lang_cookie = Cookies.get('sisyphus_language');
 
-
+    $('#btn_delete, #btn_print, #btn_close_task').remove();
 
     //*** read the config file ***//
     $.ajax({
@@ -49,7 +49,7 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             exclude: ['id_project'],
-            required : ['id_project', 'fk_customer', 'planned_start_date', 'planned_end_date'],
+            required : ['id_project', 'fk_customer', 'planned_start_date', 'planned_end_date', 'fk_sys_rec_state'],
             language: lang_cookie,
 
     })
@@ -60,7 +60,7 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             disabled : ['id_project', 'fk_customer'],
-            required : ['id_project', 'fk_customer', 'planned_start_date', 'planned_end_date'],
+            required : ['id_project', 'fk_customer', 'planned_start_date', 'planned_end_date', 'fk_sys_rec_state'],
             language: lang_cookie,
 
     })
