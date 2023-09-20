@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  db:
+    build: ./database
+    container_name: sisyphus_db
+    volumes:
+      - sisyphus_dev:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=hello_django
+      - POSTGRES_PASSWORD=hello_django
+      - POSTGRES_DB=sisyphus
+    expose:
+      - '5433'
+    ports:
+      - '5433:5433'
+    command: -p 5433
+
+  api:
+    build:
+      context: ./app
+      dockerfile: Dockerfile.dev
+    container_name: sisyphus_api
+    volumes:
+      - ./app/:/home/sisyphus/app
+      - /tmp:/tmp
+    ports:
+      - 8002:8002
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+
+volumes:
+  sisyphus_dev:

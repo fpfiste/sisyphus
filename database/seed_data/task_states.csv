@@ -1,0 +1,7 @@
+"id_task_state","task_state"
+1,erstellt
+2,geplant
+3,ausgeführt
+4,abgeschlossen
+5,verrechnet
+-1,storniert

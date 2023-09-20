@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link rel="shortcut icon" href="/img/icons/icon-48x48.png" />
+
+
+
+	<link href="/static/css/app.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/398fba641d.js" crossorigin="anonymous"></script>
+
+	<!-- jquery -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+	<script src=" https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js "></script>
+
+	<!-- bootstrap -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+	<link href="/static/components/table/table.css" rel="stylesheet">
+	<script type="application/javascript" src="/static/components/table/table.js"></script>
+	<script type="application/javascript" src="/static/components/form.js"></script>
+	<link href="/static/components/scheduler/scheduler.css" rel="stylesheet">
+	<script type="application/javascript" src="/static/components/scheduler/scheduler.js"></script>
+    {% load static %}
+
+
+    <title>{% block small_title %}Title{% endblock %}</title>
+
+</head>
+
+<body>
+
+		<div class="wrapper">
+
+			<nav id="sidebar" class="sidebar js-sidebar">
+				<div class="sidebar-content js-simplebar">
+					<a class="sidebar-brand" href="{% url 'index' %}">
+						<img src="/static/img/logo_small.png" class="img-fluid" style="width: 50%; margin-left: 25%;">
+        			</a>
+
+					<ul class="sidebar-nav">
+					<li class="sidebar-header" id="sidebar_title_planning"></li>
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{% url 'schedule' %}">
+              					<i class="fa-regular fa-calendar-days"></i><span class="align-middle" id="sidebar_title_schedule"></span>
+           					</a>
+						</li>
+					<li class="sidebar-header" id="sidebar_title_operations"></li>
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{% url 'projects' %}">
+              					<i class="fa-solid fa-bars-progress"></i><span class="align-middle" id="sidebar_title_projects"></span>
+           					</a>
+						</li>
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{% url 'tasks' %}">
+              					<i class="fa-solid fa-list-check"></i> <span class="align-middle" id="sidebar_title_tasks"></span>
+           					</a>
+						</li>
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{% url 'sales' %}">
+              					<i class="fa-solid fa-cash-register"></i> <span class="align-middle" id="sidebar_title_sales"></span>
+           					</a>
+						</li>
+						<li class="sidebar-header" id="sidebar_title_master_data"></li>
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{% url 'companies' %}">
+              					<i class="fa-solid fa-industry"></i> <span class="align-middle" id="sidebar_title_companies"></span>
+            				</a>
+						</li>
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{% url 'employees' %}">
+								<i class="fa-solid fa-person"></i> <span class="align-middle" id="sidebar_title_employees"></span>
+            				</a>
+						</li>
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{% url 'assets' %}">
+              					<i class="fa-solid fa-truck-plane"></i><span class="align-middle" id="sidebar_title_assets"></span>
+            				</a>
+						</li>
+						<li class="sidebar-item">
+							<a class="sidebar-link" href="{% url 'task-templates' %}">
+              					<i class="fa-solid fa-folder-open"></i><span class="align-middle" id="sidebar_title_task_templates"></span>
+            				</a>
+						</li>
+
+					<li class="sidebar-header" id="sidebar_title_finances"></li>
+
+						<li class="sidebar-item">
+						<a class="sidebar-link" href="{% url 'billing' %}">
+              				<i class="fa-solid fa-coins"></i><span class="align-middle" id="sidebar_title_billing"></span>
+            			</a>
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="{% url 'invoices' %}">
+             				<i class="fa-solid fa-receipt"></i><span class="align-middle" id="sidebar_title_invoices"></span>
+            			</a>
+					</li>
+
+
+
+				</ul>
+
+			</div>
+		</nav>
+
+
+
+
+
+
+
+
+
+
+
+			<div class="main">
+				<nav class="navbar navbar-expand navbar-light navbar-bg">
+					<a class="sidebar-toggle js-sidebar-toggle">
+         				<i class="hamburger align-self-center"></i>
+        			</a>
+
+					<div class="navbar-collapse collapse">
+						<ul class="navbar-nav navbar-align">
+							<li class="nav-item dropdown">
+								<select id="language_selector" name="countries" style="height:100%; background:transparent; border:None;">
+									<option value="ch">🇨🇭</option>
+									<option value="en">🇬🇧</option>
+
+								</select>
+							</li>
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+									<img id="user_image" src="/static/img/user.png" class="avatar img-fluid rounded me-1"/>
+				  				</a>
+								<div class="dropdown-menu dropdown-menu-end">
+									<a class="dropdown-item" href="{% url 'logout' %}">Log out</a>
+								</div>
+							</li>
+					</ul>
+				</div>
+			</nav>
+			<main class="content">
+				<div class="container-fluid p-0">
+
+					{% block content %}
+					{% endblock %}
+
+				</div>
+			</main>
+
+
+
+		</div>
+
+</div>
+
+<script type="text/javascript" src="/static/js/index.js"></script>
+<script type="text/javascript" src="{{page_config.js}}"></script>
+
+</body>
+
+</html>
