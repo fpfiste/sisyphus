@@ -5,7 +5,7 @@ services:
     build: ./database
     container_name: sisyphus_db
     volumes:
-      - postgres_data:/var/lib/postgresql/data/
+      - sisyphus_dev:/var/lib/postgresql/data/
     environment:
       - POSTGRES_USER=hello_django
       - POSTGRES_PASSWORD=hello_django
@@ -25,11 +25,11 @@ services:
       - ./app/:/home/sisyphus/app
       - /tmp:/tmp
     ports:
-      - 8000:8000
+      - 8002:8002
     env_file:
       - ./.env.dev
     depends_on:
       - db
 
 volumes:
-  postgres_data:
+  sisyphus_dev:
