@@ -2,6 +2,8 @@
 
 {
   "translations": {
+        "password_input_label" : {"en":  "Password", "ch": "Passwort"},
+        "user_input_label" : {"en":  "Username", "ch": "Benutzer"},
         "sidebar_title_planning": {"en": "Planning", "ch": "Planung"},
         "sidebar_title_schedule": {"en": "Schedule", "ch": "Kalender"},
         "sidebar_title_operations": {"en": "Operations", "ch": "Tagesgeschäft"},

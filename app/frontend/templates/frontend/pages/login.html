@@ -1,34 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-        {% load static %}
+{% extends 'frontend/base.html' %}
 
+{% block title%}{{page_config.title}}{% endblock %}
 
-        <link href="{% static '/css/lib/font-awesome.min.css' %}" rel="stylesheet">
-    <link href="{% static '/css/lib/themify-icons.css' %}" rel="stylesheet">
-    <link href="{% static '/css/lib/menubar/sidebar.css' %}" rel="stylesheet">
-    <link href="{% static '/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
-    <link href="{% static '/css/lib/helper.css' %}" rel="stylesheet">
-    <link href="{% static '/css/lib/line-progress/jquery.lineProgressbar.css' %}" rel="stylesheet">
-    <link href="{% static '/css/style.css' %}" rel="stylesheet">
-    <link href="{% static '/css/lib/datatable/DataTable.css' %}" rel="stylesheet" />
-    <link href="{% static '/css/lib/scheduler/timetablejs.css' %}" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="{% static '/images/favicon.ico' %}">
-</head>
-<body>
+{% block content %}
          <div class="content-wrap">
             <div class="modal-dialog modal-dialog-centered" role="document" id="div_modal_login">
 
                 <div class="modal-content" id="modal-login">
-                    <img id="id_login_logo" src="{% static '/images/logo_small.png' %}">
+                    <img id="id_login_logo" style="width: 50%; margin:auto;"src="/static/img/logo_small.png">
                     <form class="form_login" id="id_form_login" method="post" action="">
                         <div class="modal-body" id="body_modal_login">
 
                             {% csrf_token %}
 
-                            {{ login_form}}
+
+                                                          <div class="form-group">
+                                <label id="user_input_label" for="user_input"></label>
+                                <input type="text" class="form-control" name = "username"id="user_input" aria-describedby="emailHelp" placeholder="Enter email">
+                              </div>
+                              <div class="form-group">
+                                <label id="password_input_label"for="password_input">Password</label>
+                                <input type="password" name="password" class="form-control" id="password_input" placeholder="Password">
+                              </div>
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-danger" name="btn_login" type="submit">Login</button>
@@ -37,5 +30,4 @@
                 </div>
             </div>
          </div>
-</body>
-</html>
+{% endblock %}

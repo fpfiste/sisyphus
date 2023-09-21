@@ -5,6 +5,8 @@
 4,auth,user
 5,contenttypes,contenttype
 6,sessions,session
+7,authtoken,token
+8,authtoken,tokenproxy
 34,api,vat
 35,api,projects
 36,api,assetabsences

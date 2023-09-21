@@ -5,7 +5,9 @@ from operator import attrgetter
 from django.db import transaction
 from django.db.models import Q
 from rest_framework import viewsets, status
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.decorators import action
+from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 
 from main import settings
@@ -21,6 +23,8 @@ class AssetAbsenceCodesViewSet(viewsets.ModelViewSet):
     """
     queryset = AssetAbsenceCodes.objects.all()
     serializer_class = AssetAbsenceCodeSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -39,6 +43,8 @@ class AssetAbsenceViewSet(viewsets.ModelViewSet):
     """
     queryset = AssetAbsences.objects.all()
     serializer_class = AssetAbsenceSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
 
     def get_queryset(self):
@@ -59,6 +65,8 @@ class AssetTypesViewSet(viewsets.ModelViewSet):
     """
     queryset = AssetTypes.objects.all()
     serializer_class = AssetTypeSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -77,6 +85,8 @@ class AssetViewSet(viewsets.ModelViewSet):
     """
     queryset = Assets.objects.all()
     serializer_class = AssetSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -96,6 +106,8 @@ class CompanyViewSet(viewsets.ModelViewSet):
     """
     queryset = Companies.objects.all()
     serializer_class = CompanySerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
 
     def get_queryset(self):
@@ -153,6 +165,8 @@ class CountryViewSet(viewsets.ModelViewSet):
     """
     queryset = Countries.objects.all()
     serializer_class = CountrySerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -172,6 +186,8 @@ class CurrencyViewSet(viewsets.ModelViewSet):
     """
     queryset = Currencies.objects.all()
     serializer_class = CurrencySerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -191,6 +207,8 @@ class EmployeeAbsenceCodesViewSet(viewsets.ModelViewSet):
     """
     queryset = EmployeeAbsenceCodes.objects.all()
     serializer_class = EmployeeAbsenceCodeSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -209,6 +227,8 @@ class EmployeeAbsenceViewSet(viewsets.ModelViewSet):
     """
     queryset = EmployeeAbsences.objects.all()
     serializer_class = EmployeeAbsenceSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -227,6 +247,8 @@ class EmployeeTypesViewSet(viewsets.ModelViewSet):
     """
     queryset = EmployeeTypes.objects.all()
     serializer_class = EmployeeTypeSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
 
     def get_queryset(self):
@@ -246,6 +268,8 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     """
     queryset = Employees.objects.all()
     serializer_class = EmployeeSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
 
     def get_queryset(self):
@@ -264,6 +288,8 @@ class InvoiceStateViewSet(viewsets.ModelViewSet):
     """
     queryset = InvoiceStates.objects.all()
     serializer_class = InvoiceStateSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
 
     def get_queryset(self):
@@ -283,6 +309,8 @@ class InvoiceTermsViewSet(viewsets.ModelViewSet):
     """
     queryset = InvoiceTerms.objects.all()
     serializer_class = InvoiceTermsSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -300,6 +328,8 @@ class InvoiceTextViewSet(viewsets.ModelViewSet):
     """
     queryset = InvoiceTexts.objects.all()
     serializer_class = InvoiceTextSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
 
     def get_queryset(self):
@@ -319,6 +349,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     """
     queryset = Invoices.objects.all()
     serializer_class = InvoiceSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
 
     def get_queryset(self):
@@ -524,6 +556,8 @@ class ProjectViewSet(viewsets.ModelViewSet):
     """
     queryset = Projects.objects.all()
     serializer_class = ProjectsSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -542,6 +576,8 @@ class SalesStateViewSet(viewsets.ModelViewSet):
     """
     queryset = SalesState.objects.all()
     serializer_class = SalesStateSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -559,6 +595,8 @@ class SalesViewSet(viewsets.ModelViewSet):
     """
     queryset = Sales.objects.all()
     serializer_class = SalesSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
 
 
@@ -679,6 +717,8 @@ class SysRecStateViewSet(viewsets.ModelViewSet):
     """
     queryset = SysRecStates.objects.all()
     serializer_class = SysRecStatesSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
 
     def get_queryset(self):
@@ -698,6 +738,8 @@ class TaskStateViewSet(viewsets.ModelViewSet):
     queryset = TaskStates.objects.all()
     serializer_class = TaskStateSerializer
 
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -729,6 +771,8 @@ class TaskTemplateViewSet(viewsets.ModelViewSet):
     """
     queryset = TaskTemplates.objects.all()
     serializer_class = TaskTemplateSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -746,6 +790,8 @@ class TaskViewSet(viewsets.ModelViewSet):
     """
     queryset = Tasks.objects.all()
     serializer_class = TaskSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def retrieve(self, request, pk):
         task = Tasks.objects.get(id_task=pk)
@@ -895,7 +941,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def listday(self, request):
-
+        print(request.query_params)
         date = request.query_params.get('date')
 
         if date == None:
@@ -1049,6 +1095,8 @@ class UnitViewSet(viewsets.ModelViewSet):
     """
     queryset = Units.objects.all()
     serializer_class = UnitSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -1067,6 +1115,8 @@ class VATViewSet(viewsets.ModelViewSet):
     """
     queryset = Vat.objects.all()
     serializer_class = VATSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
     def get_queryset(self):
         """
@@ -1077,6 +1127,8 @@ class VATViewSet(viewsets.ModelViewSet):
         params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
         data = queryset.filter(**params).order_by('-pk')
         return data
+
+
 
 
 

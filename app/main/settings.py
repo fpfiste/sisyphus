@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'frontend.apps.FrontendConfig',
     'api.apps.ApiConfig',
     'rest_framework',
+    'rest_framework.authtoken'
 
 ]
 
@@ -165,3 +166,9 @@ COMPANY = {
         }
 
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+
+}

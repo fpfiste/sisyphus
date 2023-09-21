@@ -1010,3 +1010,20 @@ CREATE TABLE public.employee_absences (
 );
 CREATE INDEX employee_absences_fk_employee_absence_code_0f106f50 ON public.employee_absences USING btree (fk_employee_absence_code);
 CREATE INDEX employee_absences_fk_employee_d330c4d2 ON public.employee_absences USING btree (fk_employee);
+
+
+-- public.authtoken_token definition
+
+-- Drop table
+
+-- DROP TABLE public.authtoken_token;
+
+CREATE TABLE public.authtoken_token (
+	"key" varchar(40) NOT NULL,
+	created timestamptz NOT NULL,
+	user_id int4 NOT NULL,
+	CONSTRAINT authtoken_token_pkey PRIMARY KEY (key),
+	CONSTRAINT authtoken_token_user_id_key UNIQUE (user_id),
+	CONSTRAINT authtoken_token_user_id_35299eff_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES public.auth_user(id) DEFERRABLE INITIALLY DEFERRED
+);
+CREATE INDEX authtoken_token_key_10f0b77e_like ON public.authtoken_token USING btree (key varchar_pattern_ops);
