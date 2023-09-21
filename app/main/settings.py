@@ -29,7 +29,7 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(' ')
 # Application definition
 
 
-CSRF_TRUSTED_ORIGINS = ["http://0.0.0.0:1337"]
+CSRF_TRUSTED_ORIGINS = os.environ.get("DJANGO_TRUSTED_ORIGINS", "127.0.0.1").split(' ')
 
 INSTALLED_APPS = [
 
@@ -83,9 +83,9 @@ WSGI_APPLICATION = 'main.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
-        "NAME": os.environ.get("SQL_DATABASE", "sisyphus"),
-        "USER": os.environ.get("SQL_USER", "hello_django"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "hello_django"),
+        "NAME": os.environ.get("POSTGRES_DB", "sisyphus"),
+        "USER": os.environ.get("POSTGRES_USER", "hello_django"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "hello_django"),
         "HOST": os.environ.get("SQL_HOST", "0.0.0.0"),
         "PORT": os.environ.get("SQL_PORT", "5433"),
         'OPTIONS': {
