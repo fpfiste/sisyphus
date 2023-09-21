@@ -791,7 +791,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     queryset = Tasks.objects.all()
     serializer_class = TaskSerializer
     authentication_classes = (TokenAuthentication, SessionAuthentication)
-    permission_classes = (DjangoModelPermissions,)
+    
 
     def retrieve(self, request, pk):
         task = Tasks.objects.get(id_task=pk)
