@@ -1,4 +1,4 @@
-"id_country","country","country_code"
-1,Schweiz,CH
-2,Deutschland,DE
-3,Österreich,AT
+"country","country_code"
+Schweiz,CH
+Deutschland,DE
+Österreich,AT

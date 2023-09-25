@@ -1,4 +1,4 @@
-"id_currency","currency","currency_abbreviation","currency_account_nr"
-1,Schweizer Franken,CHF,CH56 XXXX XXXX XXXX XXXX N
-2,Euro,EUR,CH56 XXXX XXXX XXXX XXXX N
-3,US Dollar,USD,CH56 XXXX XXXX XXXX XXXX N
+"currency","currency_abbreviation","currency_account_nr"
+Schweizer Franken,CHF,CH56 XXXX XXXX XXXX XXXX N
+Euro,EUR,CH56 XXXX XXXX XXXX XXXX N
+US Dollar,USD,CH56 XXXX XXXX XXXX XXXX N
