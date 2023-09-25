@@ -1,5 +1,5 @@
-"id_invoice_state","invoice_state"
-1,erstellt
-2,exportiert
-3,verbucht
--1,storniert
+"invoice_state"
+erstellt
+exportiert
+verbucht
+storniert

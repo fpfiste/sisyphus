@@ -15,6 +15,7 @@
         "sidebar_title_employees": {"en": "Employees", "ch": "Mitarbeiter"},
         "sidebar_title_assets": {"en": "Assets", "ch": "Maschinen & Anlagen"},
         "sidebar_title_task_templates": {"en": "Task templates", "ch": "Auftragsvorlagen"},
+        "sidebar_title_sales_templates": {"en": "Sales templates", "ch": "Verkaufsvorlagen"},
         "sidebar_title_finances": {"en": "Finance", "ch": "Finanzen"},
         "sidebar_title_payment_conditions": {"en": "Payment Conditions", "ch": "Zahlungsbedingungen"},
         "sidebar_title_invoices": {"en": "Invoices", "ch": "Rechnungen"},
@@ -56,11 +57,12 @@
           },
           "display_type": "fk_field",
           "input_type": "select",
-          "api_endpoint": "/api/task-template",
+          "api_endpoint": "/api/templates/",
+
           "min": "",
           "max": "",
-          "pk_field": "id_task_template",
-          "display_field": "task_description"
+          "pk_field": "id_template",
+          "display_field": "template_title"
         },
         "id_task": {
           "title": {
@@ -166,7 +168,7 @@
           "pk_field": "",
           "display_field": ""
         },
-        "task_description": {
+        "description": {
           "title": {
             "en": "Description",
             "ch": "Beschreibung"
@@ -482,6 +484,17 @@
           "max": "",
           "pk_field":"",
           "display_field": ""
+        },
+        "company_custom_fields": {
+          "title": {
+            "en": "More Attributes",
+            "ch": "Weitere Attribute"
+          },
+          "display_type": "jsonfield",
+          "input_type": "jsonfield",
+           "custom_field_options" : {"assigned_project": {"en": "Assigned Project", "ch": "Zugeteiltes Projekt"}, "year_of_production": {"en":  "Year of Production", "ch":  "Produktions Jahr"}},
+          "min": "",
+          "max": ""
         }
       }
 
@@ -572,6 +585,17 @@
           "max": "",
           "pk_field": "id_sys_rec_status",
           "display_field": "sys_rec_status"
+        },
+         "project_custom_fields": {
+          "title": {
+            "en": "More Attributes",
+            "ch": "Weitere Attribute"
+          },
+          "display_type": "jsonfield",
+          "input_type": "jsonfield",
+           "custom_field_options" : {"assigned_project": {"en": "Assigned Project", "ch": "Zugeteiltes Projekt"}, "year_of_production": {"en":  "Year of Production", "ch":  "Produktions Jahr"}},
+          "min": "",
+          "max": ""
         }
       }
 
@@ -751,7 +775,19 @@
           "max": "",
           "pk_field": "id_employee_type",
           "display_field": "employee_type_description"
+        },
+        "employee_custom_fields": {
+          "title": {
+            "en": "More Attributes",
+            "ch": "Weitere Attribute"
+          },
+          "display_type": "jsonfield",
+          "input_type": "jsonfield",
+           "custom_field_options" : {"assigned_project": {"en": "Assigned Project", "ch": "Zugeteiltes Projekt"}, "year_of_production": {"en":  "Year of Production", "ch":  "Produktions Jahr"}},
+          "min": "",
+          "max": ""
         }
+
       }
 
 
@@ -816,19 +852,6 @@
           "pk_field": "",
           "display_field": ""
         },
-        "year_of_production": {
-          "title": {
-            "en": "Year of production",
-            "ch": "Baujahr"
-          },
-          "display_type": "text",
-          "input_type": "number",
-          "api_endpoint": "",
-          "min": "1900",
-          "max": "999999999",
-          "pk_field": "",
-          "display_field": ""
-        },
          "fk_sys_rec_status": {
           "title": {
             "en": "Status",
@@ -841,6 +864,17 @@
           "max": "",
           "pk_field": "id_sys_rec_status",
           "display_field": "sys_rec_status"
+        },
+         "asset_custom_fields": {
+          "title": {
+            "en": "More Attributes",
+            "ch": "Weitere Attribute"
+          },
+          "display_type": "jsonfield",
+          "input_type": "jsonfield",
+           "custom_field_options" : {"assigned_project": {"en": "Assigned Project", "ch": "Zugeteiltes Projekt"}, "year_of_production": {"en":  "Year of Production", "ch":  "Produktions Jahr"}},
+          "min": "",
+          "max": ""
         }
       }
 
@@ -854,6 +888,20 @@
       "table_id" : "sales_table",
       "pk" : "id_sale",
       "fields": {
+        "sales_template": {
+          "title": {
+            "en": "Template",
+            "ch": "Vorlage"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/templates/",
+          "api_filter": "fk_template_type=2",
+          "min": "",
+          "max": "",
+          "pk_field": "id_template",
+          "display_field": "template_title"
+        },
         "id_sale": {
           "title": {
             "en": "Sale ID",
@@ -869,8 +917,8 @@
         },
         "sale_date": {
           "title": {
-            "en": "Timestamp",
-            "ch": "Zeitpunkt"
+            "en": "Date of Sale",
+            "ch": "Verkaufsdatum"
           },
           "display_type": "text",
           "input_type": "date",
@@ -881,8 +929,8 @@
         },
         "sale_time": {
           "title": {
-            "en": "Timestamp",
-            "ch": "Zeitpunkt"
+            "en": "Time of Sale",
+            "ch": "Verkaufszeit"
           },
           "display_type": "text",
           "input_type": "time",
@@ -891,13 +939,13 @@
           "pk_field": "",
           "display_field": ""
         },
-        "sale_description": {
+        "description": {
           "title": {
             "en": "Description",
             "ch": "Beschreibung"
           },
           "display_type": "text",
-          "input_type": "text",
+          "input_type": "textarea",
           "min": "",
           "max": "",
           "pk_field": "",
@@ -916,7 +964,7 @@
           "pk_field": "id_project",
           "display_field": "project_name"
         },
-        "sale_amount": {
+        "amount": {
           "title": {
             "en": "Amount",
             "ch": "Menge"
@@ -929,7 +977,7 @@
           "pk_field": "",
           "display_field": ""
         },
-        "sale_unit_price": {
+        "unit_price": {
           "title": {
             "en": "Unit price",
             "ch": "Stückpreis"
@@ -942,7 +990,7 @@
           "pk_field": "",
           "display_field": ""
         },
-        "sale_reference": {
+        "customer_reference": {
           "title": {
             "en": "Reference",
             "ch": "Referenz"
@@ -1019,6 +1067,17 @@
           "max": "",
           "pk_field": "id_vat",
           "display_field": "vat_title"
+        },
+        "sale_custom_fields": {
+          "title": {
+            "en": "More Attributes",
+            "ch": "Weitere Attribute"
+          },
+          "display_type": "jsonfield",
+          "input_type": "jsonfield",
+           "custom_field_options" : {"assigned_project": {"en": "Assigned Project", "ch": "Zugeteiltes Projekt"}, "year_of_production": {"en":  "Year of Production", "ch":  "Produktions Jahr"}},
+          "min": "",
+          "max": ""
         }
       }
 
@@ -1032,18 +1091,19 @@
       "table_id" : "tasks_table",
       "pk" : "id_task",
       "fields": {
-        "task_template": {
+        "task_template":{
           "title": {
             "en": "Template",
             "ch": "Vorlage"
           },
           "display_type": "fk_field",
           "input_type": "select",
-          "api_endpoint": "/api/templates",
+          "api_endpoint": "/api/templates/",
+          "api_filter": "fk_template_type=1",
           "min": "",
           "max": "",
-          "pk_field": "id_task_template",
-          "display_field": "task_description"
+          "pk_field": "id_template",
+          "display_field": "template_title"
         },
         "id_task": {
           "title": {
@@ -1188,13 +1248,13 @@
           "pk_field": "id_vat",
           "display_field": "vat_title"
         },
-        "task_description": {
+        "description": {
           "title": {
             "en": "Description",
             "ch": "Beschreibung"
           },
-          "display_type": "text",
-          "input_type": "text",
+          "display_type": "textarea",
+          "input_type": "textarea",
           "api_endpoint": "",
           "min": "",
           "max": "",
@@ -1318,21 +1378,33 @@
           "max": "",
           "pk_field": "id_company",
           "display_field": "company_internal_alias"
+        },
+        "task_custom_fields": {
+          "title": {
+            "en": "More Attributes",
+            "ch": "Weitere Attribute"
+          },
+          "display_type": "jsonfield",
+          "input_type": "jsonfield",
+           "custom_field_options" : {"assigned_project": {"en": "Assigned Project", "ch": "Zugeteiltes Projekt"}, "year_of_production": {"en":  "Year of Production", "ch":  "Produktions Jahr"}},
+          "min": "",
+          "max": ""
         }
+
       }
 
 
 
 },
     "/templates": {
-      "title": {"en": "Task Templates", "ch": "Auftrags-Vorlagen"},
+      "title": {"en": "Templates", "ch": "Vorlagen"},
       "ajax_url" : "/api/templates/",
       "js": "/static/js/pages/templates.js",
       "template" : "frontend/pages/table.html",
       "table_id" : "tasks_table",
-      "pk" : "id_task_template",
+      "pk" : "id_template",
       "fields": {
-        "id_task_template": {
+        "id_template": {
           "title": {
             "en": "Template ID",
             "ch": "Vorlagen Nr."
@@ -1342,6 +1414,32 @@
           "api_endpoint": "",
           "min": "0",
           "max": "999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "fk_template_type": {
+          "title": {
+            "en": "Template Type",
+            "ch": "Vorlagen-Typ"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/template-types",
+          "min": "",
+          "max": "",
+          "pk_field": "id_template_type",
+          "display_field": "template_type"
+        },
+        "template_title": {
+          "title": {
+            "en": "Title",
+            "ch": "Titel"
+          },
+          "display_type": "text",
+          "input_type": "text",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
           "pk_field": "",
           "display_field": ""
         },
@@ -1384,13 +1482,13 @@
           "pk_field": "",
           "display_field": ""
         },
-        "task_description": {
+        "description": {
           "title": {
             "en": "Description",
             "ch": "Beschreibung"
           },
-          "display_type": "text",
-          "input_type": "text",
+          "display_type": "textarea",
+          "input_type": "textarea",
           "api_endpoint": "",
           "min": "",
           "max": "",

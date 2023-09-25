@@ -10,8 +10,8 @@ from django.db import models
 
 class AssetAbsenceCodes(models.Model):
     id_asset_absence_code = models.AutoField(primary_key=True)
-    asset_absence_code = models.CharField()
-    asset_absence_code_abbreviation = models.CharField()
+    asset_absence_code = models.CharField(max_length=30)
+    asset_absence_code_abbreviation = models.CharField(max_length=5)
 
     class Meta:
         managed = False
@@ -20,10 +20,12 @@ class AssetAbsenceCodes(models.Model):
 
 class AssetAbsences(models.Model):
     id_asset_absence = models.AutoField(primary_key=True)
-    asset_absence_from = models.DateTimeField()
-    asset_absence_to = models.DateTimeField()
+    asset_absence_date_from = models.DateField()
+    asset_absence_date_to = models.DateField()
     fk_asset = models.ForeignKey('Assets', models.DO_NOTHING, db_column='fk_asset')
     fk_asset_absence_code = models.ForeignKey(AssetAbsenceCodes, models.DO_NOTHING, db_column='fk_asset_absence_code')
+    asset_absence_time_from = models.TimeField()
+    asset_absence_time_to = models.TimeField()
 
     class Meta:
         managed = False
@@ -32,7 +34,7 @@ class AssetAbsences(models.Model):
 
 class AssetTypes(models.Model):
     id_asset_type = models.AutoField(primary_key=True)
-    asset_type = models.CharField()
+    asset_type = models.CharField(max_length=50)
 
     class Meta:
         managed = False
@@ -41,11 +43,11 @@ class AssetTypes(models.Model):
 
 class Assets(models.Model):
     id_asset = models.AutoField(primary_key=True)
-    asset_description = models.CharField()
-    asset_internal_alias = models.CharField()
-    year_of_production = models.IntegerField(blank=True, null=True)
+    asset_description = models.CharField(max_length=50)
+    asset_internal_alias = models.CharField(max_length=20)
     fk_asset_type = models.ForeignKey(AssetTypes, models.DO_NOTHING, db_column='fk_asset_type')
     fk_sys_rec_status = models.ForeignKey('SysRecStates', models.DO_NOTHING, db_column='fk_sys_rec_status')
+    asset_custom_fields = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -121,19 +123,30 @@ class AuthUserUserPermissions(models.Model):
         unique_together = (('user', 'permission'),)
 
 
+class AuthtokenToken(models.Model):
+    key = models.CharField(primary_key=True, max_length=40)
+    created = models.DateTimeField()
+    user = models.OneToOneField(AuthUser, models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'authtoken_token'
+
+
 class Companies(models.Model):
     id_company = models.AutoField(primary_key=True)
-    company_name = models.CharField()
-    company_street = models.CharField()
-    company_zipcode = models.CharField()
+    company_name = models.CharField(max_length=50)
+    company_street = models.CharField(max_length=50)
+    company_zipcode = models.CharField(max_length=50)
     fk_country = models.ForeignKey('Countries', models.DO_NOTHING, db_column='fk_country')
-    company_city = models.CharField()
-    company_internal_alias = models.CharField(unique=True)
-    company_email = models.CharField(blank=True, null=True)
+    company_city = models.CharField(max_length=50)
+    company_internal_alias = models.CharField(unique=True, max_length=50)
+    company_email = models.CharField(max_length=50, blank=True, null=True)
     is_customer = models.BooleanField(blank=True, null=True)
     is_supplier = models.BooleanField(blank=True, null=True)
     is_subcontractor = models.BooleanField(blank=True, null=True)
     fk_sys_rec_status = models.ForeignKey('SysRecStates', models.DO_NOTHING, db_column='fk_sys_rec_status')
+    company_custom_fields = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -142,7 +155,7 @@ class Companies(models.Model):
 
 class Countries(models.Model):
     id_country = models.AutoField(primary_key=True)
-    country = models.CharField(unique=True)
+    country = models.CharField(unique=True, max_length=50)
     country_code = models.CharField(max_length=3)
 
     class Meta:
@@ -152,9 +165,9 @@ class Countries(models.Model):
 
 class Currencies(models.Model):
     id_currency = models.AutoField(primary_key=True)
-    currency = models.CharField()
-    currency_abbreviation = models.CharField()
-    currency_account_nr = models.CharField()
+    currency = models.CharField(max_length=50)
+    currency_abbreviation = models.CharField(max_length=3)
+    currency_account_nr = models.CharField(max_length=50)
 
     class Meta:
         managed = False
@@ -208,8 +221,8 @@ class DjangoSession(models.Model):
 
 class EmployeeAbsenceCodes(models.Model):
     id_employee_absence_code = models.AutoField(primary_key=True)
-    employee_absence_code = models.CharField()
-    employee_absence_code_abbreviation = models.CharField()
+    employee_absence_code = models.CharField(max_length=50)
+    employee_absence_code_abbreviation = models.CharField(max_length=5)
 
     class Meta:
         managed = False
@@ -218,10 +231,12 @@ class EmployeeAbsenceCodes(models.Model):
 
 class EmployeeAbsences(models.Model):
     id_employee_absence = models.AutoField(primary_key=True)
-    employee_absence_from = models.DateTimeField()
-    employee_absence_to = models.DateTimeField()
+    employee_absence_date_from = models.DateField()
+    employee_absence_date_to = models.DateField()
     fk_employee = models.ForeignKey('Employees', models.DO_NOTHING, db_column='fk_employee')
     fk_employee_absence_code = models.ForeignKey(EmployeeAbsenceCodes, models.DO_NOTHING, db_column='fk_employee_absence_code')
+    employee_absence_time_from = models.TimeField()
+    employee_absence_time_to = models.TimeField()
 
     class Meta:
         managed = False
@@ -230,7 +245,7 @@ class EmployeeAbsences(models.Model):
 
 class EmployeeTypes(models.Model):
     id_employee_type = models.AutoField(primary_key=True)
-    employee_type_description = models.CharField()
+    employee_type_description = models.CharField(max_length=50)
 
     class Meta:
         managed = False
@@ -239,29 +254,43 @@ class EmployeeTypes(models.Model):
 
 class Employees(models.Model):
     id_employee = models.AutoField(primary_key=True)
-    employee_first_name = models.CharField()
-    employee_last_name = models.CharField()
-    employee_street = models.CharField()
-    employee_zipcode = models.CharField()
-    employee_city = models.CharField()
-    employee_email = models.CharField()
-    employee_cell_phone = models.CharField()
+    employee_first_name = models.CharField(max_length=50)
+    employee_last_name = models.CharField(max_length=50)
+    employee_street = models.CharField(max_length=50)
+    employee_zipcode = models.CharField(max_length=20)
+    employee_city = models.CharField(max_length=50)
+    employee_email = models.CharField(max_length=50)
+    employee_cell_phone = models.CharField(max_length=50)
     employee_birthday = models.DateField()
     employee_salary = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     employee_fte = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
-    employee_internal_alias = models.CharField(unique=True)
+    employee_internal_alias = models.CharField(unique=True, max_length=10)
     fk_employee_type = models.ForeignKey(EmployeeTypes, models.DO_NOTHING, db_column='fk_employee_type')
     fk_sys_rec_status = models.ForeignKey('SysRecStates', models.DO_NOTHING, db_column='fk_sys_rec_status')
     fk_country = models.ForeignKey(Countries, models.DO_NOTHING, db_column='fk_country')
+    employee_custom_fields = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'employees'
 
 
+class InvoiceCancellation(models.Model):
+    id_invoice_cancellation = models.AutoField(primary_key=True)
+    cancellation_date = models.DateField()
+    cancellation_time = models.TimeField()
+    cancellation_reason = models.CharField(max_length=200)
+    cancellation_user = models.CharField(max_length=20)
+    fk_invoice = models.OneToOneField('Invoices', models.DO_NOTHING, db_column='fk_invoice')
+
+    class Meta:
+        managed = False
+        db_table = 'invoice_cancellation'
+
+
 class InvoiceStates(models.Model):
     id_invoice_state = models.AutoField(primary_key=True)
-    invoice_state = models.CharField()
+    invoice_state = models.CharField(max_length=20)
 
     class Meta:
         managed = False
@@ -271,29 +300,35 @@ class InvoiceStates(models.Model):
 class InvoiceTerms(models.Model):
     id_invoice_term = models.AutoField(primary_key=True)
     due_days = models.IntegerField(unique=True)
-    term_title = models.CharField()
+    term_title = models.CharField(max_length=20)
 
     class Meta:
         managed = False
         db_table = 'invoice_terms'
 
 
-class InvoiceTexts(models.Model):
+class InvoiceTextTemplates(models.Model):
     id_invoice_text = models.AutoField(primary_key=True)
-    invoice_text = models.CharField()
+    invoice_text = models.CharField(max_length=200)
     fk_customer = models.ForeignKey(Companies, models.DO_NOTHING, db_column='fk_customer')
+    invoice_text_title = models.CharField(max_length=20)
 
     class Meta:
         managed = False
-        db_table = 'invoice_texts'
+        db_table = 'invoice_text_templates'
 
 
 class Invoices(models.Model):
     id_invoice = models.AutoField(primary_key=True)
     invoice_date = models.DateField()
-    invoice_text = models.CharField(blank=True, null=True)
+    invoice_text = models.CharField(max_length=200, blank=True, null=True)
     fk_invoice_state = models.ForeignKey(InvoiceStates, models.DO_NOTHING, db_column='fk_invoice_state')
     fk_invoice_terms = models.ForeignKey(InvoiceTerms, models.DO_NOTHING, db_column='fk_invoice_terms')
+    fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat', blank=True, null=True)
+    net_total = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    total = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    fk_currency = models.ForeignKey(Currencies, models.DO_NOTHING, db_column='fk_currency', blank=True, null=True)
+    fk_project = models.ForeignKey('Projects', models.DO_NOTHING, db_column='fk_project', blank=True, null=True)
 
     class Meta:
         managed = False
@@ -302,11 +337,12 @@ class Invoices(models.Model):
 
 class Projects(models.Model):
     id_project = models.AutoField(primary_key=True)
-    project_name = models.CharField()
+    project_name = models.CharField(max_length=200)
     start_date = models.DateField()
     end_date = models.DateField()
     fk_customer = models.ForeignKey(Companies, models.DO_NOTHING, db_column='fk_customer')
     fk_sys_rec_status = models.ForeignKey('SysRecStates', models.DO_NOTHING, db_column='fk_sys_rec_status')
+    project_custom_fields = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -316,17 +352,18 @@ class Projects(models.Model):
 class Sales(models.Model):
     id_sale = models.AutoField(primary_key=True)
     sale_date = models.DateField()
-    sale_amount = models.DecimalField(max_digits=11, decimal_places=2)
-    sale_unit_price = models.DecimalField(max_digits=11, decimal_places=2)
-    sale_reference = models.CharField(blank=True, null=True)
-    sale_description = models.CharField(blank=True, null=True)
+    amount = models.DecimalField(max_digits=11, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=11, decimal_places=2)
+    customer_reference = models.CharField(max_length=50, blank=True, null=True)
+    description = models.CharField(max_length=200)
     sale_time = models.TimeField(blank=True, null=True)
-    fk_currency = models.ForeignKey(Currencies, models.DO_NOTHING, db_column='fk_currency')
+    fk_currency = models.ForeignKey(Currencies, models.DO_NOTHING, db_column='fk_currency', blank=True, null=True)
     fk_invoice = models.ForeignKey(Invoices, models.DO_NOTHING, db_column='fk_invoice', blank=True, null=True)
     fk_project = models.ForeignKey(Projects, models.DO_NOTHING, db_column='fk_project')
     fk_sales_status = models.ForeignKey('SalesState', models.DO_NOTHING, db_column='fk_sales_status')
     fk_unit = models.ForeignKey('Units', models.DO_NOTHING, db_column='fk_unit')
     fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat')
+    sale_custom_fields = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -335,7 +372,7 @@ class Sales(models.Model):
 
 class SalesState(models.Model):
     id_sales_state = models.AutoField(primary_key=True)
-    sales_state = models.CharField(unique=True)
+    sales_state = models.CharField(unique=True, max_length=20)
 
     class Meta:
         managed = False
@@ -344,8 +381,8 @@ class SalesState(models.Model):
 
 class SysRecStates(models.Model):
     id_sys_rec_status = models.AutoField(primary_key=True)
-    sys_rec_status = models.CharField()
-    entity = models.CharField(blank=True, null=True)
+    sys_rec_status = models.CharField(max_length=20)
+    entity = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -354,26 +391,11 @@ class SysRecStates(models.Model):
 
 class TaskStates(models.Model):
     id_task_state = models.AutoField(primary_key=True)
-    task_state = models.CharField()
+    task_state = models.CharField(max_length=20)
 
     class Meta:
         managed = False
         db_table = 'task_states'
-
-
-class TaskTemplates(models.Model):
-    id_task_template = models.AutoField(primary_key=True)
-    fk_project = models.IntegerField(blank=True, null=True)
-    amount = models.DecimalField(max_digits=11, decimal_places=2)
-    unit_price = models.DecimalField(max_digits=11, decimal_places=2)
-    task_description = models.CharField()
-    fk_currency = models.ForeignKey(Currencies, models.DO_NOTHING, db_column='fk_currency', blank=True, null=True)
-    fk_unit = models.ForeignKey('Units', models.DO_NOTHING, db_column='fk_unit')
-    fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat', blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'task_templates'
 
 
 class Tasks(models.Model):
@@ -382,9 +404,9 @@ class Tasks(models.Model):
     task_date_to = models.DateField(blank=True, null=True)
     amount = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     unit_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
-    task_description = models.CharField()
-    internal_info = models.CharField(blank=True, null=True)
-    customer_reference = models.CharField(blank=True, null=True)
+    description = models.CharField(max_length=200)
+    internal_info = models.CharField(max_length=200, blank=True, null=True)
+    customer_reference = models.CharField(max_length=100, blank=True, null=True)
     fk_subcontractor = models.IntegerField(blank=True, null=True)
     task_time_from = models.TimeField(blank=True, null=True)
     task_time_to = models.TimeField(blank=True, null=True)
@@ -398,16 +420,43 @@ class Tasks(models.Model):
     fk_task_state = models.ForeignKey(TaskStates, models.DO_NOTHING, db_column='fk_task_state')
     fk_unit = models.ForeignKey('Units', models.DO_NOTHING, db_column='fk_unit', blank=True, null=True)
     fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat', blank=True, null=True)
+    task_custom_fields = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'tasks'
 
 
+class TemplateTypes(models.Model):
+    id_template_type = models.AutoField(primary_key=True)
+    template_type = models.CharField(max_length=50)
+
+    class Meta:
+        managed = False
+        db_table = 'template_types'
+
+
+class Templates(models.Model):
+    id_template = models.AutoField(primary_key=True)
+    fk_project = models.IntegerField(blank=True, null=True)
+    amount = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    unit_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    description = models.CharField(max_length=200, blank=True, null=True)
+    fk_currency = models.IntegerField(blank=True, null=True)
+    fk_unit = models.IntegerField(blank=True, null=True)
+    fk_vat = models.IntegerField(blank=True, null=True)
+    fk_template_type = models.IntegerField(blank=True, null=True)
+    template_title = models.CharField(max_length=50)
+
+    class Meta:
+        managed = False
+        db_table = 'templates'
+
+
 class Units(models.Model):
     id_unit = models.AutoField(primary_key=True)
-    unit = models.CharField()
-    unit_abbreviation = models.CharField()
+    unit = models.CharField(max_length=20)
+    unit_abbreviation = models.CharField(max_length=5)
 
     class Meta:
         managed = False
@@ -417,7 +466,7 @@ class Units(models.Model):
 class Vat(models.Model):
     id_vat = models.AutoField(primary_key=True)
     vat = models.DecimalField(unique=True, max_digits=3, decimal_places=3)
-    vat_title = models.CharField()
+    vat_title = models.CharField(max_length=50)
 
     class Meta:
         managed = False

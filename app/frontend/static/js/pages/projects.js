@@ -25,10 +25,9 @@ $(document).ready(function(){
                         fields: page_config['fields'],
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
-                        exclude: ['fk_customer'],
+                        exclude: ['fk_customer', 'project_custom_fields'],
                         language: lang_cookie,
                     })
-
 
 
     // create form insstances
@@ -39,6 +38,7 @@ $(document).ready(function(){
             validation:false,
             fields: page_config['fields'],
             language: lang_cookie,
+            exclude: ['project_custom_fields']
 
 
     })

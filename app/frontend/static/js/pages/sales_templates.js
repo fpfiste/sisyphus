@@ -1,10 +1,11 @@
 
 $(document).ready(function(){
     let page_config
-    let url = '/invoices'
+    let url = '/sales-templates'
     let lang_cookie = Cookies.get('sisyphus_language');
 
-    $('#btn_close_task, #btn_save, #btn_create' ).remove();
+    $('#btn_print, #btn_close_task').remove();
+
     //*** read the config file ***//
     $.ajax({
           url: '/_config',
@@ -15,7 +16,6 @@ $(document).ready(function(){
             translations = response['translations']
           }
     });
-
 
 
     // create table instance
@@ -42,6 +42,17 @@ $(document).ready(function(){
 
 
     })
+    let create_form = new BootstrapForm({
+            container: '#create_form_container',
+            id: 'create_form',
+            ajax_url: page_config['ajax_url'],
+            validation:true,
+            fields: page_config['fields'],
+            exclude: ['id_sales_template' , ''],
+            required : [],
+            language: lang_cookie
+
+    })
 
 
 
@@ -51,16 +62,17 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            disabled : ['id_invoice', 'fk_invoice_state', 'fk_invoice_terms',  'invoice_date', 'invoice_text'],
-            required : ['id_invoice', 'fk_invoice_state', 'fk_invoice_terms',  'invoice_date'],
+            disabled : ['id_sales_template'],
+            required : [],
             language: lang_cookie
 
 
     })
 
-   // build components
+    // build components
     table.build();
     filter_form.build();
+    create_form.build();
     update_form.build();
 
 
@@ -76,50 +88,23 @@ $(document).ready(function(){
         $('#btn_filter').click();
     });
 
-    $('#btn_print').on('click', function() {
-        let pk = $('#update_form #id_invoice').val();
+    $( "#btn_add" ).on( "click", function() {
+        let url = page_config['ajax_url']
+        create_form.submit(url, 'POST')
+    });
 
-        let url = page_config['ajax_url'] + pk + '/pdf'
 
-        $.ajax({
-           url: url,
-           type: 'GET',
-           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
-           success: function(response) {
-                var doc = window.open(response['file_url'], '_blank');
-                location.reload();
-                doc.focus();
-           },
-           error: function(error){
-            console.log(error)
-           }
-        });
-    })
 
-    $('#btn_delete').on('click', function() {
-        update_form.required = ['id_task']
+    $( "#btn_save" ).on( "click", function() {
         let pk = $('#update_form #' + page_config['pk']).val()
-        let url = '/api/invoices/' + pk + '/'
+        let url = page_config['ajax_url'] +pk + '/'
+        update_form.submit(url, 'PUT');
+    });
 
-        let task_state = $('#fk_invoice_state').val()
+    $( "#btn_delete" ).on( "click", function() {
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = page_config['ajax_url'] +pk + '/'
+        update_form.submit(url, 'DELETE');
+    });
 
-        if (task_state >= 2) {
-            alert('Invoice cannot be canceld since it was already booked')
-            location.reload();
-        }
-
-        $.ajax({
-           url: url,
-           type: 'DELETE',
-           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
-           success: function(response) {
-                console.log(response)
-                window.open(response['file_url'], '_blank').focus();
-
-           },
-           error: function(error){
-            console.log(error)
-           }
-        });
-    })
 });

@@ -4,7 +4,7 @@ $(document).ready(function(){
     let url = '/assets'
     let lang_cookie = Cookies.get('sisyphus_language');
 
-
+    $('#btn_delete, #btn_print, #btn_close_task').remove();
 
     //*** read the config file ***//
     $.ajax({
@@ -26,7 +26,8 @@ $(document).ready(function(){
                         fields: page_config['fields'],
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
-                        language: lang_cookie
+                        language: lang_cookie,
+                        exclude: ['asset_custom_fields']
 
                     })
 
@@ -38,7 +39,8 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:false,
             fields: page_config['fields'],
-            language: lang_cookie
+            language: lang_cookie,
+            exclude:['asset_custom_fields']
 
 
 
@@ -66,6 +68,7 @@ $(document).ready(function(){
             disabled : ['id_asset'],
             required : ['id_asset', 'asset_description' , 'asset_internal_alias', 'fk_sys_rec_status'],
             language: lang_cookie
+
 
 
     })

@@ -29,7 +29,6 @@ def send_config(request):
 
 
 def login_view(request):
-    print(request)
     request.session['push_sent'] = None
     form = AuthenticationForm()
     if request.method == 'POST':
@@ -47,18 +46,7 @@ def login_view(request):
     return render(request, 'frontend/pages/login.html', {'login_form': form})
 
 
-@permission_required('add_tasks', )
-@permission_required('frontend.view_tasks', )
-@permission_required('frontend.change_tasks', )
-@permission_required('frontend.delete_tasks', )
-@permission_required('frontend.add_employee_absences', )
-@permission_required('frontend.add_employee_absences', )
-@permission_required('frontend.add_employee_absences', )
-@permission_required('frontend.add_employee_absences', )
-@permission_required('frontend.add_asset_absences', )
-@permission_required('frontend.add_asset_absences', )
-@permission_required('frontend.add_asset_absences', )
-@permission_required('frontend.add_asset_absences', )
+
 def render_schedule(request, pk=None):
 
     user = User.objects.get(username=request.user)
@@ -138,6 +126,18 @@ def render_assets(request, pk=None):
 @permission_required('frontend.delete_task_templates', )
 def render_task_templates(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
+    page_config = config['pages'][url]
+    data = {'page_config': page_config}
+    return render(request, page_config['template'], data)
+
+
+@permission_required('frontend.add_sales_templates', )
+@permission_required('frontend.view_sales_templates', )
+@permission_required('frontend.change_sales_templates', )
+@permission_required('frontend.delete_sales_templates', )
+def render_sales_templates(request, pk=None):
+    url = request.path.split('/' + str(pk))[0]
+    print(url)
     page_config = config['pages'][url]
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)

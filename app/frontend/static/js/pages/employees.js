@@ -26,7 +26,8 @@ $(document).ready(function(){
                         fields: page_config['fields'],
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
-                        language: lang_cookie
+                        language: lang_cookie,
+                        exclude:['employee_custom_fields']
                     })
 
 
@@ -37,7 +38,8 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:false,
             fields: page_config['fields'],
-            language: lang_cookie
+            language: lang_cookie,
+            exclude: ['employee_custom_fields']
 
 
     })

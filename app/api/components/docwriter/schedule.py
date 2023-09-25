@@ -65,6 +65,8 @@ class SchedulePDF(Document):
         })
 
 
+
+
     def filter_data(self, id_employee):
         subset = [i for i in self.tasks if i['employee_1'] == id_employee or i['employee_2'] == id_employee]
         return subset
@@ -132,28 +134,36 @@ class SchedulePDF(Document):
             for task in subset:
 
                 seconds_from = (task['ts_from'] - self.date).seconds
-                duration = (task['ts_to'] - task['ts_from']).seconds
+                seconds_to = (task['ts_to'] - self.date).seconds
 
-                if (task['ts_from'] - self.date).days > 0:
+
+                if (task['ts_from'] - self.date).days < 0:
                     seconds_from = 0
 
-                if (task['ts_to'] - task['ts_from']).days >= 1:
-                    duration = 86400 - seconds_from
+                print((task['ts_to'] - self.date).days)
+                if (task['ts_to'] - self.date).days >= 1:
+                    seconds_to = 86400
 
-                x_offset = (seconds_from / 86400 * 24) + 5
+                offset_left = (seconds_from / 86400 * 24) + 5
+                offset_right  = 86400 - seconds_to
+                duration = 86400 - offset_right - offset_left
                 width = (duration / 86400 * 24)
 
-                print((task['ts_to'] - self.date).days)
-                print(x_offset)
-                print(width)
+
+
+
+
 
 
                 c.setFillColor(colors.indianred)
-                c.rect(x_offset * cm, (ypos-0.5) * cm, width * cm, 1 * cm, fill=1)
+                c.rect(offset_left * cm, (ypos-0.5) * cm, width * cm, 1 * cm, fill=1)
                 c.setFillColor(colors.white)
 
-                string_pos = (width / 2 ) + x_offset
+                string_pos = (width / 2 ) + offset_left
                 c.drawCentredString(string_pos * cm, ypos * cm, f'{task["id"]} - {task["description"]}')
+
+
+
 
 
             ypos += 1

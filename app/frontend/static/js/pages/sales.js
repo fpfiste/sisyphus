@@ -4,7 +4,7 @@ $(document).ready(function(){
     let url = '/sales'
     let lang_cookie = Cookies.get('sisyphus_language');
 
-    $('#btn_close_task').remove();
+
 
     //*** read the config file ***//
     $.ajax({
@@ -17,6 +17,7 @@ $(document).ready(function(){
           }
     });
 
+    $('#btn_close_task').remove();
 
 
     // create table instance
@@ -26,7 +27,7 @@ $(document).ready(function(){
                         fields: page_config['fields'],
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
-                        exclude: ['fk_invoice'],
+                        exclude: ['fk_invoice', 'sale_custom_fields', 'sales_template'],
                         language: lang_cookie
                     })
 
@@ -38,7 +39,7 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:false,
             fields: page_config['fields'],
-            exclude: ['sale_description', 'fk_invoice'],
+            exclude: ['sale_description', 'fk_invoice', 'sale_custom_fields', 'sales_template'],
             language: lang_cookie
 
 
@@ -60,9 +61,9 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            exclude: ['fk_invoice'],
+            exclude: ['fk_invoice', 'sales_template'],
             disabled : ['id_sale', 'fk_invoice', 'fk_sales_status'],
-            required : ['id_sale', 'sale_date', 'fk_project', 'sale_amount', 'sale_unit_price', 'fk_unit'],
+            required : ['id_sale', 'sale_date', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_description', 'fk_unit'],
             language: lang_cookie
 
     })
@@ -99,12 +100,6 @@ $(document).ready(function(){
         update_form.submit(url, 'PUT');
     });
 
-    $('#btn_close_task').on('click', function() {
-        update_form.required = ['id_sale', 'fk_project', 'sale_date', 'sale_time','sale_amount', 'sale_unit_price', 'fk_unit', 'fk_vat', 'fk_currency', 'sale_description']
-        let pk = $('#update_form #' + page_config['pk']).val()
-        let url = '/api/sales/' + pk + '/close/'
-        update_form.submit(url, 'PUT');
-    })
 
     $('#update_modal').on('show.bs.modal', function() {
         let task_status = $('#update_form #fk_sales_status').val()
@@ -162,5 +157,30 @@ $(document).ready(function(){
 
         update_form.submit(url, 'DELETE');
     })
+
+    $( "#sales_template" ).on( "change", function() {
+        let template_id = $(this).val();
+
+        $('#create_form').trigger("reset");
+
+        let url = '/api/templates/'+ template_id + '/'
+
+        $.ajax({
+           url: url,
+           type: 'GET',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           success: function(response) {
+              console.log(response)
+              $('#sales_template').val(template_id);
+              $.each(response, (key, value)=>{
+                $('#create_modal #'+ key).val(value)
+
+              })
+           },
+           error: function(error){
+            console.log(error)
+           }
+        });
+    });
 
 });

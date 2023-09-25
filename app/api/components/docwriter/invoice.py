@@ -190,6 +190,8 @@ class Invoice(Document):
 
         c.save()
 
+        return self.net_total, self.total
+
 
 if __name__ == '__main__':
 

@@ -1,6 +1,6 @@
-"id_employee_type","employee_type_description"
-3,Temporär
-4,Stundenlohn
-5,Kader
-1,Vollzeit
-2,Teilzeit
+"employee_type_description"
+Temporär
+Stundenlohn
+Kader
+Vollzeit
+Teilzeit

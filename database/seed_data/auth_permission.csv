@@ -115,3 +115,7 @@
 123,Can change task states,56,change_taskstates
 124,Can delete task states,56,delete_taskstates
 125,Can view task states,56,view_taskstates
+126,Can add task templates,43,add_salestemplates
+127,Can change task templates,43,change_salestemplates
+128,Can delete task templates,43,delete_salestemplates
+129,Can view task templates,43,view_salestemplates

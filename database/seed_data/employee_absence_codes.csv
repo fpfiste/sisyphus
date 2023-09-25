@@ -1,11 +1,11 @@
-"id_employee_absence_code","employee_absence_code","employee_absence_code_abbreviation"
-1,Ferien,F
-2,Krankheit bezahlt,KB
-3,Krankheit unbezahlt,KU
-4,Betriebsunfall,BU
-5,Nichtbetriebsunfall,NBU
-6,Militär / Zivilschutz,MIL
-7,Geburt / Heirat / Tod / Umzug,ZIV
-8,Mutterschafts-Urlaub,MUU
-9,Unbezahlter Urlaub,UU
-10,Unerlaubte Abwesenheit,UA
+"employee_absence_code","employee_absence_code_abbreviation"
+Ferien,F
+Krankheit bezahlt,KB
+Krankheit unbezahlt,KU
+Betriebsunfall,BU
+Nichtbetriebsunfall,NBU
+Militär / Zivilschutz,MIL
+Geburt / Heirat / Tod / Umzug,ZIV
+Mutterschafts-Urlaub,MUU
+Unbezahlter Urlaub,UU
+Unerlaubte Abwesenheit,UA
