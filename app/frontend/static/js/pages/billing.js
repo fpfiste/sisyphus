@@ -27,7 +27,7 @@ $(document).ready(function(){
                         query_params: '?fk_sales_status=1',
                         pk_field: 'id_sale',
                         language: lang_cookie,
-                        exclude: ['fk_project', 'invoice_text', 'id_task', 'amount', 'unit_price']
+                        exclude: ['fk_project', 'invoice_text', 'fk_invoice_terms','id_task']
 
                     })
      // build components
@@ -41,7 +41,7 @@ $(document).ready(function(){
                     query_params: '?fk_task_state=4',
                     pk_field: 'id_task',
                     language: lang_cookie,
-                    exclude: ['fk_project', 'invoice_text', 'id_sale', 'sale_amount', 'sale_unit_price']
+                    exclude: ['fk_project', 'invoice_text', 'id_sale','fk_invoice_terms']
                 })
 
 
@@ -78,10 +78,6 @@ $(document).ready(function(){
         $('#btn_filter').click();
     });
 
-    $( "#btn_add" ).on( "click", function() {
-        let url = page_config['ajax_url']
-        create_form.submit(url, 'POST')
-    });
 
     $('#fk_project, #fk_vat, #fk_currency').on('change', function() {
       let query_params = $('#create_form').serialize();
@@ -134,7 +130,7 @@ $(document).ready(function(){
         if ((tasks.length == 0) && (sales.length == 0)){
             return
         }
-        console.log('here')
+
         let data = {
             'fk_project': $('#fk_project').val(),
             'fk_vat': $('#fk_vat').val(),

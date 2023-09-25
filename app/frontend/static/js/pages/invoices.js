@@ -108,6 +108,18 @@ $(document).ready(function(){
             location.reload();
         }
 
-        update_form.submit(url, 'DELETE');
+        $.ajax({
+           url: url,
+           type: 'DELETE',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           success: function(response) {
+                console.log(response)
+                window.open(response['file_url'], '_blank').focus();
+
+           },
+           error: function(error){
+            console.log(error)
+           }
+        });
     })
 });

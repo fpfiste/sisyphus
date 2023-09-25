@@ -1,20 +1,110 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<filetype binary="false" default_extension="" description="Javascript" name="Javascript">
-  <highlighting>
-    <options>
-      <option name="LINE_COMMENT" value="//" />
-      <option name="COMMENT_START" value="/*" />
-      <option name="COMMENT_END" value="*/" />
-      <option name="HEX_PREFIX" value="" />
-      <option name="NUM_POSTFIXES" value="" />
-      <option name="HAS_BRACES" value="true" />
-      <option name="HAS_BRACKETS" value="true" />
-      <option name="HAS_PARENS" value="true" />
-      <option name="HAS_STRING_ESCAPES" value="true" />
-    </options>
-    <keywords keywords="break;case;catch;class;const;continue;debugger;default;delete;do;else;export;extends;finally;for;function;if;import;in;instanceof;let;new;return;super;switch;this;throw;try;typeof;var;void;while;with;yield" ignore_case="false" />
-  </highlighting>
-  <extensionMap>
-    <mapping ext="js" />
-  </extensionMap>
-</filetype>
+
+$(document).ready(function(){
+    let page_config
+    let url = '/sales-templates'
+    let lang_cookie = Cookies.get('sisyphus_language');
+
+    $('#btn_print, #btn_close_task').remove();
+
+    //*** read the config file ***//
+    $.ajax({
+          url: '/_config',
+          async: false,
+          dataType: 'json',
+          success: function (response) {
+            page_config = response['pages'][url]
+            translations = response['translations']
+          }
+    });
+
+
+    // create table instance
+    let table = new BootstrapDataTable({
+                        container:'#overview-table',
+                        id: page_config['table_id'],
+                        fields: page_config['fields'],
+                        ajax_url: page_config['ajax_url'],
+                        pk_field: page_config['pk'],
+                        language: lang_cookie
+
+                    })
+
+
+    // create form insstances
+    let filter_form = new BootstrapForm({
+            container: '#form_filter_container',
+            id: 'filter_form',
+            ajax_url: page_config['ajax_url'],
+            validation:false,
+            fields: page_config['fields'],
+            language: lang_cookie
+
+
+
+    })
+    let create_form = new BootstrapForm({
+            container: '#create_form_container',
+            id: 'create_form',
+            ajax_url: page_config['ajax_url'],
+            validation:true,
+            fields: page_config['fields'],
+            exclude: ['id_sales_template' , ''],
+            required : [],
+            language: lang_cookie
+
+    })
+
+
+
+    let update_form = new BootstrapForm({
+            container: '#update_form_container',
+            id: 'update_form',
+            ajax_url: page_config['ajax_url'],
+            validation:true,
+            fields: page_config['fields'],
+            disabled : ['id_sales_template'],
+            required : [],
+            language: lang_cookie
+
+
+    })
+
+    // build components
+    table.build();
+    filter_form.build();
+    create_form.build();
+    update_form.build();
+
+
+    // add evetn listeners
+    $( "#btn_filter" ).on( "click", function() {
+      let query_params = $('#filter_form').serialize();
+      table.query_params = '?' + query_params
+      table.build();
+    });
+
+    $( "#btn_reset" ).on( "click", function() {
+        $('#filter_form').trigger("reset");
+        $('#btn_filter').click();
+    });
+
+    $( "#btn_add" ).on( "click", function() {
+        let url = page_config['ajax_url']
+        create_form.submit(url, 'POST')
+    });
+
+
+
+    $( "#btn_save" ).on( "click", function() {
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = page_config['ajax_url'] +pk + '/'
+        update_form.submit(url, 'PUT');
+    });
+
+    $( "#btn_delete" ).on( "click", function() {
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = page_config['ajax_url'] +pk + '/'
+        update_form.submit(url, 'DELETE');
+    });
+
+});

@@ -48,8 +48,8 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            exclude: ['id_task_template' , ''],
-            required : ['amount', 'unit_price' , 'task_description', 'fk_unit'],
+            exclude: ['id_template' , ''],
+            required : ['template_title', 'fk_template_type'],
             language: lang_cookie
 
     })
@@ -62,8 +62,8 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            disabled : ['id_task_template'],
-            required : ['amount', 'unit_price' , 'task_description', 'fk_unit'],
+            disabled : ['id_template'],
+            required : ['template_title', 'fk_template_type'],
             language: lang_cookie
 
 

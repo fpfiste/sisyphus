@@ -81,7 +81,7 @@ class BootstrapForm{
 
           if (ajax_url){
                   let url = ajax_url + '?' + api_endpoint_filter
-
+                  console.log(url)
                   $.ajax({
                         url: url,
                         async: false,
@@ -422,7 +422,6 @@ class BootstrapForm{
 
         let array = this.serialize();
 
-        alert(array)
 
         $.ajax({
            url: url,

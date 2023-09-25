@@ -22,7 +22,7 @@ $(document).ready(function(){
                         fields: page_config['fields'],
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
-                        exclude: ['task_template','fk_employee_1', 'fk_employee_2', 'fk_asset_1', 'fk_asset_2', 'fk_subcontractor', 'fk_invoice', 'fk_project', 'fk_task_state', 'fk_unit', 'fk_currency', 'fk_vat'],
+                        exclude: ['task_template','fk_employee_1', 'fk_employee_2', 'fk_asset_1', 'fk_asset_2', 'fk_subcontractor', 'fk_invoice', 'fk_project', 'fk_task_state', 'fk_unit', 'fk_currency', 'fk_vat', 'task_custom_fields'],
                         language: lang_cookie
                     })
 
@@ -35,7 +35,7 @@ $(document).ready(function(){
             ajax_url: page_config['ajax_url'],
             validation:false,
             fields: page_config['fields'],
-            exclude: ['task_template', 'task_description', 'fk_invoice', 'internal_info', 'employees', 'assets', 'amount', 'unit_price', 'fk_unit'],
+            exclude: ['task_template', 'task_description', 'fk_invoice', 'internal_info', 'employees', 'assets', 'amount', 'unit_price', 'fk_unit', 'task_custom_fields'],
             language: lang_cookie
 
     })
@@ -170,7 +170,7 @@ $(document).ready(function(){
         if (
             (task_status == "4") ||
             (task_status == "5") ||
-            (task_status == "-1")
+            (task_status == "6")
         ){
                 $('#update_form').find(':input').prop('disabled', true)
                 $('#btn_delete').prop('disabled', true)

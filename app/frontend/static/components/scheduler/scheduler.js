@@ -238,13 +238,13 @@ class Scheduler{
 
 
 
-                this.add_row('e'+value.fk_employee_1, value.id_task, value.fk_project + '-' + value.task_description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
-                this.add_row('e'+value.fk_employee_2, value.id_task, value.fk_project + '-' + value.task_description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
-                this.add_row('s'+value.fk_subcontractor, value.id_task, value.fk_project + '-' + value.task_description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
+                this.add_row('e'+value.fk_employee_1, value.id_task, value.fk_project + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
+                this.add_row('e'+value.fk_employee_2, value.id_task, value.fk_project + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
+                this.add_row('s'+value.fk_subcontractor, value.id_task, value.fk_project + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
             })
 
           $.each(this.open_tasks, (key,value) => {
-                 let task_span = '<span class="task open_task badge badge-primary" style = "box-sizing: border-box; margin-left: 1vw; width: 200px" data-row-pk="'+value.id_task+'">'+ value.id_task +'-' + value.task_description +'</span>'
+                 let task_span = '<span class="task open_task badge badge-primary" style = "box-sizing: border-box; margin-left: 1vw; width: 200px" data-row-pk="'+value.id_task+'">'+ value.id_task +'-' + value.description +'</span>'
                  $('#task_lane_o').append(task_span)
 
           })

@@ -36,7 +36,7 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             exclude: ['id_task', 'fk_invoice', 'fk_task_state'],
-            required : ['fk_project', 'task_description'],
+            required : ['fk_project', 'description'],
             language: lang_cookie
 
 
@@ -49,7 +49,7 @@ $(document).ready(function(){
             fields: page_config['fields'],
             exclude: ['fk_invoice', 'task_template', 'fk_invoice'],
             disabled : ['id_task', 'fk_task_state'],
-            required : ['id_task', 'fk_project', 'task_description'],
+            required : ['id_task', 'fk_project', 'description'],
             language: lang_cookie
     })
 

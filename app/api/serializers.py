@@ -22,6 +22,7 @@ class AssetTypeSerializer(serializers.ModelSerializer):
 
 
 class AssetSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Assets
         fields = '__all__'
@@ -80,9 +81,9 @@ class InvoiceStateSerializer(serializers.ModelSerializer):
         model = InvoiceStates
         fields = '__all__'
 
-class InvoiceTextSerializer(serializers.ModelSerializer):
+class InvoiceTextTemplatesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = InvoiceTexts
+        model = InvoiceTextTemplates
         fields = '__all__'
 
 class InvoiceSerializer(serializers.ModelSerializer):
@@ -90,7 +91,10 @@ class InvoiceSerializer(serializers.ModelSerializer):
         model = Invoices
         fields = '__all__'
 
-
+class InvoiceCancellationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InvoiceCancellation
+        fields = '__all__'
 
 class ProjectsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -112,10 +116,17 @@ class TaskStateSerializer(serializers.ModelSerializer):
         model = TaskStates
         fields = '__all__'
 
-class TaskTemplateSerializer(serializers.ModelSerializer):
+class TemplateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TaskTemplates
+        model = Templates
         fields = '__all__'
+class TemplateTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TemplateTypes
+        fields = '__all__'
+
+
+
 
 
 class TaskSerializer(serializers.ModelSerializer):

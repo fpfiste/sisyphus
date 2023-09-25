@@ -172,7 +172,11 @@ class BootstrapDataTable{
                         } else if (value === false){
                             value = 0;
                         }
-                        $('#update_form #'+ key).val(value);
+                        if (typeof(value) === 'object') {
+                            value = JSON.stringify(value);
+                        }
+                        $('#update_form #'+ key).val(value).trigger('change');
+
                     });
 
                     $('#update_modal').modal('show');
