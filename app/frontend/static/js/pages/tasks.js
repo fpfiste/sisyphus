@@ -122,7 +122,7 @@ $(document).ready(function(){
     });
 
     $('#btn_close_task').on('click', function() {
-        update_form.required = ['id_task', 'fk_project', 'task_date_from', 'task_date_to', 'task_time_from', 'task_time_to', 'amount', 'unit_price', 'task_description', 'fk_unit', 'fk_employee_1', 'fk_currency', 'fk_vat']
+        update_form.required = ['id_task', 'fk_project', 'task_date_from', 'task_date_to', 'task_time_from', 'task_time_to', 'amount', 'unit_price', 'task_description', 'fk_unit', 'fk_currency', 'fk_vat']
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/tasks/' + pk + '/close/'
         update_form.submit(url, 'PUT');
