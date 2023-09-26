@@ -23,6 +23,6 @@ RUN pip install -r requirements.txt
 
 COPY ./entrypoint.prod.sh /entrypoint.prod.sh
 RUN chmod +x /entrypoint.prod.sh
-RUN mkdir /home/sisyphus/app/frontend/static/tmp/
+
 
 CMD ["sh", "./entrypoint.prod.sh"]
