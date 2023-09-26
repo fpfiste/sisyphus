@@ -1101,8 +1101,12 @@ class TaskViewSet(viewsets.ModelViewSet):
 
 
         )
+        tasks = tasks.filter(
+            Q(fk_employee_1__isnull=False) |
+            Q(fk_subcontractor__isnull=False)
 
-        tasks = tasks.filter(fk_employee_1__isnull = False, task_time_from__isnull=False, task_time_to__isnull=False).exclude(fk_task_state=6).order_by('task_date_from', 'task_time_from')
+        )
+        tasks = tasks.filter(task_time_from__isnull=False, task_time_to__isnull=False).exclude(fk_task_state=6).order_by('task_date_from', 'task_time_from')
 
         serializer = self.get_serializer(tasks, many=True)
 
@@ -1114,7 +1118,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         tasks = Tasks.objects.filter(
             Q(task_date_from__isnull=True) |
             Q(task_date_to__isnull=True) |
-            Q(fk_employee_1__isnull=True)
+            Q(fk_employee_1__isnull=True, fk_subcontractor__isnull=True)
         ).order_by('id_task')
 
         tasks = tasks.filter(fk_task_state__gt=0)
