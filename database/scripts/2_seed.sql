@@ -8,7 +8,7 @@ FROM '/docker-entrypoint-initdb.d/asset_types.csv'
 DELIMITER ','
 CSV HEADER;
 
-COPY public.auth_user
+COPY public.auth_user(password,last_login,is_superuser,username,first_name,last_name,email,is_staff,is_active,date_joined)
 FROM '/docker-entrypoint-initdb.d/auth_user.csv'
 DELIMITER ','
 CSV HEADER;
