@@ -8,7 +8,7 @@ FROM python:3.11-bullseye
 # set work directory
 WORKDIR /home/sisyphus/app
 RUN mkdir /home/sisyphus/app/static
-
+RUN mkdir /home/sisyphus/app/frontend/static/tmp/
 
 
 # install psycopg2 dependencies
