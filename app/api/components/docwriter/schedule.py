@@ -140,20 +140,18 @@ class SchedulePDF(Document):
                 if (task['ts_from'] - self.date).days < 0:
                     seconds_from = 0
 
-                print((task['ts_to'] - self.date).days)
+
                 if (task['ts_to'] - self.date).days >= 1:
+                    print((task['ts_to'] - self.date).days)
                     seconds_to = 86400
 
+
+                duration = 86400 - seconds_from - (86400 - seconds_to)
                 offset_left = (seconds_from / 86400 * 24) + 5
-                offset_right  = 86400 - seconds_to
-                duration = 86400 - offset_right - offset_left
+
+
+
                 width = (duration / 86400 * 24)
-
-
-
-
-
-
 
                 c.setFillColor(colors.indianred)
                 c.rect(offset_left * cm, (ypos-0.5) * cm, width * cm, 1 * cm, fill=1)
