@@ -500,10 +500,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
 
                 tasks = Tasks.objects.filter(fk_invoice=pk)
-                print(tasks)
-
                 sales = Sales.objects.filter(fk_invoice=pk)
-                print(sales)
 
                 positions = list(chain(tasks, sales))
                 customer = positions[0].fk_project.fk_customer
@@ -537,10 +534,6 @@ class InvoiceViewSet(viewsets.ModelViewSet):
 
                 )
 
-
-
-
-                print('here')
 
                 doc.set_logo(logo_path=settings.LOGO_PATH,
                              logo_width=settings.LOGO_WIDTH,
@@ -588,9 +581,6 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         terms = invoice.fk_invoice_terms
         customer = invoice.fk_project.fk_customer
 
-        print(invoice.fk_invoice_state)
-
-
         if invoice.fk_invoice_state.id_invoice_state == 4:
             cancellation = InvoiceCancellation.objects.get(fk_invoice=invoice)
             doc = InvoiceCancellationDoc(
@@ -614,6 +604,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                          logo_x=settings.LOGO_X_OFFSET,
                          logo_y=settings.LOGO_Y_OFFSET
                          )
+
+
 
             doc.set_customer(customer.id_company, customer.company_name, customer.company_street,
                              customer.company_zipcode,
