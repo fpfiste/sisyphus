@@ -57,10 +57,10 @@ def render_schedule(request, pk=None):
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
 
-@permission_required('frontend.add_projects', )
-@permission_required('frontend.view_projects', )
-@permission_required('frontend.change_projects', )
-@permission_required('frontend.delete_projects', )
+@permission_required('api.add_projects', )
+@permission_required('api.view_projects', )
+@permission_required('api.change_projects', )
+@permission_required('api.delete_projects', )
 def render_projects(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]
@@ -68,10 +68,10 @@ def render_projects(request, pk=None):
     return render(request, page_config['template'], data)
 
 
-@permission_required('frontend.add_tasks', )
-@permission_required('frontend.view_tasks', )
-@permission_required('frontend.change_tasks', )
-@permission_required('frontend.delete_tasks', )
+@permission_required('api.add_tasks', )
+@permission_required('api.view_tasks', )
+@permission_required('api.change_tasks', )
+@permission_required('api.delete_tasks', )
 def render_tasks(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]
@@ -79,10 +79,10 @@ def render_tasks(request, pk=None):
     return render(request, page_config['template'], data)
 
 
-@permission_required('frontend.add_sales', )
-@permission_required('frontend.view_sales', )
-@permission_required('frontend.change_sales', )
-@permission_required('frontend.delete_sales', )
+@permission_required('api.add_sales', )
+@permission_required('api.view_sales', )
+@permission_required('api.change_sales', )
+@permission_required('api.delete_sales', )
 def render_sales(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]
@@ -90,40 +90,40 @@ def render_sales(request, pk=None):
     return render(request, page_config['template'], data)
 
 
-@permission_required('frontend.add_companies', )
-@permission_required('frontend.view_companies', )
-@permission_required('frontend.change_companies', )
-@permission_required('frontend.delete_companies', )
+@permission_required('api.add_companies', )
+@permission_required('api.view_companies', )
+@permission_required('api.change_companies', )
+@permission_required('api.delete_companies', )
 def render_companies(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
 
-@permission_required('frontend.add_employees', )
-@permission_required('frontend.view_employees', )
-@permission_required('frontend.change_employees', )
-@permission_required('frontend.delete_employees', )
+@permission_required('api.add_employees', )
+@permission_required('api.view_employees', )
+@permission_required('api.change_employees', )
+@permission_required('api.delete_employees', )
 def render_employees(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
 
-@permission_required('frontend.add_assets', )
-@permission_required('frontend.view_assets', )
-@permission_required('frontend.change_assets', )
-@permission_required('frontend.delete_assets', )
+@permission_required('api.add_assets', )
+@permission_required('api.view_assets', )
+@permission_required('api.change_assets', )
+@permission_required('api.delete_assets', )
 def render_assets(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
 
-@permission_required('frontend.add_task_templates', )
-@permission_required('frontend.view_task_templates', )
-@permission_required('frontend.change_task_templates', )
-@permission_required('frontend.delete_task_templates', )
+@permission_required('api.add_task_templates', )
+@permission_required('api.view_task_templates', )
+@permission_required('api.change_task_templates', )
+@permission_required('api.delete_task_templates', )
 def render_task_templates(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]
@@ -131,10 +131,10 @@ def render_task_templates(request, pk=None):
     return render(request, page_config['template'], data)
 
 
-@permission_required('frontend.add_sales_templates', )
-@permission_required('frontend.view_sales_templates', )
-@permission_required('frontend.change_sales_templates', )
-@permission_required('frontend.delete_sales_templates', )
+@permission_required('api.add_sales_templates', )
+@permission_required('api.view_sales_templates', )
+@permission_required('api.change_sales_templates', )
+@permission_required('api.delete_sales_templates', )
 def render_sales_templates(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
     print(url)
@@ -142,28 +142,28 @@ def render_sales_templates(request, pk=None):
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
 
-@permission_required('frontend.add_paymentconditions', )
-@permission_required('frontend.view_paymentconditions', )
-@permission_required('frontend.change_paymentconditions', )
-@permission_required('frontend.delete_paymentconditions', )
+@permission_required('api.add_paymentconditions', )
+@permission_required('api.view_paymentconditions', )
+@permission_required('api.change_paymentconditions', )
+@permission_required('api.delete_paymentconditions', )
 def render_terms(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
 
-@permission_required('frontend.add_invoices', )
-@permission_required('frontend.view_invoices', )
-@permission_required('frontend.change_invoices', )
-@permission_required('frontend.delete_invoices', )
+@permission_required('api.add_invoices', )
+@permission_required('api.view_invoices', )
+@permission_required('api.change_invoices', )
+@permission_required('api.delete_invoices', )
 def render_invoices(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
 
-@permission_required('frontend.add_invoices', )
-@permission_required('frontend.view_tasks',)
+@permission_required('api.add_invoices', )
+@permission_required('api.view_tasks',)
 def render_billing(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
 
