@@ -124,7 +124,7 @@ class Invoice(Document):
             c.drawString(2 * cm, ypos * cm, str(position['date']))
 
             c.setFont("Helvetica-Bold", 9)
-            c.drawString(5 * cm, ypos * cm, f'Auftrag: {position["position_id"] }')
+            c.drawString(5 * cm, ypos * cm, f'Referenz: {position["reference_text"] if position["reference_text"] != None else "" }')
             ypos = self.addy(ypos, c, 0.5)
             c.setFont("Helvetica", 9)
 
@@ -134,9 +134,9 @@ class Invoice(Document):
                 c.drawString(5 * cm, ypos * cm, f'{line}')
                 ypos = self.addy(ypos, c, 0.5)
 
-            if position['reference_text'] not in (None, ''):
-                c.drawString(5 * cm, ypos * cm, f'Referenz: {position["reference_text"]}')
-                ypos = self.addy(ypos, c, 0.5)
+
+            c.drawString(5 * cm, ypos * cm, f'Auftrag: {position["position_id"] }')
+            ypos = self.addy(ypos, c, 0.5)
 
             ypos = self.addy(ypos, c, -0.5)
             c.setFont("Helvetica", 9)

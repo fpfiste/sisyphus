@@ -449,7 +449,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 for task in tasks:
                     doc.add_position(
                         position_id=task.id_task,
-                        date = str(task.task_date_to),
+                        date = task.task_date_to.strftime('%d.%m.%Y'),
                         reference_text=task.customer_reference,
                         description=task.description,
                         unit=task.fk_unit.unit,
@@ -460,7 +460,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 for sale in sales:
                     doc.add_position(
                         position_id=sale.id_sale,
-                        date = str(sale.sale_date),
+                        date = task.task_date_to.strftime('%d.%m.%Y'),
                         reference_text=sale.customer_reference,
                         description=sale.description,
                         unit=sale.fk_unit.unit,
@@ -654,7 +654,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             for task in tasks:
                 doc.add_position(
                     position_id=task.id_task,
-                    date=str(task.task_date_to),
+                    date=task.task_date_to.strftime('%d.%m.%Y'),
                     reference_text=task.customer_reference,
                     description=task.description,
                     unit=task.fk_unit.unit,
@@ -665,7 +665,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             for sale in sales:
                 doc.add_position(
                     position_id=sale.id_sale,
-                    date=str(sale.sale_date),
+                    date=sale.sale_date.strftime('%d.%m.%Y'),
                     reference_text=sale.customer_reference,
                     description=sale.description,
                     unit=sale.fk_unit.unit,
@@ -1023,9 +1023,6 @@ class TaskViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-
 
     def update(self, request,pk):
         request.data._mutable = True
