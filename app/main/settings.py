@@ -147,11 +147,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ### Document Header
 
-LOGO_PATH = os.path.join(STATIC_ROOT, 'img', 'doc_header.png')
-LOGO_WIDTH = 30
-LOGO_HEIGHT = 30
-LOGO_X_OFFSET = 130
-LOGO_Y_OFFSET = 5
+LOGO_PATH = os.path.join(STATIC_ROOT, 'img', 'doc_header.jpg')
+LOGO_WIDTH = 200
+LOGO_HEIGHT = 40
+LOGO_X_OFFSET = 5
+LOGO_Y_OFFSET = 0
 
 
 COMPANY = {
