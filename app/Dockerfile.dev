@@ -7,7 +7,7 @@ FROM python:3.11-bullseye
 # set work directory
 WORKDIR /home/sisyphus/app
 
-RUN mkdir /home/sisyphus/app/frontend/static/tmp/
+
 
 
 # install psycopg2 dependencies
@@ -23,6 +23,6 @@ RUN pip install -r requirements.txt
 COPY ./entrypoint.dev.sh /entrypoint.dev.sh
 RUN chmod +x /entrypoint.dev.sh
 
-
+RUN mkdir /home/sisyphus/app/frontend/static/tmp/
 
 CMD ["sh", "./entrypoint.dev.sh"]
