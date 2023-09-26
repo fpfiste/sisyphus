@@ -16,7 +16,7 @@
 40,api,companies
 41,api,salesstate
 42,api,units
-43,api,tasktemplates
+43,api,templates
 44,api,invoiceterms
 45,api,invoicestates
 46,api,tasks
@@ -30,4 +30,3 @@
 54,api,employees
 55,api,sysrecstates
 56,api,taskstates
-57,api,salestemplates

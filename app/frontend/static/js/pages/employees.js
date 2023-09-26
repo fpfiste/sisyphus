@@ -50,7 +50,7 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             exclude: ['id_employee'],
-            required : ['employee_first_name', 'employee_last_name','employee_street', 'employee_zipcode', 'employee_city' , 'employee_email', 'fk_sys_rec_status', 'employee_cell_phone', 'employee_birthday', 'employee_internal_alias', 'fk_employee_type' ],
+            required : ['employee_first_name', 'employee_last_name','employee_street', 'employee_zipcode', 'employee_city' ,'fk_sys_rec_status', 'employee_birthday', 'employee_internal_alias', 'fk_employee_type' ],
             language: lang_cookie
 
     })
@@ -63,7 +63,7 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             disabled : ['id_employee'],
-            required : ['id_employee', 'employee_first_name', 'employee_last_name','employee_street', 'employee_zipcode', 'employee_city' , 'employee_email', 'fk_sys_rec_status', 'employee_cell_phone', 'employee_birthday', 'employee_internal_alias', 'fk_employee_type' ],
+            required : ['id_employee', 'employee_first_name', 'employee_last_name','employee_street', 'employee_zipcode', 'employee_city', 'fk_sys_rec_status', 'employee_birthday', 'employee_internal_alias', 'fk_employee_type' ],
             language: lang_cookie
 
     })

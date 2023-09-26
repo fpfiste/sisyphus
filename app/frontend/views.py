@@ -120,19 +120,16 @@ def render_assets(request, pk=None):
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
 
-def render_task_templates(request, pk=None):
+@permission_required('api.add_templates', )
+@permission_required('api.view_templates', )
+@permission_required('api.change_templates', )
+@permission_required('api.delete_templates', )
+def render_templates(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
 
-
-def render_sales_templates(request, pk=None):
-    url = request.path.split('/' + str(pk))[0]
-    print(url)
-    page_config = config['pages'][url]
-    data = {'page_config': page_config}
-    return render(request, page_config['template'], data)
 
 @permission_required('api.add_paymentconditions', )
 @permission_required('api.view_paymentconditions', )
