@@ -11,12 +11,20 @@ from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 import json
 
+from rest_framework.views import APIView
+
 from main import settings
 from .components.docwriter.schedule import SchedulePDF
 from .components.docwriter.storno import InvoiceCancellationDoc
 from .serializers import *
 import datetime as dt
 from api.components import Invoice, DeliveryNote
+
+
+
+
+
+
 
 
 class AssetAbsenceCodesViewSet(viewsets.ModelViewSet):
@@ -171,6 +179,29 @@ class CompanyViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(e)
             return Response({'message': 'Something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class ClearingTypeViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = ClearingType.objects.all()
+    serializer_class = ClearingTypeSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = ClearingType.objects.all()
+        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
+        data = queryset.filter(**params).order_by('-pk')
+        return data
+
+
 
 
 
@@ -457,10 +488,11 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                         unit_price=task.unit_price
                     )
 
+
                 for sale in sales:
                     doc.add_position(
                         position_id=sale.id_sale,
-                        date = task.task_date_to.strftime('%d.%m.%Y'),
+                        date = sale.sale_date.strftime('%d.%m.%Y'),
                         reference_text=sale.customer_reference,
                         description=sale.description,
                         unit=sale.fk_unit.unit,
@@ -478,17 +510,20 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 url = '/static/tmp/' + os.path.basename(doc.file_name)
 
                 return Response({'file_url': url}, status=status.HTTP_200_OK)
+        except ValueError as v:
+            return Response({'message': str(v)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             print(e)
-            return Response({'message': 'Unknown Error'},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Unknown Error'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 
 
     @transaction.atomic
     def destroy(self, request, pk):
         try:
-
-
 
             instance = Invoices.objects.get(id_invoice=pk)
 
@@ -775,7 +810,6 @@ class SalesViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
 
 
-
         return Response(serializer.data)
 
     @action(detail=True, methods=['PUT'])
@@ -839,6 +873,18 @@ class SalesViewSet(viewsets.ModelViewSet):
         url = '/static/tmp/' + os.path.basename(doc.file_name)
 
         return Response({'file_url': url}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'])
+    def getoverview(self, request):
+        sales = Sales.objects.filter(fk_sales_status=1, fk_clearing_type=2)
+
+        data = {
+
+            'to_bill': len(sales)
+
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
 
 class SysRecStateViewSet(viewsets.ModelViewSet):
     """
@@ -1127,7 +1173,7 @@ class TaskViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['PUT'])
     def close(self, request,pk):
         task = Tasks.objects.get(id_task=pk)
-        if task.fk_project != None and \
+        if (task.fk_project != None and \
             task.task_date_from != None and \
             task.task_date_to != None and \
             task.task_time_from != None and \
@@ -1138,7 +1184,8 @@ class TaskViewSet(viewsets.ModelViewSet):
             task.fk_unit != None and \
             task.fk_employee_1 != None and \
             task.fk_currency != None and \
-            task.fk_vat != None:
+            task.fk_vat != None and \
+            task.fk_clearing_type != None):
 
             task.fk_task_state = TaskStates.objects.get(id_task_state = 4)
             task.save()
@@ -1236,6 +1283,21 @@ class TaskViewSet(viewsets.ModelViewSet):
         url = '/static/tmp/' + os.path.basename(doc.file_name)
 
         return Response({'file_url': url}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'])
+    def getoverview(self, request):
+        tasks = Tasks.objects.filter(fk_task_state__lt=5)
+
+
+        data = {
+            'open': len(tasks.filter(fk_task_state=1)),
+            'scheduled': len(tasks.filter(fk_task_state=2)),
+            'executed': len(tasks.filter(fk_task_state=3)),
+            'to_bill': len(tasks.filter(fk_task_state=4, fk_clearing_type=2))
+
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
 
 class UnitViewSet(viewsets.ModelViewSet):
     """

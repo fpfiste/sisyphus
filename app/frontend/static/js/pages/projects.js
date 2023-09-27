@@ -49,7 +49,7 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             exclude: ['id_project'],
-            required : ['id_project', 'fk_customer', 'planned_start_date', 'planned_end_date', 'fk_sys_rec_state'],
+            required : ['fk_customer', 'project_name', 'planned_start_date', 'planned_end_date', 'fk_sys_rec_state'],
             language: lang_cookie,
 
     })
@@ -60,7 +60,7 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             disabled : ['id_project', 'fk_customer'],
-            required : ['id_project', 'fk_customer', 'planned_start_date', 'planned_end_date', 'fk_sys_rec_state'],
+            required : ['id_project', 'project_name', 'fk_customer', 'planned_start_date', 'planned_end_date', 'fk_sys_rec_state'],
             language: lang_cookie,
 
     })

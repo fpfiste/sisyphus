@@ -51,7 +51,7 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             exclude: ['id_sale', 'fk_invoice', 'fk_sales_status'],
-            required : ['sale_date', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_description', 'fk_unit'],
+            required : ['sale_date', 'amount', 'unit_price', 'description', 'sale_time', 'fk_currency', 'fk_project', 'fk_unit', 'fk_vat', 'fk_clearing_type'],
             language: lang_cookie
 
     })
@@ -63,7 +63,7 @@ $(document).ready(function(){
             fields: page_config['fields'],
             exclude: ['fk_invoice', 'sales_template'],
             disabled : ['id_sale', 'fk_invoice', 'fk_sales_status'],
-            required : ['id_sale', 'sale_date', 'fk_project', 'sale_amount', 'sale_unit_price', 'sale_description', 'fk_unit'],
+            required : ['id_sale', 'sale_date', 'amount', 'unit_price', 'description', 'sale_time', 'fk_currency', 'fk_project', 'fk_unit', 'fk_vat', 'fk_clearing_type'],
             language: lang_cookie
 
     })

@@ -80,7 +80,13 @@ FROM '/docker-entrypoint-initdb.d/auth_permission.csv'
 DELIMITER ','
 CSV HEADER;
 
-COPY public.template_types
+COPY public.template_types(template_type)
 FROM '/docker-entrypoint-initdb.d/template_types.csv'
+DELIMITER ','
+CSV HEADER;
+
+
+COPY public.clearing_type(clearing_type)
+FROM '/docker-entrypoint-initdb.d/clearing_type.csv'
 DELIMITER ','
 CSV HEADER;

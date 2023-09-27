@@ -6,7 +6,10 @@ from .views import *
 
 
 
+
+
 router = routers.DefaultRouter()
+
 router.register(r'companies',  CompanyViewSet, basename='companies')
 router.register(r'countries',  CountryViewSet)
 router.register(r'currencies',  CurrencyViewSet)
@@ -31,6 +34,7 @@ router.register(r'template-types',  TemplateTypeViewSet)
 router.register(r'tasks',  TaskViewSet)
 router.register(r'units',  UnitViewSet)
 router.register(r'vat',  VATViewSet)
+router.register(r'clearingtype',  ClearingTypeViewSet)
 # Wire up our API using automatic URL routing.
 
 

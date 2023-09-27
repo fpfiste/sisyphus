@@ -52,7 +52,7 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             exclude: ['id_asset'],
-            required : ['fk_asset_type', 'asset_description' , 'asset_internal_alias', 'fk_sys_rec_status'],
+            required : ['fk_asset_type', 'asset_description' , 'asset_internal_alias', 'fk_sys_rec_status', 'fk_company'],
             language: lang_cookie
 
     })
@@ -66,7 +66,7 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             disabled : ['id_asset'],
-            required : ['id_asset', 'asset_description' , 'asset_internal_alias', 'fk_sys_rec_status'],
+            required : ['id_asset', 'asset_description' , 'asset_internal_alias', 'fk_sys_rec_status', 'fk_company'],
             language: lang_cookie
 
 

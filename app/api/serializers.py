@@ -32,6 +32,16 @@ class SysRecStatesSerializer(serializers.ModelSerializer):
         model = SysRecStates
         fields = ('url', 'id_sys_rec_status', 'sys_rec_status')
 
+
+class ClearingTypeSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = ClearingType
+        fields = '__all__'
+
+
+
 class CompanySerializer(serializers.ModelSerializer):
 
 

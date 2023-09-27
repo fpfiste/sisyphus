@@ -24,7 +24,7 @@ $(document).ready(function(){
                         id: 'sales_billing_table',
                         fields: page_config['fields'],
                         ajax_url: '/api/sales/',
-                        query_params: '?fk_sales_status=1',
+                        query_params: '?fk_sales_status=1&fk_clearing_type=2',
                         pk_field: 'id_sale',
                         language: lang_cookie,
                         exclude: ['fk_project', 'invoice_text', 'fk_invoice_terms','id_task']
@@ -38,7 +38,7 @@ $(document).ready(function(){
                     id: 'task_billing_table',
                     fields: page_config['fields'],
                     ajax_url: '/api/tasks/',
-                    query_params: '?fk_task_state=4',
+                    query_params: '?fk_task_state=4&fk_clearing_type=2',
                     pk_field: 'id_task',
                     language: lang_cookie,
                     exclude: ['fk_project', 'invoice_text', 'id_sale','fk_invoice_terms']
@@ -82,8 +82,8 @@ $(document).ready(function(){
     $('#fk_project, #fk_vat, #fk_currency').on('change', function() {
       let query_params = $('#create_form').serialize();
       console.log(query_params)
-      sales_table.query_params = '?' + query_params + '&fk_sales_status=1'
-      task_table.query_params = '?' + query_params +'&fk_task_state=4'
+      sales_table.query_params = '?' + query_params + '&fk_sales_status=1&fk_clearing_type=2'
+      task_table.query_params = '?' + query_params +'&fk_task_state=4&fk_clearing_type=2'
       sales_table.build();
       task_table.build();
 
@@ -93,9 +93,9 @@ $(document).ready(function(){
     $( "#btn_reset" ).on( "click", function() {
         $('#filter_form').trigger("reset");
         $('#btn_filter').click();
-        sales_table.query_params = '?fk_sales_status=2'
+        sales_table.query_params = '?fk_sales_status=2&fk_clearing_type=2'
         sales_table.build()
-        task_table.query_params = '?fk_task_state=4'
+        task_table.query_params = '?fk_task_state=4&fk_clearing_type=2'
         task_table.build()
     });
 
@@ -154,6 +154,7 @@ $(document).ready(function(){
 
            },
            error: function(error){
+            alert(error['responseJSON']['message'])
             console.log(error)
            }
         });

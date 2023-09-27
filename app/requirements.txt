@@ -12,3 +12,4 @@ gunicorn
 qrbill
 svglib
 pdfrw
+django-filter

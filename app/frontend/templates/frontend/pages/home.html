@@ -1,0 +1,53 @@
+{% extends 'frontend/base.html' %}
+
+{% block title%}Home{% endblock %}
+
+{% block content %}
+
+<div class="row" style="height: 15vh;">
+    <div class="col-3" style="height:100%;">
+        <div class="card" style="height:100%;">
+            <div class="card-header home_open" style="height:95%;">
+                <span id="home_open"></span>
+            </div>
+            <div class="card-body" style="height:95%;">
+                <h1 id="home_open_value">0</h1>
+            </div>
+        </div>
+    </div>
+    <div class="col-3" style="height:100%;">
+        <div class="card" style="height:100%;">
+            <div class="card-header" style="height:95%;">
+                <span id="home_scheduled"></span>
+            </div>
+            <div class="card-body" style="height:95%;">
+                <h1 id="home_scheduled_value">0</h1>
+            </div>
+        </div>
+    </div>
+    <div class="col-3" style="height:100%;">
+        <div class="card" style="height:100%;">
+            <div class="card-header" style="height:95%;">
+                <span id="home_executed"></span>
+            </div>
+            <div class="card-body" style="height:95%;">
+                <h1 id="home_executed_value">0</h1>
+            </div>
+        </div>
+    </div>
+    <div class="col-3" style="height:100%;">
+        <div class="card" style="height:100%;">
+            <div class="card-header" style="height:95%;">
+                <span id="home_to_bill"></span>
+            </div>
+            <div class="card-body" style="height:95%;">
+                <h1 id="home_to_bill_value">0</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}

@@ -16,8 +16,14 @@ config_path = os.path.join(dir_path, 'config.json')
 with open(config_path) as cnf:
     config = json.load(cnf)
 @login_required
-def index(request):
-        return render(request, 'frontend/home.html')
+def render_home(request, pk=None):
+    url = request.path.split('/' + str(pk))[0]
+    page_config = config['pages'][url]
+    data = {'page_config': page_config}
+    return render(request, page_config['template'], data)
+
+
+
 
 def logout_view(request):
     logout(request)

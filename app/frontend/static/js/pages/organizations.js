@@ -49,7 +49,7 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             exclude: ['id_company'],
-            required : ['company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'fk_sys_rec_status' , 'company_email', 'is_customer', 'is_supplier', 'is_subcontractor'],
+            required : ['company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'company_city',  'fk_sys_rec_status' , 'is_own_company', 'is_customer', 'is_supplier', 'is_subcontractor'],
             language: lang_cookie
 
     })
@@ -60,7 +60,7 @@ $(document).ready(function(){
             validation:true,
             fields: page_config['fields'],
             disabled : ['id_company'],
-            required : ['id_company','company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'fk_sys_rec_status' , 'company_email', 'is_customer', 'is_supplier', 'is_subcontractor'],
+            required : ['id_company', 'company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'company_city',  'fk_sys_rec_status' , 'is_own_company', 'is_customer', 'is_supplier', 'is_subcontractor'],
             language: lang_cookie
 
     })

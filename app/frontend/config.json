@@ -19,6 +19,10 @@
         "sidebar_title_payment_conditions": {"en": "Payment Conditions", "ch": "Zahlungsbedingungen"},
         "sidebar_title_invoices": {"en": "Receivables", "ch": "Debitoren"},
         "sidebar_title_billing": {"en": "Billing", "ch": "Verrechnung"},
+        "home_open" :  {"en": "Open Tasks", "ch": "Offene Aufträge"},
+        "home_scheduled":  {"en": "Scheduled Tasks", "ch": "Geplante Aufträge"},
+        "home_executed" :  {"en": "Executed Tasks", "ch": "Ausgeführte Aufträge"},
+        "home_to_bill" :  {"en": "To Bill", "ch": "Zu verrechnen"},
         "btn_create" : {"en": "Add", "ch": "Hinzufügen"},
         "btn_add" : {"en": "Add", "ch": "Hinzufügen"},
         "btn_reset" : {"en": "Reset", "ch": "Zurücksetzen"},
@@ -42,6 +46,15 @@
 
 
   "pages": {
+    "/":  {
+      "title": {"en": "Sisyphus", "ch": "Sisyphus"},
+      "ajax_url" : "/api/tasks/",
+      "js": "/static/js/pages/home.js",
+      "template" : "frontend/pages/home.html"
+
+
+
+},
     "/schedule": {
       "title": {"en": "Schedule", "ch": "Kalender"},
       "ajax_url" : "/api/tasks/",
@@ -441,6 +454,21 @@
           "pk_field":"",
           "display_field": ""
         },
+        "is_own_company": {
+          "title": {
+            "en": "Own Company",
+            "ch": "Eigene Firma"
+          },
+          "display_type": "checkbox",
+          "input_type": "select",
+          "disabled": "disabled",
+          "options": {"0": {"en": "No", "ch": "Nein"}, "1": {"en":  "Yes", "ch":  "Ja"}},
+
+          "min": "",
+          "max": "",
+          "pk_field":"",
+          "display_field": ""
+        },
         "is_customer": {
           "title": {
             "en": "Customer",
@@ -712,18 +740,18 @@
           "pk_field": "",
           "display_field": ""
         },
-        "fk_sys_rec_status": {
+        "fk_company": {
           "title": {
-            "en": "Status",
-            "ch": "Status"
+            "en": "Company",
+            "ch": "Unternehmen"
           },
           "display_type": "fk_field",
           "input_type": "select",
-          "api_endpoint": "/api/sysrecstate",
+          "api_endpoint": "/api/companies",
           "min": "",
           "max": "",
-          "pk_field": "id_sys_rec_status",
-          "display_field": "sys_rec_status"
+          "pk_field": "id_company",
+          "display_field": "company_internal_alias"
         },
         "employee_cell_phone": {
           "title": {
@@ -775,6 +803,20 @@
           "pk_field": "id_employee_type",
           "display_field": "employee_type_description"
         },
+        "fk_sys_rec_status": {
+          "title": {
+            "en": "Status",
+            "ch": "Status"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/sysrecstate",
+          "min": "",
+          "max": "",
+          "pk_field": "id_sys_rec_status",
+          "display_field": "sys_rec_status"
+        },
+
         "employee_custom_fields": {
           "title": {
             "en": "More Attributes",
@@ -786,7 +828,6 @@
           "min": "",
           "max": ""
         }
-
       }
 
 
@@ -851,7 +892,7 @@
           "pk_field": "",
           "display_field": ""
         },
-         "fk_sys_rec_status": {
+        "fk_sys_rec_status": {
           "title": {
             "en": "Status",
             "ch": "Status"
@@ -864,6 +905,20 @@
           "pk_field": "id_sys_rec_status",
           "display_field": "sys_rec_status"
         },
+        "fk_company": {
+          "title": {
+            "en": "Company",
+            "ch": "Unternehmen"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/companies",
+          "min": "",
+          "max": "",
+          "pk_field": "id_company",
+          "display_field": "company_internal_alias"
+        },
+
          "asset_custom_fields": {
           "title": {
             "en": "More Attributes",
@@ -1028,18 +1083,18 @@
           "pk_field": "id_unit",
           "display_field": "unit"
         },
-        "fk_invoice": {
+        "fk_clearing_type": {
           "title": {
-            "en": "Invoice",
-            "ch": "Rechnung"
+            "en": "Clearing Type",
+            "ch": "Abrechnung"
           },
           "display_type": "fk_field",
           "input_type": "select",
-          "api_endpoint": "/api/invoices",
+          "api_endpoint": "/api/clearingtype",
           "min": "",
           "max": "",
-          "pk_field": "id_invoice",
-          "display_field": "invoicde_date"
+          "pk_field": "id_clearing_type",
+          "display_field": "clearing_type"
         },
         "fk_currency": {
           "title": {
@@ -1246,6 +1301,19 @@
           "max": "",
           "pk_field": "id_vat",
           "display_field": "vat_title"
+        },
+        "fk_clearing_type": {
+          "title": {
+            "en": "Clearing Type",
+            "ch": "Abrechnung"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/clearingtype",
+          "min": "",
+          "max": "",
+          "pk_field": "id_clearing_type",
+          "display_field": "clearing_type"
         },
         "description": {
           "title": {
@@ -1721,32 +1789,6 @@
           "title": {
             "en": "Sale ID",
             "ch": "Verkaufs Nr."
-          },
-          "display_type": "text",
-          "input_type": "number",
-          "api_endpoint": "",
-          "min": "0",
-          "max": "999999999",
-          "pk_field": "",
-          "display_field": ""
-        },
-        "sale_amount": {
-          "title": {
-            "en": "Amount",
-            "ch": "Menge"
-          },
-          "display_type": "text",
-          "input_type": "number",
-          "api_endpoint": "",
-          "min": "0",
-          "max": "9999999999",
-          "pk_field": "",
-          "display_field": ""
-        },
-        "sale_unit_price": {
-          "title": {
-            "en": "Unit price",
-            "ch": "Stückpreis"
           },
           "display_type": "text",
           "input_type": "number",

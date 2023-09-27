@@ -92,7 +92,7 @@ class BootstrapDataTable{
             let header = this.draw_header()
             console.log(header)
             //* draw the grid of the new table object
-            let table_grid = '<div id="table_container" style="overflow:auto; white-space:nowrap; height:100%;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'">'+header+'<tbody></tbody></table></div>';
+            let table_grid = '<div id="table_container" style="overflow:scroll; white-space:nowrap; height:100%;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'">'+header+'<tbody></tbody></table></div>';
             $(this.container).append(table_grid);
 
       }

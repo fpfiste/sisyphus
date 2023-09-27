@@ -115,3 +115,7 @@
 123,Can change task states,56,change_taskstates
 124,Can delete task states,56,delete_taskstates
 125,Can view task states,56,view_taskstates
+126,Can add clearing type,57,add_clearingtype
+127,Can change clearing type,57,change_clearingtype
+128,Can delete clearing type,57,delete_clearingtype
+129,Can view clearing type,57,view_clearingtype
