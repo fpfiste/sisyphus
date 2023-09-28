@@ -1145,9 +1145,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         )
         tasks = tasks.filter(
-            Q(fk_employee_1__isnull=False) |
-            Q(fk_subcontractor__isnull=False)
-
+            Q(fk_employee_1__isnull=False)
         )
         tasks = tasks.filter(task_time_from__isnull=False, task_time_to__isnull=False).exclude(fk_task_state=6).order_by('task_date_from', 'task_time_from')
 
@@ -1161,7 +1159,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         tasks = Tasks.objects.filter(
             Q(task_date_from__isnull=True) |
             Q(task_date_to__isnull=True) |
-            Q(fk_employee_1__isnull=True, fk_subcontractor__isnull=True)
+            Q(fk_employee_1__isnull=True)
         ).order_by('id_task')
 
         tasks = tasks.filter(fk_task_state__gt=0)
@@ -1261,8 +1259,6 @@ class TaskViewSet(viewsets.ModelViewSet):
                 doc.add_employee(task.fk_employee_1.id_employee, task.fk_employee_1.employee_internal_alias)
             if task.fk_employee_2 != None:
                 doc.add_employee(task.fk_employee_2.id_employee, task.fk_employee_2.employee_internal_alias)
-            if task.fk_subcontractor != None:
-                doc.add_subcontractor(task.fk_subcontractor.id_subcontractor, task.fk_subcontractor.company_internal_alias)
 
             doc.add_task(
                 task.id_task,
@@ -1275,7 +1271,6 @@ class TaskViewSet(viewsets.ModelViewSet):
                 task.fk_employee_2.id_employee if task.fk_employee_2 != None else None,
                 task.fk_asset_1.id_asset if task.fk_asset_1 != None else None,
                 task.fk_asset_2.id_asset if task.fk_asset_1 != None else None,
-                task.fk_subcontractor.id_company if task.fk_subcontractor != None else None
             )
 
 

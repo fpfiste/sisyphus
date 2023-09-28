@@ -13,7 +13,6 @@ class SchedulePDF(Document):
         super().__init__(language, 'Schedule', output_path=output_path)
         self.date = dateutil.parser.parse(date)
         self.employees = []
-        self.subcontractors = []
         self.assets = []
         self.tasks = []
         self.language = language
@@ -21,7 +20,6 @@ class SchedulePDF(Document):
             'title': {'en': 'Schedule Date', 'ch': 'Kalender vom'},
             'employee_label': {'en': 'Employees', 'ch': 'Mitarbeiter'},
             'asset_label': {'en': 'Assets', 'ch': 'Ressourcen'},
-            'subcon_label': {'en': 'Subcontractors', 'ch': 'Subunternehmer'}
 
         }
 
@@ -34,14 +32,7 @@ class SchedulePDF(Document):
                 'name' : name
             })
 
-    def add_subcontractor(self, id, name):
-        ids = [i['id'] for i in self.subcontractors]
 
-        if id not in ids:
-            self.subcontractors.append({
-            'id' : id,
-            'name' : name
-        })
 
     def add_asset(self, id, name):
         ids = [i['id'] for i in self.assets]
@@ -51,7 +42,7 @@ class SchedulePDF(Document):
             'id' : id,
             'name': name
         })
-    def add_task(self,id, description, date_from, time_from, date_to, time_to, employee_1, employee_2, asset_1, asset_2, subcontractor):
+    def add_task(self,id, description, date_from, time_from, date_to, time_to, employee_1, employee_2, asset_1, asset_2):
         self.tasks.append({
             'id':id,
             'description':description,
@@ -61,7 +52,6 @@ class SchedulePDF(Document):
             'employee_2': employee_2,
             'asset_1' : asset_1,
             'asset_2' : asset_2,
-            'subcontractor' : subcontractor
         })
 
 
@@ -89,7 +79,7 @@ class SchedulePDF(Document):
         ypos = 2.25
         xpos = 1
 
-        max_y = len(self.employees) + len(self.subcontractors)
+        max_y = len(self.employees)
         for i in range(max_y):
             c.setLineWidth(0)
             if i % 2:
@@ -104,6 +94,7 @@ class SchedulePDF(Document):
         c.line(xpos * cm, 2.1 * cm, xpos * cm, (max_y + 2.25) * cm)
         ypos = 2.1
         xpos = 5
+
 
         for i in range(25):
             c.setFillColor(colors.black)

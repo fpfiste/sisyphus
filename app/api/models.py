@@ -420,7 +420,6 @@ class Tasks(models.Model):
     description = models.CharField(max_length=200)
     internal_info = models.CharField(max_length=200, blank=True, null=True)
     customer_reference = models.CharField(max_length=100, blank=True, null=True)
-    fk_subcontractor = models.IntegerField(blank=True, null=True)
     task_time_from = models.TimeField(blank=True, null=True)
     task_time_to = models.TimeField(blank=True, null=True)
     fk_asset_1 = models.ForeignKey(Assets, models.DO_NOTHING, db_column='fk_asset_1', blank=True, null=True)
@@ -435,6 +434,7 @@ class Tasks(models.Model):
     fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat', blank=True, null=True)
     task_custom_fields = models.JSONField(blank=True, null=True)
     fk_clearing_type = models.ForeignKey(ClearingType, models.DO_NOTHING, db_column='fk_clearing_type', blank=True, null=True)
+
 
     class Meta:
         managed = False

@@ -816,7 +816,6 @@
           "pk_field": "id_sys_rec_status",
           "display_field": "sys_rec_status"
         },
-
         "employee_custom_fields": {
           "title": {
             "en": "More Attributes",
@@ -1431,20 +1430,6 @@
           "max": "",
           "pk_field": "id_asset",
           "display_field": "asset_internal_alias"
-        },
-        "fk_subcontractor": {
-          "title": {
-            "en": "Subcontractor",
-            "ch": "Subunternehmer"
-          },
-          "display_type": "fk_field",
-          "input_type": "select",
-          "api_endpoint": "/api/companies",
-          "api_filter": "is_subcontractor=1",
-          "min": "",
-          "max": "",
-          "pk_field": "id_company",
-          "display_field": "company_internal_alias"
         },
         "task_custom_fields": {
           "title": {
