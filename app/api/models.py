@@ -134,6 +134,19 @@ class AuthtokenToken(models.Model):
         db_table = 'authtoken_token'
 
 
+class Cancellations(models.Model):
+    id_invoice_cancellation = models.AutoField(primary_key=True)
+    cancellation_date = models.DateField()
+    cancellation_time = models.TimeField()
+    cancellation_reason = models.CharField(max_length=200)
+    cancellation_user = models.CharField(max_length=20)
+    fk_invoice = models.OneToOneField('Receivables', models.DO_NOTHING, db_column='fk_invoice')
+
+    class Meta:
+        managed = False
+        db_table = 'cancellations'
+
+
 class ClearingType(models.Model):
     id_clearing_type = models.AutoField(primary_key=True)
     clearing_type = models.CharField(unique=True, max_length=50)
@@ -287,19 +300,6 @@ class Employees(models.Model):
         db_table = 'employees'
 
 
-class InvoiceCancellation(models.Model):
-    id_invoice_cancellation = models.AutoField(primary_key=True)
-    cancellation_date = models.DateField()
-    cancellation_time = models.TimeField()
-    cancellation_reason = models.CharField(max_length=200)
-    cancellation_user = models.CharField(max_length=20)
-    fk_invoice = models.OneToOneField('Invoices', models.DO_NOTHING, db_column='fk_invoice')
-
-    class Meta:
-        managed = False
-        db_table = 'invoice_cancellation'
-
-
 class InvoiceStates(models.Model):
     id_invoice_state = models.AutoField(primary_key=True)
     invoice_state = models.CharField(max_length=20)
@@ -330,21 +330,22 @@ class InvoiceTextTemplates(models.Model):
         db_table = 'invoice_text_templates'
 
 
-class Invoices(models.Model):
-    id_invoice = models.AutoField(primary_key=True)
+class Payables(models.Model):
+    id_payable = models.AutoField(primary_key=True)
+    fk_company = models.ForeignKey(Companies, models.DO_NOTHING, db_column='fk_company')
     invoice_date = models.DateField()
-    invoice_text = models.CharField(max_length=200, blank=True, null=True)
-    fk_invoice_state = models.ForeignKey(InvoiceStates, models.DO_NOTHING, db_column='fk_invoice_state')
-    fk_invoice_terms = models.ForeignKey(InvoiceTerms, models.DO_NOTHING, db_column='fk_invoice_terms')
-    fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat')
     net_total = models.DecimalField(max_digits=11, decimal_places=2)
-    total = models.DecimalField(max_digits=11, decimal_places=2)
+    vat = models.DecimalField(max_digits=11, decimal_places=2)
+    fk_invoice_status = models.ForeignKey(InvoiceStates, models.DO_NOTHING, db_column='fk_invoice_status')
+    fk_terms = models.ForeignKey(InvoiceTerms, models.DO_NOTHING, db_column='fk_terms')
     fk_currency = models.ForeignKey(Currencies, models.DO_NOTHING, db_column='fk_currency')
-    fk_project = models.ForeignKey('Projects', models.DO_NOTHING, db_column='fk_project')
+    positions = models.JSONField(blank=True, null=True)
+    invoice_id = models.CharField(unique=True, max_length=200)
+    total = models.DecimalField(max_digits=11, decimal_places=2)
 
     class Meta:
         managed = False
-        db_table = 'invoices'
+        db_table = 'payables'
 
 
 class Projects(models.Model):
@@ -361,6 +362,24 @@ class Projects(models.Model):
         db_table = 'projects'
 
 
+class Receivables(models.Model):
+    id_invoice = models.AutoField(primary_key=True)
+    invoice_date = models.DateField()
+    invoice_text = models.CharField(max_length=200, blank=True, null=True)
+    fk_invoice_state = models.ForeignKey(InvoiceStates, models.DO_NOTHING, db_column='fk_invoice_state')
+    fk_invoice_terms = models.ForeignKey(InvoiceTerms, models.DO_NOTHING, db_column='fk_invoice_terms')
+    fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat')
+    net_total = models.DecimalField(max_digits=11, decimal_places=2)
+    total = models.DecimalField(max_digits=11, decimal_places=2)
+    fk_currency = models.ForeignKey(Currencies, models.DO_NOTHING, db_column='fk_currency')
+    fk_project = models.ForeignKey(Projects, models.DO_NOTHING, db_column='fk_project')
+    discount = models.DecimalField(max_digits=3, decimal_places=3, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'receivables'
+
+
 class Sales(models.Model):
     id_sale = models.AutoField(primary_key=True)
     sale_date = models.DateField()
@@ -370,7 +389,7 @@ class Sales(models.Model):
     description = models.CharField(max_length=200)
     sale_time = models.TimeField()
     fk_currency = models.ForeignKey(Currencies, models.DO_NOTHING, db_column='fk_currency')
-    fk_invoice = models.ForeignKey(Invoices, models.DO_NOTHING, db_column='fk_invoice', blank=True, null=True)
+    fk_invoice = models.ForeignKey(Receivables, models.DO_NOTHING, db_column='fk_invoice', blank=True, null=True)
     fk_project = models.ForeignKey(Projects, models.DO_NOTHING, db_column='fk_project')
     fk_sales_status = models.ForeignKey('SalesState', models.DO_NOTHING, db_column='fk_sales_status')
     fk_unit = models.ForeignKey('Units', models.DO_NOTHING, db_column='fk_unit')
@@ -427,14 +446,13 @@ class Tasks(models.Model):
     fk_currency = models.ForeignKey(Currencies, models.DO_NOTHING, db_column='fk_currency', blank=True, null=True)
     fk_employee_1 = models.ForeignKey(Employees, models.DO_NOTHING, db_column='fk_employee_1', blank=True, null=True)
     fk_employee_2 = models.ForeignKey(Employees, models.DO_NOTHING, db_column='fk_employee_2', related_name='tasks_fk_employee_2_set', blank=True, null=True)
-    fk_invoice = models.ForeignKey(Invoices, models.DO_NOTHING, db_column='fk_invoice', blank=True, null=True)
+    fk_invoice = models.ForeignKey(Receivables, models.DO_NOTHING, db_column='fk_invoice', blank=True, null=True)
     fk_project = models.ForeignKey(Projects, models.DO_NOTHING, db_column='fk_project')
     fk_task_state = models.ForeignKey(TaskStates, models.DO_NOTHING, db_column='fk_task_state')
     fk_unit = models.ForeignKey('Units', models.DO_NOTHING, db_column='fk_unit', blank=True, null=True)
     fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat', blank=True, null=True)
     task_custom_fields = models.JSONField(blank=True, null=True)
     fk_clearing_type = models.ForeignKey(ClearingType, models.DO_NOTHING, db_column='fk_clearing_type', blank=True, null=True)
-
 
     class Meta:
         managed = False

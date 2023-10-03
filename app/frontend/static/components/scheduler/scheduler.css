@@ -13,6 +13,21 @@
 
 }
 
+#date_input_section, #employee_type_filter{
+    display:flex;
+    align-items: flex-end;
+    width: auto;
+    margin-bottom: 10px;
+}
+
+#employee_type_filter_dropdown {
+    top:85px;
+    padding-left: 15px;
+}
+
+#employee_type_dropdown_button {
+    height: 30px;
+}
 #schedule_table {
 
   border-spacing: 0;
@@ -35,19 +50,15 @@
   top: 0;
   background-color: white;
   z-index: 10;
-  height: 15%;
+  height: 5% !important;
 }
 
-#scheduler_input_row .row {
-    height: 40%;
-    margin-top: 5px;
-    margin-left: 5px;
-
+#scheduler_title_row {
+    height:20px;
 }
 
-#scheduler_input_row th:nth-child(2) {
-    background: white !important;
-}
+
+
 
 thead th{
     border:None;
@@ -58,7 +69,7 @@ thead th{
 }
 
 #scheduler_spacer_row {
-    height: 10px !important;
+    height: 5px !important;
 
 }
 #scheduler_spacer_row th {
@@ -75,6 +86,7 @@ thead th{
 #schedule_table th {
     padding: 0px;
     min-width: 96px;
+    padding-left: 15px;
 
 }
 
@@ -127,7 +139,7 @@ thead th{
 }
 
 #schedule_table tbody ul {
-    min-height: 100%;
+    /*min-height: 100%;*/
 }
 
 #schedule_table tfoot {
@@ -141,20 +153,12 @@ thead th{
 
 
 
-#schedule_table tr {
+#schedule_table tbody tr {
     height: 50px;
 
 }
 
-#scheduler_sub_contractor_header{
-    background:white !important;
-}
 
-#scheduler_subcontractor_label{
-    height: 50px;
-    vertical-align: middle;
-    background : #efefef;
-}
 
 .task_lane {
     background: linear-gradient(to right, transparent 95px, lightgray 1px),linear-gradient(to right, transparent 23px, #e5e5e5 0.1px, transparent 24.2px, transparent 47px, #e5e5e5 0.1px, transparent 48.2px, transparent 71px, #e5e5e5 0.1px, transparent 72.2px);

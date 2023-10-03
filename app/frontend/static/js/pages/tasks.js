@@ -3,6 +3,7 @@ $(document).ready(function(){
     let page_config
     let url = '/tasks'
     let lang_cookie = Cookies.get('sisyphus_language');
+    $('#loading_screen_wrapper').toggle();
     //*** read the config file ***//
     $.ajax({
           url: '/_config',
@@ -11,6 +12,7 @@ $(document).ready(function(){
           success: function (response) {
             page_config = response['pages'][url]
             translations = response['translations']
+            $('#loading_screen_wrapper').toggle();
           }
     });
 
@@ -97,12 +99,13 @@ $(document).ready(function(){
     });
 
     $( "#task_template" ).on( "change", function() {
+        $('#loading_screen_wrapper').toggle();
+
         let template_id = $(this).val();
 
         $('#create_form').trigger("reset");
 
         let url = '/api/templates/'+ template_id + '/'
-
         $.ajax({
            url: url,
            type: 'GET',
@@ -114,6 +117,8 @@ $(document).ready(function(){
                 $('#create_modal #'+ key).val(value)
 
               })
+
+              $('#loading_screen_wrapper').toggle();
            },
            error: function(error){
             console.log(error)
@@ -144,6 +149,7 @@ $(document).ready(function(){
     })
 
     $('#btn_print').on('click', function() {
+        $('#loading_screen_wrapper').toggle();
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/tasks/' + pk + '/pdf/'
         $.ajax({
@@ -152,11 +158,15 @@ $(document).ready(function(){
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
                 console.log(response)
+                $('#loading_screen_wrapper').toggle();
                 window.open(response['file_url'], '_blank').focus();
+
 
            },
            error: function(error){
             console.log(error)
+            alert(error);
+            loaction.reload();
            }
         });
     })

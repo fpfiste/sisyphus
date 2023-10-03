@@ -38,7 +38,6 @@ class BootstrapDataTable{
       };
 
       checkbox_field(checked, disabled) {
-        console.log(checked)
         if (checked) {
              return  '<td><input type="checkbox" checked '+disabled+'/></td>'
         } else {
@@ -81,7 +80,6 @@ class BootstrapDataTable{
                 header += '<th>'+value.title[this.language]+'</th>'
             }
         });
-        console.log(header)
         return header
 
 
@@ -90,7 +88,6 @@ class BootstrapDataTable{
       build_grid() {
             $(this.container).empty();
             let header = this.draw_header()
-            console.log(header)
             //* draw the grid of the new table object
             let table_grid = '<div id="table_container" style="overflow:scroll; white-space:nowrap; height:100%;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'">'+header+'<tbody></tbody></table></div>';
             $(this.container).append(table_grid);
@@ -102,10 +99,11 @@ class BootstrapDataTable{
         //* remove older renderings of the object
         //* load the data to populate the table
 
-
+        console.log(this.data)
 
         //* loop all the rows in this.data object and add it to the table
         $.each(this.data,(key,element) => {
+
 
 
             //* create the row wrapper for the current record
@@ -172,8 +170,10 @@ class BootstrapDataTable{
                         } else if (value === false){
                             value = 0;
                         }
-                        if (typeof(value) === 'object') {
+                        if (value != null & typeof(value) === 'object') {
                             value = JSON.stringify(value);
+                        } else if (value == null) {
+                            value = JSON.stringify({});
                         }
                         $('#update_form #'+ key).val(value).trigger('change');
 

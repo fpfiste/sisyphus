@@ -99,10 +99,10 @@
 107,Can change employee types,52,change_employeetypes
 108,Can delete employee types,52,delete_employeetypes
 109,Can view employee types,52,view_employeetypes
-110,Can add invoices,53,add_invoices
-111,Can change invoices,53,change_invoices
-112,Can delete invoices,53,delete_invoices
-113,Can view invoices,53,view_invoices
+110,Can add receivables,53,add_receivables
+111,Can change receivables,53,change_receivables
+112,Can delete receivables,53,delete_receivables
+113,Can view receivables,53,view_receivables
 114,Can add employees,54,add_employees
 115,Can change employees,54,change_employees
 116,Can delete employees,54,delete_employees
@@ -119,3 +119,7 @@
 127,Can change clearing type,57,change_clearingtype
 128,Can delete clearing type,57,delete_clearingtype
 129,Can view clearing type,57,view_clearingtype
+130,Can add payables,58,add_payables
+131,Can change payables,58,change_payables
+132,Can delete payables,58,delete_payables
+133,Can view payables,58,view_payables

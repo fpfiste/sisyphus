@@ -4,7 +4,7 @@ $(document).ready(function(){
     let url = '/assets/absences'
 
 
-
+    $('#loading_screen_wrapper').toggle();
     //*** read the config file ***//
     $.ajax({
           url: '/_config',
@@ -13,6 +13,7 @@ $(document).ready(function(){
           success: function (response) {
             page_config = response['pages'][url]
             translations = response['translations']
+             $('#loading_screen_wrapper').toggle();
           }
     });
 
@@ -68,6 +69,7 @@ $(document).ready(function(){
 
     // add evetn listeners
     $( "#btn_filter" ).on( "click", function() {
+       $('#loading_screen_wrapper').toggle();
       let query_params = $('#filter_form').serialize();
       $.ajax({
         url: window.location.origin +page_config['ajax_url'] + '?' + query_params,

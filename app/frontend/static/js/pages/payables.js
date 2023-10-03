@@ -1,11 +1,10 @@
 
 $(document).ready(function(){
     let page_config
-    let url = '/companies'
+    let url = '/payables'
     let lang_cookie = Cookies.get('sisyphus_language');
-    $('#loading_screen_wrapper').toggle();
 
-    $('#btn_delete, #btn_print, #btn_close_task').remove();
+    $('#btn_close_task' ).remove();
     //*** read the config file ***//
     $.ajax({
           url: '/_config',
@@ -14,10 +13,9 @@ $(document).ready(function(){
           success: function (response) {
             page_config = response['pages'][url]
             translations = response['translations']
-            $('#loading_screen_wrapper').toggle();
-
           }
     });
+
 
 
     // create table instance
@@ -27,8 +25,8 @@ $(document).ready(function(){
                         fields: page_config['fields'],
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
-                        exclude: ['fk_sys_rec_status', 'company_custom_fields'],
                         language: lang_cookie,
+                        exclude: ['file_upload', 'positions']
 
                     })
 
@@ -41,30 +39,37 @@ $(document).ready(function(){
             validation:false,
             fields: page_config['fields'],
             language: lang_cookie,
-            exclude: ['company_custom_fields']
+            exclude: ['file_upload']
+
 
 
     })
+
+
     let create_form = new BootstrapForm({
             container: '#create_form_container',
             id: 'create_form',
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            exclude: ['id_company'],
-            required : ['company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'company_city',  'fk_sys_rec_status' , 'is_own_company', 'is_customer', 'is_supplier', 'is_subcontractor'],
+            exclude: ['id_payable', 'fk_invoice_status'],
+            required : ['invoice_id', 'fk_terms',  'invoice_date', 'fk_company', 'fk_currency', 'net_total', 'vat', 'total'],
             language: lang_cookie
 
     })
+
     let update_form = new BootstrapForm({
             container: '#update_form_container',
             id: 'update_form',
             ajax_url: page_config['ajax_url'],
             validation:true,
             fields: page_config['fields'],
-            disabled : ['id_company'],
-            required : ['id_company', 'company_name', 'company_internal_alias', 'company_street', 'company_zipcode', 'company_country', 'company_city',  'fk_sys_rec_status' , 'is_own_company', 'is_customer', 'is_supplier', 'is_subcontractor'],
-            language: lang_cookie
+            disabled : ['id_payable', 'fk_invoice_status', ],
+            required : ['id_payable', 'invoice_id', 'fk_terms',  'invoice_date', 'fk_company', 'fk_currency', 'net_total', 'vat', 'total'],
+            language: lang_cookie,
+                        exclude: ['file_upload']
+
+
 
     })
 
@@ -100,6 +105,62 @@ $(document).ready(function(){
         update_form.submit(url, 'PUT');
     });
 
+
+
+    $('#file_upload').on('change', function() {
+        $('#loading_screen_wrapper').toggle();
+
+        console.log(this)
+
+        var that = this;
+
+        var formData = new FormData();
+
+         // add assoc key values, this will be posts values
+        formData.append("file", this.files[0], this.files[0].name);
+        formData.append("upload_file", true);
+
+        console.log(formData)
+
+        $.ajax({
+            type: "POST",
+            url: "/api/payables/extract_data/",
+            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+            success: function (result) {
+                   console.log(result)
+                   $('#create_form').trigger("reset");
+                   $.each(result, (key, value)=>{
+                        if (value === true){
+                            value = 1;
+                        } else if (value === false){
+                            value = 0;
+                        }
+                        if (typeof(value) === 'object') {
+                            value = JSON.stringify(value);
+                        }
+                        $('#create_form #'+ key).val(value).trigger('change');
+
+                    });
+                    $('#loading_screen_wrapper').toggle();
+
+            },
+            error: function (error) {
+                console.log(error)
+                alert(error);
+                location.reload();
+            },
+            async: true,
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+
+    });
+
+
+
+
+    })
 
 
 });

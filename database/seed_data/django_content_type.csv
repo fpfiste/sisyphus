@@ -26,8 +26,9 @@
 50,api,assetabsencecodes
 51,api,employeeabsencecodes
 52,api,employeetypes
-53,api,invoices
+53,api,receivables
 54,api,employees
 55,api,sysrecstates
 56,api,taskstates
 57,api,clearingtype
+58,api,payables

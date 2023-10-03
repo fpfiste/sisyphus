@@ -102,6 +102,8 @@ $(document).ready(function(){
 
 
     $('#update_modal').on('show.bs.modal', function() {
+            $('#loading_screen_wrapper').toggle();
+
         let task_status = $('#update_form #fk_sales_status').val()
         console.log(task_status)
         if (
@@ -123,10 +125,13 @@ $(document).ready(function(){
             $('#btn_close_task').prop('disabled', false)
             $('#btn_save').prop('disabled', false)
         }
+            $('#loading_screen_wrapper').toggle();
 
     })
 
     $('#btn_print').on('click', function() {
+            $('#loading_screen_wrapper').toggle();
+
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/sales/' + pk + '/pdf/'
         $.ajax({
@@ -136,15 +141,19 @@ $(document).ready(function(){
            success: function(response) {
                 console.log(response)
                 window.open(response['file_url'], '_blank').focus();
+                    $('#loading_screen_wrapper').toggle();
 
            },
            error: function(error){
+           alert(error)
+           location.reload()
             console.log(error)
            }
         });
     })
 
     $('#btn_delete').on('click', function() {
+
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/sales/' + pk + '/'
 
@@ -159,6 +168,8 @@ $(document).ready(function(){
     })
 
     $( "#sales_template" ).on( "change", function() {
+            $('#loading_screen_wrapper').toggle();
+
         let template_id = $(this).val();
 
         $('#create_form').trigger("reset");
@@ -176,9 +187,13 @@ $(document).ready(function(){
                 $('#create_modal #'+ key).val(value)
 
               })
+                  $('#loading_screen_wrapper').toggle();
+
            },
            error: function(error){
             console.log(error)
+            alert(error);
+            location.reload();
            }
         });
     });

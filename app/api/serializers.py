@@ -96,14 +96,21 @@ class InvoiceTextTemplatesSerializer(serializers.ModelSerializer):
         model = InvoiceTextTemplates
         fields = '__all__'
 
-class InvoiceSerializer(serializers.ModelSerializer):
+class ReceivablesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Invoices
+        model = Receivables
         fields = '__all__'
+
+class PayableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payables
+        fields = '__all__'
+        
+
 
 class InvoiceCancellationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = InvoiceCancellation
+        model = Cancellations
         fields = '__all__'
 
 class ProjectsSerializer(serializers.ModelSerializer):

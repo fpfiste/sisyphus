@@ -23,7 +23,8 @@ router.register(r'employees/types',  EmployeeTypesViewSet)
 router.register(r'employees',  EmployeeViewSet)
 router.register(r'invoice-states',  InvoiceStateViewSet)
 router.register(r'invoiceterms',  InvoiceTermsViewSet)
-router.register(r'invoices',  InvoiceViewSet)
+router.register(r'receivables',  ReceivablesViewSet)
+router.register(r'payables',  PayablesViewSet)
 router.register(r'projects',  ProjectViewSet)
 router.register(r'sales',  SalesViewSet)
 router.register(r'sales-state',  SalesStateViewSet)
@@ -36,7 +37,6 @@ router.register(r'units',  UnitViewSet)
 router.register(r'vat',  VATViewSet)
 router.register(r'clearingtype',  ClearingTypeViewSet)
 # Wire up our API using automatic URL routing.
-
 
 
 

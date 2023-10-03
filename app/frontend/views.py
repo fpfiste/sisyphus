@@ -147,25 +147,46 @@ def render_terms(request, pk=None):
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
 
-@permission_required('api.add_invoices', )
-@permission_required('api.view_invoices', )
-@permission_required('api.change_invoices', )
-@permission_required('api.delete_invoices', )
+
+
+
+
+@permission_required('api.add_receivables', )
+@permission_required('api.view_receivables', )
+@permission_required('api.change_receivables', )
+@permission_required('api.delete_receivables', )
 def render_invoices(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
 
+
+
 @permission_required('api.add_invoices', )
 @permission_required('api.view_tasks',)
 def render_billing(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
 
-    print(url)
     page_config = config['pages'][url]
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
 
 
 
+
+
+
+
+
+
+
+@permission_required('api.add_payables', )
+@permission_required('api.add_payables', )
+@permission_required('api.add_payables', )
+@permission_required('api.add_payables', )
+def render_payables(request, pk=None):
+    url = request.path.split('/' + str(pk))[0]
+    page_config = config['pages'][url]
+    data = {'page_config': page_config}
+    return render(request, page_config['template'], data)

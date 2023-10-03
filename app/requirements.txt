@@ -13,3 +13,4 @@ qrbill
 svglib
 pdfrw
 django-filter
+azure-ai-formrecognizer

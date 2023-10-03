@@ -1,7 +1,7 @@
 
 $(document).ready(function(){
     let page_config
-    let url = '/invoices'
+    let url = '/receivables'
     let lang_cookie = Cookies.get('sisyphus_language');
 
     $('#btn_close_task, #btn_save, #btn_create' ).remove();
@@ -78,6 +78,7 @@ $(document).ready(function(){
 
     $('#btn_print').on('click', function() {
         let pk = $('#update_form #id_invoice').val();
+        $('#loading_screen_wrapper').toggle();
 
         let url = page_config['ajax_url'] + pk + '/pdf'
 
@@ -87,19 +88,25 @@ $(document).ready(function(){
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
                 var doc = window.open(response['file_url'], '_blank');
+                $('#loading_screen_wrapper').toggle();
+
                 location.reload();
                 doc.focus();
            },
            error: function(error){
+            alert(error)
+            location.reload();
             console.log(error)
            }
         });
     })
 
     $('#btn_delete').on('click', function() {
+        $('#loading_screen_wrapper').toggle();
+
         update_form.required = ['id_task']
         let pk = $('#update_form #' + page_config['pk']).val()
-        let url = '/api/invoices/' + pk + '/'
+        let url = '/api/receivables/' + pk + '/'
 
         let task_state = $('#fk_invoice_state').val()
 
@@ -115,10 +122,13 @@ $(document).ready(function(){
            success: function(response) {
                 console.log(response)
                 window.open(response['file_url'], '_blank').focus();
+                    $('#loading_screen_wrapper').toggle();
 
            },
            error: function(error){
             console.log(error)
+            alert(error)
+            location.reload();
            }
         });
     })

@@ -2,24 +2,24 @@
 
 class Scheduler{
 
-      constructor({container, id, data, scheduleDate, employee_label, asset_label, subcontractor_label, open_task_label}) {
+      constructor({container, id, data, scheduleDate, employee_label, asset_label, open_task_label, employee_type_label}) {
           this.container = container;
           this.id = id;
           this.data = data
           this.employee_url = '/api/employees/?fk_sys_rec_status=1';
-          this.subcontractor_url = '/api/companies?is_subcontractor=1'
+          this.employee_type_url = '/api/employees/types/'
           this.asset_url = '/api/assets';
           this.task_url = '/api/tasks/listday/';
           this.open_tasks_url = '/api/tasks/getOpenTasks/'
           this.get_date_url = '/api/tasks/getDate/'
           this.set_date_url = '/api/tasks/setDate/'
           this.schedule_date = Cookies.get('scheduler_date')  || new Date().toISOString().split('T')[0];
+          this.excluded_employee_types = (Cookies.get('excluded_employee_types')  || '').split(',');
+          console.log(this.excluded_employee_types)
           this.employee_label= employee_label
+          this.employee_type_label = employee_type_label
           this.asset_label= asset_label
-          this.subcontractor_label = subcontractor_label
           this.open_task_label = open_task_label
-          this.show_subus = (Cookies.get('show_subus') ==='true') ? true : false;
-          console.log(this.show_subus)
           this.build_grid()
       }
 
@@ -41,46 +41,56 @@ class Scheduler{
       }
 
 
-      draw_drop_down_select() {
-        let drp = '<div class="dropdown">'+
-                       '<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true">Dropdownd</button>' +
-                            '<ul class="dropdown-menu" id=scheduler_dropdown aria-labelledby="dropdownMenu1">' +
-                            '<li ><label><input type="checkbox"> Mitarbeiter</label></li>' +
-                            '<li><label><input type="checkbox"> Subunternehmer</label></li>' +
-                            '<li><label><input type="checkbox"> Offene Aufträge</label></li>' +
-                       '</ul>' +
-                  '</div>'
+      checkbox(id, value, label) {
+        let checked = ''
+        if (this.excluded_employee_types.includes(value.toString())){
+            checked = ''
+        } else {
+            checked = 'checked'
+        }
+        let checkbox = '<div class="form-check">'
+        checkbox += '<input class="form-check-input employee_type_checkbox" type="checkbox" value="'+value+'" id="'+id+'" '+checked +'>'
+        checkbox += '<label class="form-check-label" for="'+id+'">'+label+'</label>'
+        checkbox += '</div>'
+
+        return  checkbox
+      }
+
+      drop_down() {
+        let drop_down = '<div id="employee_type_filter" class="dropdown show">'
+        drop_down += '<a class="btn btn-light dropdown-toggle" role="button" id="employee_type_dropdown_button" aria-expanded="false">'+this.employee_type_label+'</a>'
+        drop_down += '<div id="employee_type_filter_dropdown" class="dropdown-menu">'
+        $.each(this.employee_types, (key, value)=>{
+            drop_down += this.checkbox(value['id_employee_type'], value['id_employee_type'], value['employee_type_description'])
+        })
+        drop_down += '<hr>'
+
+        drop_down += '<button type="button" class="btn btn-danger btn-sm" id="schedule_employee_type_fitler_btn">Filter</button>'
+        drop_down += '</div></div>'
 
 
-        return drp
+
+
+
+        return drop_down
+
+      }
+
+      draw_input_section() {
+               let input = '<div class="row" style="min-height:10%; height:10%;">' +
+                                        this.drop_down() +
+                                     '<div id="date_input_section">'+
+                                            '<input type="date"  id="scheduler_date_input" class="scheduler-first-column" value="'+this.schedule_date+'"/>'+
+                                            '<button  id="scheduler_prev_date"><i class="fa-solid fa-chevron-left"></i></button>'+
+                                            '<button  id="scheduler_next_date"><i class="fa-solid fa-chevron-right"></i></button>' +
+                                    '</div></div>'
+            return input;
       }
 
       draw_header() {
 
           let header = '<thead style="position:sticky; top:0;">'
-          let input_row =  '<tr id="scheduler_input_row">' +
-                                '<th colspan ="2">'+
-                                    '<div class="row">' +
-                                        '<div class="col">' +
-                                            '<input type="date"  id="scheduler_date_input" class="scheduler-first-column" value="'+this.schedule_date+'"/>'+
-                                        '</div>' +
-                                        '<div class="col">' +
-                                            '<button  id="scheduler_prev_date"><i class="fa-solid fa-chevron-left"></i></button>'+
-                                            '<button  id="scheduler_next_date"><i class="fa-solid fa-chevron-right"></i></button>' +
-                                         '</div>' +
-                                    '</div>' +
-                                    '<div class="row">' +
-                                        '<div class="col">' +
-                                            '<div class="form-check">' +
-                                                '<input class="form-check-input" type="checkbox" value="" id="show_subus"'+ ((this.show_subus === true) ? 'checked' : '')+ '>' +
-                                                '<label class="form-check-label" for="show_subus">' + this.subcontractor_label + '</label>' +
-                                            '</div>' +
-                                        '</div>' +
-                                    '</div>' +
-                                '</th>'+
-                                '<th colspan="100"></th>'+
 
-                           '</tr>'
 
 
           let title_row = '<tr id="scheduler_title_row">' +
@@ -100,7 +110,7 @@ class Scheduler{
           title_row += '</tr>'
           spacer_row +='</tr>'
 
-          header += input_row
+
           header += title_row
           header += spacer_row
           header += '</thead>'
@@ -115,7 +125,9 @@ class Scheduler{
 
 
         $.each(this.employee_data, (key,value) => {
-            let row = '<tr id="e'+value.id_employee+'">' +
+            console.log(this.excluded_employee_types.includes(value['fk_employee_type'].toString()));
+            if (!this.excluded_employee_types.includes(value['fk_employee_type'].toString())){
+                            let row = '<tr id="e'+value.id_employee+'">' +
                             '<td class="scheduler-first-column">'+value.employee_internal_alias+'</td> '+
                             '<td id="resource_lane_e'+value.id_employee+'">'+
                                 '<ul style="list-style:None; padding: 0px; margin-bottom: 0px;"></ul>'+
@@ -125,25 +137,12 @@ class Scheduler{
                             '</td>'+
                         '</tr>'
             body += row;
+            }
+
         })
 
 
-        if (this.show_subus) {
-            body += '<tr id="scheduler_sub_contractor_header"><th colspan="2" id="scheduler_subcontractor_label">'+this.subcontractor_label+'</th><th colspan="100"></th></tr>'
-          $.each(this.subcontractor_data, (key,value) => {
-            let row = '<tr id="s'+value.id_company+'">' +
-                            '<td class="scheduler-first-column">'+value.company_internal_alias+'</td> '+
-                            '<td id="resource_lane_s'+value.id_company+'">'+
-                                '<ul style="list-style:None; padding: 0px; margin-bottom: 0px;"></ul>'+
-                            '</td>'+
-                            '<td id="task_lane_s'+value.id_company+'" class="task_lane" colspan="100" >' +
-                                '<ul style="list-style:None; padding: 0px; margin-bottom: 0px;"></ul>'+
-                            '</td>'+
-                        '</tr>'
-            body += row;
-        })
 
-        }
 
 
 
@@ -167,12 +166,12 @@ class Scheduler{
 
       build_grid() {
           $(this.container).empty();
-
+            let input_section = this.draw_input_section()
             let header = this.draw_header();
             let body = this.draw_body();
             let footer = this.draw_footer();
             //* draw the grid of the new table object
-            let table_grid = '<div id="scheduler_container" style="overflow:scroll; min-height:100%; height:100%;"><table id="schedule_table" class="table" style="height:100%">'+header+body+footer+'</table></div>';
+            let table_grid = input_section+'<div id="scheduler_container" style="overflow:scroll; min-height:90%; height:90%;"><table id="schedule_table" class="table" style="height:100%">'+header+body+footer+'</table></div>';
             $(this.container).append(table_grid);
       }
 
@@ -315,21 +314,45 @@ class Scheduler{
                 this.build();
             })
 
+            $('#employee_type_dropdown_button').on('click', ()=> {
+                $('#employee_type_filter_dropdown').toggle();
+            })
+
+            $('#schedule_employee_type_fitler_btn').on('click', ()=>{
+                let exclude = []
+
+                let unchecked = $('.employee_type_checkbox:checkbox:not(:checked)')
+                $.each(unchecked, (index, value)=>{
+                    exclude.push(value.value)
+                })
+
+                Cookies.set('excluded_employee_types', exclude);
+                this.excluded_employee_types = exclude
+                this.build();
+
+
+            })
+
+            $('employee_type_filter_dropdown').on('focusout', function () {
+                 $('#employee_type_filter_dropdown').hide();
+            });
+
+
       }
 
 
       build(){
         $.when(
             this.ajax_call(this.employee_url, 'GET'),
-            this.ajax_call(this.subcontractor_url, 'GET'),
+            this.ajax_call(this.employee_type_url, 'GET'),
             this.ajax_call(this.asset_url, 'GET'),
             this.ajax_call(this.task_url + '?date='+ this.schedule_date, 'GET'),
             this.ajax_call(this.open_tasks_url, 'GET')
 
 
-        ).done((empl, subcon, asset, tasks, open_tasks)=> {
+        ).done((empl, empl_type, asset, tasks, open_tasks)=> {
             this.employee_data = empl[0]
-            this.subcontractor_data = subcon[0]
+            this.employee_types = empl_type[0]
             this.asset_data = asset[0]
             this.task_data = tasks[0]
             this.open_tasks = open_tasks[0]

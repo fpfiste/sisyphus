@@ -11,15 +11,17 @@ from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 import json
 
+import re
 from rest_framework.views import APIView
-
+from django.db.models import F
 from main import settings
 from .components.docwriter.schedule import SchedulePDF
 from .components.docwriter.storno import InvoiceCancellationDoc
+from .components.levensteindistance import Levenshtein
 from .serializers import *
 import datetime as dt
 from api.components import Invoice, DeliveryNote
-
+from api.components import FormRecognizer
 
 
 
@@ -154,31 +156,34 @@ class CompanyViewSet(viewsets.ModelViewSet):
             with transaction.atomic():
                 self.perform_create(serializer)
 
-                project_data = {
-                        'fk_customer' : serializer.instance.pk,
-                        'project_name' : request.data['company_name'] + ' - Default',
-                        'start_date' : dt.datetime.now().strftime('%Y-%m-%d'),
-                        'end_date' : '9999-12-31',
-                        'fk_sys_rec_status' : 1
-                }
+                if serializer.data['is_customer'] == True:
+                    project_data = {
+                            'fk_customer' : serializer.instance.pk,
+                            'project_name' : request.data['company_name'] + ' - Default',
+                            'start_date' : dt.datetime.now().strftime('%Y-%m-%d'),
+                            'end_date' : '9999-12-31',
+                            'fk_sys_rec_status' : 1
+                    }
 
 
 
 
-                project_serializer = ProjectsSerializer(data=project_data)
+                    project_serializer = ProjectsSerializer(data=project_data)
 
-                project_serializer.is_valid()
+                    project_serializer.is_valid()
 
-                if not project_serializer.is_valid():
-                    return Response({'message': 'Something is wrong with your input'}, status=status.HTTP_400_BAD_REQUEST)
+                    if not project_serializer.is_valid():
+                        return Response({'message': 'Something is wrong with your input'}, status=status.HTTP_400_BAD_REQUEST)
 
-                project_serializer.save()
+                    project_serializer.save()
 
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response({'message': 'Something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 
@@ -392,12 +397,12 @@ class InvoiceTextViewSet(viewsets.ModelViewSet):
         return data
 
 
-class InvoiceViewSet(viewsets.ModelViewSet):
+class ReceivablesViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    queryset = Invoices.objects.all()
-    serializer_class = InvoiceSerializer
+    queryset = Receivables.objects.all()
+    serializer_class = ReceivablesSerializer
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
@@ -407,13 +412,15 @@ class InvoiceViewSet(viewsets.ModelViewSet):
         Optionally restricts the returned purchases to a given user,
         by filtering against a `username` query parameter in the URL.
         """
-        queryset = Invoices.objects.all()
+        queryset = Receivables.objects.all()
         params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
         data = queryset.filter(**params).order_by('-pk')
         return data
 
+
     @transaction.atomic
     def create(self, request):
+        print(request.data)
         try:
             sales = []
             tasks = []
@@ -431,12 +438,17 @@ class InvoiceViewSet(viewsets.ModelViewSet):
             request.data['invoice_date'] = dt.date.today().strftime('%Y-%m-%d')
 
             with transaction.atomic():
-                serializer = InvoiceSerializer(data=request.data)
+                serializer = ReceivablesSerializer(data=request.data)
 
                 if not serializer.is_valid():
-
+                    print(serializer.errors)
                     return Response({'message': 'Something is wrong with your input'},
                                     status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
 
                 serializer.save()
 
@@ -457,7 +469,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 project = Projects.objects.get(id_project=request.data['fk_project'])
 
 
-                doc = Invoice(invoice.pk,  invoice.invoice_date, invoice.invoice_text, vat.vat, currency.currency_abbreviation, currency.currency_account_nr, terms.due_days, language='de',output_path=settings.TMP_FOLDER)
+                doc = Invoice(invoice.pk,  invoice.invoice_date, invoice.invoice_text, vat.vat, currency.currency_abbreviation, currency.currency_account_nr, terms.due_days, language='de',output_path=settings.TMP_FOLDER, discount=invoice.discount)
 
 
                 doc.set_logo(logo_path=settings.LOGO_PATH,
@@ -485,7 +497,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                         description=task.description,
                         unit=task.fk_unit.unit,
                         amount=task.amount,
-                        unit_price=task.unit_price
+                        unit_price=task.unit_price,
+                        pos_type='T'
                     )
 
 
@@ -497,7 +510,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                         description=sale.description,
                         unit=sale.fk_unit.unit,
                         amount=sale.amount,
-                        unit_price=sale.unit_price
+                        unit_price=sale.unit_price,
+                        pos_type='S'
                     )
                 net_total, total = doc.draw()
 
@@ -525,7 +539,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     def destroy(self, request, pk):
         try:
 
-            instance = Invoices.objects.get(id_invoice=pk)
+            instance = Receivables.objects.get(id_invoice=pk)
 
             if instance.fk_invoice_state.id_invoice_state >= 2:
                 return Response({'message': 'Invoice was already booked'}, status=status.HTTP_403_FORBIDDEN)
@@ -541,7 +555,7 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                 customer = positions[0].fk_project.fk_customer
                 currency = positions[0].fk_currency.currency_abbreviation
 
-                cancellation = InvoiceCancellation()
+                cancellation = Cancellations()
                 cancellation.cancellation_date = dt.date.today()
                 cancellation.cancellation_time = dt.datetime.now().time()
                 cancellation.cancellation_reason = ''
@@ -610,14 +624,14 @@ class InvoiceViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'])
     def pdf(self, request, pk):
 
-        invoice = Invoices.objects.get(id_invoice=pk)
+        invoice = Receivables.objects.get(id_invoice=pk)
         vat = invoice.fk_vat
         currency = invoice.fk_currency
         terms = invoice.fk_invoice_terms
         customer = invoice.fk_project.fk_customer
 
         if invoice.fk_invoice_state.id_invoice_state == 4:
-            cancellation = InvoiceCancellation.objects.get(fk_invoice=invoice)
+            cancellation = Cancellations.objects.get(fk_invoice=invoice)
             doc = InvoiceCancellationDoc(
                 cancellation.pk,
                 cancellation.cancellation_date,
@@ -667,7 +681,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                           currency.currency_account_nr,
                           terms.due_days,
                           language='de',
-                          output_path=settings.TMP_FOLDER)
+                          output_path=settings.TMP_FOLDER,
+                          discount=invoice.discount)
 
             doc.set_logo(logo_path=settings.LOGO_PATH,
                          logo_width=settings.LOGO_WIDTH,
@@ -694,7 +709,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     description=task.description,
                     unit=task.fk_unit.unit,
                     amount=task.amount,
-                    unit_price=task.unit_price
+                    unit_price=task.unit_price,
+                    pos_type='T'
                 )
 
             for sale in sales:
@@ -705,7 +721,8 @@ class InvoiceViewSet(viewsets.ModelViewSet):
                     description=sale.description,
                     unit=sale.fk_unit.unit,
                     amount=sale.amount,
-                    unit_price=sale.unit_price
+                    unit_price=sale.unit_price,
+                    pos_type='S'
                 )
             doc.draw()
 
@@ -1332,6 +1349,140 @@ class VATViewSet(viewsets.ModelViewSet):
         params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
         data = queryset.filter(**params).order_by('-pk')
         return data
+
+
+class PayablesViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Payables.objects.all()
+    serializer_class = PayableSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
+
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = Payables.objects.all()
+        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
+        data = queryset.filter(**params).order_by('-pk')
+
+        print(data)
+        return data
+
+
+
+    def create(self, request):
+        request.data._mutable = True
+
+        request.data['fk_invoice_status'] = 1
+
+        srl = PayableSerializer(data=request.data)
+
+        if srl.is_valid():
+            srl.save()
+            return Response({'data': srl.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Something is wrong'}, status=status.HTTP_404_NOT_FOUND)
+
+
+        print(request.data)
+
+    @action(detail=False, methods=['POST'])
+    def extract_data(self, request):
+
+        if settings.FORM_RECOGNIZER_ENDPOINT == None or settings.FORM_RECOGNIZER_KEY == None:
+            return Response({'message': 'Form recognizer connection was not specified'}, status=status.HTTP_404_NOT_FOUND)
+
+        rec = FormRecognizer('https://documentpareser.cognitiveservices.azure.com/', 'af4b03092bd6432ea404e99aeaa84007')
+
+        pdf = request.FILES['file'].open()
+        data = rec.analyse_invoice(pdf)
+        print(data)
+
+
+
+        vendor = re.sub(r'\W+', '', data['vendor_name'])
+        comp = Companies.objects.annotate(lev_dist=Levenshtein(F('company_name'), vendor)).order_by('lev_dist')
+
+        terms = data['payment_term']
+
+        if data['invoice_date'] != None and data['due_date'] != None:
+            due_days = (data['due_date'] - data['invoice_date']).days + 1
+        elif data['invoice_date'] == None :
+            data['invoice_date'] = ''
+        elif data['due_date'] == None:
+            due_days = 30
+
+
+
+        if data['invoice_total'] != None and data['net_total'] != None and  data['tax'] != None:
+            currency = Currencies.objects.filter(currency_abbreviation=data['invoice_total']['value']['code'])
+
+            net_total = data['net_total']['value']['amount']
+            tax = data['tax']['value']['amount']
+            total = data['invoice_total']['value']['amount']
+
+
+
+        elif data['invoice_total'] == None and data['net_total'] != None and  data['tax'] != None:
+            currency = Currencies.objects.filter(currency_abbreviation=data['net_total']['value']['code'])
+
+            net_total = data['net_total']['value']['amount']
+            tax = data['tax']['value']['amount']
+            total = net_total + tax
+
+
+
+        elif data['invoice_total'] != None and data['net_total'] == None and  data['tax'] != None:
+            currency = Currencies.objects.filter(currency_abbreviation=data['invoice_total']['value']['code'])
+
+            total = data['invoice_total']['value']['amount']
+            tax = data['tax']['value']['amount']
+            net_total = total - tax
+
+
+        elif data['invoice_total'] != None and data['net_total'] != None and  data['tax'] == None:
+            currency = Currencies.objects.filter(currency_abbreviation=data['invoice_total']['value']['code'])
+
+            net_total = data['net_total']['value']['amount']
+            total = data['invoice_total']['value']['amount']
+            tax = total - net_total
+
+        else:
+            net_total = data['net_total']['value']['amount']
+            total = data['invoice_total']['value']['amount']
+            tax = data['tax']['value']['amount']
+            currency = []
+
+
+
+
+
+
+        response = {
+
+            'fk_company' : comp[0].id_company if len(comp) > 0 else '',
+            'invoice_nr': data['invoice_nr'],
+            'fk_terms' : InvoiceTerms.objects.filter(due_days__lte=due_days).order_by('-due_days')[0].id_invoice_term,
+            'invoice_date' : data['invoice_date'],
+            'fk_currency' : currency[0].id_currency if len(currency) > 0 else '',
+            'vat' : tax,
+            'net_total' : net_total,
+            'total' : total,
+            'positions': data['items']
+        }
+
+
+
+        return Response(response, status=status.HTTP_200_OK)
+
+
+
+
 
 
 

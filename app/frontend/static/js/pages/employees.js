@@ -3,6 +3,7 @@ $(document).ready(function(){
     let page_config
     let url = '/employees'
     let lang_cookie = Cookies.get('sisyphus_language');
+    $('#loading_screen_wrapper').toggle();
 
 
 
@@ -14,6 +15,8 @@ $(document).ready(function(){
           success: function (response) {
             page_config = response['pages'][url]
             translations = response['translations']
+            $('#loading_screen_wrapper').toggle();
+
           }
     });
 

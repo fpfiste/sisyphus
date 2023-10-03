@@ -81,7 +81,6 @@ class BootstrapForm{
 
           if (ajax_url){
                   let url = ajax_url + '?' + api_endpoint_filter
-                  console.log(url)
                   $.ajax({
                         url: url,
                         async: false,
@@ -322,7 +321,7 @@ class BootstrapForm{
       }
 
       add_event_handlers() {
-           $("#update_form input[type='hidden']").on('change', (event)=> {
+           $("#" + this.id + " input[type='hidden']").on('change', (event)=> {
 
             let target = event.target
 
@@ -362,7 +361,65 @@ class BootstrapForm{
             }
 
            $("#" + this.id + " .fa-trash-can").on('click', function() {
-                console.log($(this))
+                $(this).parent().parent().parent().remove();
+           })
+           $("#" + this.id + " .fa-plus").on('click', (event)=> {
+
+                let html = '<tr>'
+                        html += '<td><input type="text" class="form-control jsonfield_attribute" value=""></td>'
+                        html += '<td><input type="text" class="form-control jsonfield_value" value=""></td>'
+                        html += '<td><span class="custom_field_action_item custom_field_action_remove"><i class="fa-regular fa-trash-can"></i></span></td>'
+                        html += '</tr>'
+                    $(event.target).parent().parent().parent().parent().prepend(html)
+
+                $("#" + this.id + " .fa-trash-can").on('click', (event)=> {
+
+                    $(event.target).parent().parent().parent().remove();
+           })
+           })
+
+
+        })
+           $("#create_form input[type='hidden']").on('change', (event)=> {
+
+            let target = event.target
+
+            let table = $(target).siblings('table')
+            $(table).find('tbody').empty();
+
+            let json = JSON.parse($(event.target).val());
+            let html = ''
+
+
+
+            if (Object.keys(json).length > 0){
+
+                 $.each(json, (key, value)=> {
+                      html += '<tr>'
+                        html += '<td><input type="text" class="form-control jsonfield_attribute" value="'+key+'"></td>'
+                        html += '<td><input type="text" class="form-control jsonfield_value" value="'+value+'"></td>'
+                        html += '<td><span class="custom_field_action_item custom_field_action_remove"><i class="fa-regular fa-trash-can"></i></span></td>'
+                        html += '</tr>'
+                })
+                    html += '<tr>'
+                    html += '<td><input type="text" class="form-control jsonfield_attribute" value=""></td>'
+                    html += '<td><input type="text" class="form-control jsonfield_value" value=""></td>'
+                    html += '<td><span class="custom_field_action_item custom_field_action_add"><i class="fa-regular fa-plus"></i></span></td>'
+                    html += '</tr>'
+                    $(table).find('tbody').append(html)
+
+            } else {
+                        html += '<tr>'
+                        html += '<td><input type="text" class="form-control jsonfield_attribute" value=""></td>'
+                        html += '<td><input type="text" class="form-control jsonfield_value" value=""></td>'
+                        html += '<td><span class="custom_field_action_item custom_field_action_add"><i class="fa-regular fa-plus"></i></span></td>'
+                        html += '</tr>'
+                    $(table).find('tbody').append(html)
+
+
+            }
+
+           $("#" + this.id + " .fa-trash-can").on('click', function() {
                 $(this).parent().parent().parent().remove();
            })
            $("#" + this.id + " .fa-plus").on('click', (event)=> {
@@ -383,7 +440,6 @@ class BootstrapForm{
 
         })
            $("#" + this.id + " .fa-trash-can").on('click', function() {
-                console.log($(this))
                 $(this).parent().parent().parent().remove();
            })
            $("#" + this.id + " .fa-plus").on('click', (event)=> {
@@ -408,6 +464,7 @@ class BootstrapForm{
       }
 
       submit(url, method){
+        $('#loading_screen_wrapper').toggle();
 
 
         let form = $('#' + this.id)
@@ -417,6 +474,7 @@ class BootstrapForm{
 
         if (this.is_valid == false){
             alert('Alle Felder ausfüllen!')
+            location.reload();
             return
         }
 
@@ -429,12 +487,14 @@ class BootstrapForm{
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            data:array,
            success: function(response) {
-
+              $('#loading_screen_wrapper').toggle();
               location.reload();
            },
            error: function(error){
-           console.log(error)
-            alert(error['responseJSON']['message'])
+            console.log(error)
+           console.log('here')
+
+            //location.reload();
            }
         });
       }

@@ -5,7 +5,7 @@ $(document).ready(function(){
     let lang_cookie = Cookies.get('sisyphus_language');
 
 
-
+    $('#loading_screen_wrapper').toggle();
     //*** read the config file ***//
     $.ajax({
           url: '/_config',
@@ -14,6 +14,7 @@ $(document).ready(function(){
           success: function (response) {
             page_config = response['pages'][url]
             translations = response['translations']
+            $('#loading_screen_wrapper').toggle();
           }
     });
 
@@ -101,6 +102,7 @@ $(document).ready(function(){
 
 
     $('#btn_add').on('click', function() {
+        $('#loading_screen_wrapper').toggle();
         create_form.validate()
 
         if (create_form.is_valid == false) {
@@ -137,17 +139,18 @@ $(document).ready(function(){
             'fk_currency': $('#fk_currency').val(),
             'invoice_text' : $('#invoice_text').val(),
             'fk_invoice_terms': $('#fk_invoice_terms').val(),
+            'discount' : $('#discount').val(),
             'sales' : sales,
             'tasks' : tasks,
         }
         $.ajax({
-           url: '/api/invoices/',
+           url: '/api/receivables/',
            type: 'POST',
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            data:data,
 
            success: function(response) {
-
+                $('#loading_screen_wrapper').toggle();
                 var doc = window.open(response['file_url'], '_blank');
                 location.reload();
                 doc.focus();
@@ -155,7 +158,7 @@ $(document).ready(function(){
            },
            error: function(error){
             alert(error['responseJSON']['message'])
-            console.log(error)
+            location.reload();
            }
         });
 

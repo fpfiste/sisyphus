@@ -18,6 +18,7 @@
         "sidebar_title_finances": {"en": "Finance", "ch": "Finanzen"},
         "sidebar_title_payment_conditions": {"en": "Payment Conditions", "ch": "Zahlungsbedingungen"},
         "sidebar_title_invoices": {"en": "Receivables", "ch": "Debitoren"},
+        "sidebar_title_payables": {"en": "Payables", "ch": "Kreditoren"},
         "sidebar_title_billing": {"en": "Billing", "ch": "Verrechnung"},
         "home_open" :  {"en": "Open Tasks", "ch": "Offene Aufträge"},
         "home_scheduled":  {"en": "Scheduled Tasks", "ch": "Geplante Aufträge"},
@@ -40,7 +41,8 @@
         "scheduler_employee_label": {"en": "Employees" ,"ch":  "Mitarbeiter"},
         "scheduler_asset_label": {"en": "Assets" ,"ch":  "Ressourcen"},
         "scheduler_subcontractor_label": {"en": "Subcontractor" ,"ch":  "Subunternehmer"},
-        "scheduler_open_task_label": {"en": "Open Tasks" ,"ch":  "Offene Aufträge"}
+        "scheduler_open_task_label": {"en": "Open Tasks" ,"ch":  "Offene Aufträge"},
+        "scheduler_employee_type_label": {"en": "Employee Types" ,"ch":  "Mitarbeiter Typ"}
   },
 
 
@@ -1319,7 +1321,7 @@
             "en": "Description",
             "ch": "Beschreibung"
           },
-          "display_type": "textarea",
+          "display_type": "text",
           "input_type": "textarea",
           "api_endpoint": "",
           "min": "",
@@ -1591,10 +1593,10 @@
 
 
 },
-    "/invoices": {
-      "title": {"en": "Invoices", "ch": "Rechnungen"},
-      "ajax_url" : "/api/invoices/",
-      "js": "/static/js/pages/invoices.js",
+    "/receivables": {
+      "title": {"en": "Receivables", "ch": "Debitoren"},
+      "ajax_url" : "/api/receivables/",
+      "js": "/static/js/pages/receivables.js",
       "template" : "frontend/pages/table.html",
       "table_id" : "tasks_table",
       "pk" : "id_invoice",
@@ -1731,6 +1733,19 @@
           "pk_field": "id_currency",
           "display_field": "currency_abbreviation"
         },
+        "discount": {
+        "title": {
+          "en": "Discount",
+          "ch": "Rabatt"
+        },
+        "display_type": "text",
+        "input_type": "number",
+        "api_endpoint": "",
+        "min": "0",
+        "max": "1",
+        "pk_field": "",
+        "display_field": ""
+      },
         "fk_invoice_terms": {
           "title": {
             "en": "Terms",
@@ -1809,6 +1824,175 @@
         "pk_field": "",
         "display_field": ""
       }
+      }
+
+
+
+},
+    "/payables": {
+      "title": {"en": "Payables", "ch": "Kreditoren"},
+      "ajax_url" : "/api/payables/",
+      "js": "/static/js/pages/payables.js",
+      "template" : "frontend/pages/table.html",
+      "table_id" : "tasks_table",
+      "pk" : "id_payable",
+      "fields": {
+        "file_upload": {
+          "title": {
+            "en": "File",
+            "ch": "Datei"
+          },
+          "display_type": "text",
+          "input_type": "file",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+
+        "id_payable": {
+          "title": {
+            "en": "Invoice ID (Int)",
+            "ch": "Rechnungs Nr. (Int)"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "invoice_id": {
+          "title": {
+            "en": "Invoice ID (Ext)",
+            "ch": "Rechnungs Nr. (Ext)"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "fk_invoice_status": {
+          "title": {
+            "en": "Invoice State",
+            "ch": "Rechnungs-Status"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/invoice-states",
+          "min": "",
+          "max": "",
+          "pk_field": "id_invoice_state",
+          "display_field": "invoice_state"
+        },
+        "fk_terms": {
+          "title": {
+            "en": "Payment-Condition",
+            "ch": "Zahlungsbedingungen"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/invoiceterms",
+          "min": "",
+          "max": "",
+          "pk_field": "id_invoice_term",
+          "display_field": "term_title"
+        },
+        "invoice_date": {
+          "title": {
+            "en": "Invoice Date",
+            "ch": "Rechnungsdatum"
+          },
+          "display_type": "text",
+          "input_type": "date",
+          "api_endpoint": "",
+          "min": "",
+          "max": "",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "fk_company": {
+          "title": {
+            "en": "Company",
+            "ch": "Lieferant"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/companies",
+          "api_filter": "is_supplier=1",
+          "min": "",
+          "max": "",
+          "pk_field": "id_company",
+          "display_field": "company_internal_alias"
+        },
+        "fk_currency": {
+          "title": {
+            "en": "Currency",
+            "ch": "Währung"
+          },
+          "display_type": "fk_field",
+          "input_type": "select",
+          "api_endpoint": "/api/currencies",
+          "min": "",
+          "max": "",
+          "pk_field": "id_currency",
+          "display_field": "currency_abbreviation"
+        },
+        "net_total": {
+          "title": {
+            "en": "Total Net",
+            "ch": "Total Netto"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "9999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "vat": {
+          "title": {
+            "en": "VAT",
+            "ch": "MWST"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "min": "0",
+          "max": "9999999999"
+
+        },
+        "total": {
+          "title": {
+            "en": "Total",
+            "ch": "Total"
+          },
+          "display_type": "text",
+          "input_type": "number",
+          "api_endpoint": "",
+          "min": "0",
+          "max": "9999999999",
+          "pk_field": "",
+          "display_field": ""
+        },
+        "positions": {
+          "title": {
+            "en": "Positions",
+            "ch": "Positionen"
+          },
+          "display_type": "jsonfield",
+          "input_type": "jsonfield",
+           "custom_field_options" : {"assigned_project": {"en": "Assigned Project", "ch": "Zugeteiltes Projekt"}, "year_of_production": {"en":  "Year of Production", "ch":  "Produktions Jahr"}},
+          "min": "",
+          "max": ""
+        }
+
+
       }
 
 

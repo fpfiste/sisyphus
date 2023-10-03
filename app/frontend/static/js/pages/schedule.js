@@ -25,7 +25,8 @@ $(document).ready(function(){
             employee_label: translations['scheduler_employee_label'][lang_cookie],
             asset_label:translations['scheduler_asset_label'][lang_cookie],
             subcontractor_label:translations['scheduler_subcontractor_label'][lang_cookie],
-            open_task_label:translations['scheduler_open_task_label'][lang_cookie]
+            open_task_label:translations['scheduler_open_task_label'][lang_cookie],
+            employee_type_label: translations['scheduler_employee_type_label'][lang_cookie]
           })
 
 
@@ -59,6 +60,8 @@ $(document).ready(function(){
     update_form.build();
 
     $( "#task_template" ).on( "change", function() {
+            $('#loading_screen_wrapper').toggle();
+
         let template_id = $(this).val();
 
         $('#create_form').trigger("reset");
@@ -76,9 +79,13 @@ $(document).ready(function(){
                 $('#'+ key).val(value)
 
               })
+                  $('#loading_screen_wrapper').toggle();
+
            },
            error: function(error){
             console.log(error)
+            alert(error);
+            location.reload();
            }
         });
     });
@@ -109,6 +116,8 @@ $(document).ready(function(){
     });
 
     $('#btn_print').on('click', function() {
+        $('#loading_screen_wrapper').toggle();
+
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/tasks/' + pk + '/pdf/'
         $.ajax({
@@ -116,10 +125,14 @@ $(document).ready(function(){
            type: 'GET',
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
+                    $('#loading_screen_wrapper').toggle();
+
                 window.open(response['file_url'], '_blank').focus();
            },
            error: function(error){
             console.log(error)
+            alert(error)
+            location.reload();
            }
         });
     })

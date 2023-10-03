@@ -6,6 +6,7 @@ $(document).ready(function(){
 
     $('#btn_delete, #btn_print, #btn_close_task').remove();
 
+    $('#loading_screen_wrapper').toggle();
     //*** read the config file ***//
     $.ajax({
           url: '/_config',
@@ -14,6 +15,7 @@ $(document).ready(function(){
           success: function (response) {
             page_config = response['pages'][url]
             translations = response['translations']
+            $('#loading_screen_wrapper').toggle();
           }
     });
 

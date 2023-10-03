@@ -4,6 +4,7 @@ $(document).ready(function(){
     let url = '/assets/absences'
 
 
+    $('#loading_screen_wrapper').toggle();
 
     //*** read the config file ***//
     $.ajax({
@@ -13,6 +14,7 @@ $(document).ready(function(){
           success: function (response) {
             page_config = response['pages'][url]
             translations = response['translations']
+
           }
     });
 
@@ -32,6 +34,8 @@ $(document).ready(function(){
             $('#home_scheduled_value').text( Number(scheduled) + Number(response['scheduled']))
             $('#home_executed_value').text( Number(executed) + Number(response['executed']))
             $('#home_to_bill_value').text( Number(to_bill) + Number(response['to_bill']))
+            $('#loading_screen_wrapper').toggle();
+
           }
     });
 

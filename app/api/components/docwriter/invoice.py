@@ -14,20 +14,22 @@ import textwrap
 
 
 class Invoice(Document):
-    def __init__(self,invoice_id:int, invoice_date:str, invoice_text:str, vat:float, currency:str, account:str, due_days:int, language:str, output_path:str):
-        super().__init__(invoice_id, 'invoice', language='de', output_path=output_path)
+    def __init__(self,invoice_id:int, invoice_date:str, invoice_text:str, vat:float, currency:str, account:str, due_days:int, output_path:str, discount=0, language='de'):
+        super().__init__(invoice_id, 'invoice', language=language, output_path=output_path)
         self.invoice_date = invoice_date
         self.vat = vat
         self.invoice_text = invoice_text
         self.currency = currency
         self.account = account
+        self.discount = discount
         self.due_days = due_days
         self.net_total = 0
         self.total = 0
         self.positions = []
         print(self.vat)
 
-    def add_position(self, position_id: int, date:str,reference_text:str, description:str, unit:str, amount:float, unit_price:float):
+
+    def add_position(self, position_id: int, date:str,reference_text:str, description:str, unit:str, amount:float, unit_price:float, pos_type = ''):
         position = {
             'position_id' : position_id,
             'date' : date,
@@ -36,13 +38,14 @@ class Invoice(Document):
             'unit' : unit,
             'amount' : amount,
             'unit_price' : unit_price,
-            'total' : amount * unit_price
+            'total' : amount * unit_price,
+            'pos_type': pos_type
         }
 
         self.positions.append(position)
         self.net_total += amount * unit_price
-
-        self.total = round(2*(self.net_total * (1 + self.vat)), 1)
+        self.net_minus_discount = self.net_total * (1-self.discount)
+        self.total = round(2*(self.net_minus_discount * (1 + self.vat)), 1)
         self.total = self.total / 2
 
 
@@ -124,7 +127,7 @@ class Invoice(Document):
             c.drawString(2 * cm, ypos * cm, str(position['date']))
 
             c.setFont("Helvetica-Bold", 9)
-            c.drawString(5 * cm, ypos * cm, f'Referenz: {position["reference_text"] if position["reference_text"] != None else "" }')
+            c.drawString(5 * cm, ypos * cm, f'Referenz: {position["reference_text"] if position["reference_text"] != "" else "-" }')
             ypos = self.addy(ypos, c, 0.5)
             c.setFont("Helvetica", 9)
 
@@ -135,7 +138,8 @@ class Invoice(Document):
                 ypos = self.addy(ypos, c, 0.5)
 
 
-            c.drawString(5 * cm, ypos * cm, f'Auftrag: {position["position_id"] }')
+
+            c.drawString(5 * cm, ypos * cm, f'Beleg: {position["pos_type"]}-{position["position_id"] }')
             ypos = self.addy(ypos, c, 0.5)
 
             ypos = self.addy(ypos, c, -0.5)
@@ -151,18 +155,28 @@ class Invoice(Document):
 
         c.line(2 * cm, ypos * cm, 19 * cm, ypos * cm)
         ypos = self.addy(ypos, c, 1)
-        c.drawString(13 * cm, ypos * cm, f'Sub-Total {self.currency}')
+        c.drawString(13 * cm, ypos * cm, f'Sub-Total')
+        c.drawString(16 * cm, ypos * cm, f'{self.currency}')
         c.drawRightString(19 * cm, ypos * cm, f"{self.net_total:,.2f}".replace(',', ''))
         ypos = self.addy(ypos, c, 0.5)
         # c.drawString(12.5 * cm, ypos * cm, 'MWST')
 
-        c.drawString(13 * cm, ypos * cm, f'MWST ({(self.vat * 100):.1f}%) {self.currency}')
-        c.drawRightString(19 * cm, ypos * cm,  f"{(self.net_total * self.vat):,.2f}".replace(',', ''))
+        if self.discount > 0 and self.discount != None:
+            c.drawString(13 * cm, ypos * cm, f'Rabatt ({(self.discount * 100):.1f}%)')
+            c.drawString(16 * cm, ypos * cm, f'{self.currency}')
+            c.drawRightString(19 * cm, ypos * cm, f"{(self.net_total * self.discount):,.2f}".replace(',', ''))
+            ypos = self.addy(ypos, c, 0.5)
+
+
+        c.drawString(13 * cm, ypos * cm, f'MWST ({(self.vat * 100):.1f}%)')
+        c.drawString(16 * cm, ypos * cm, f'{self.currency}')
+        c.drawRightString(19 * cm, ypos * cm,  f"{(self.net_minus_discount * self.vat):,.2f}".replace(',', ''))
 
         ypos = self.addy(ypos, c, 0.5)
         c.line(13 * cm, ypos * cm, 19 * cm, ypos * cm)
         ypos = self.addy(ypos, c, 0.5)
-        c.drawString(13 * cm, ypos * cm, f'Total {self.currency}')
+        c.drawString(13 * cm, ypos * cm, f'Total')
+        c.drawString(16 * cm, ypos * cm, f'{self.currency}')
         c.drawRightString(19 * cm, ypos * cm, "%.2f" % (self.total))
 
         ypos += 0.5
@@ -226,6 +240,7 @@ if __name__ == '__main__':
 
 
     )
+
 
 
     doc.draw()

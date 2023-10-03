@@ -12,6 +12,7 @@
 
 
 	<link href="/static/css/app.css" rel="stylesheet">
+	<link href="/static/css/loading_screen.css" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 	<script src="https://kit.fontawesome.com/398fba641d.js" crossorigin="anonymous"></script>
 
@@ -45,6 +46,7 @@
 				<div class="sidebar-content js-simplebar">
 					<a class="sidebar-brand" href="{% url 'index' %}">
 						<img src="/static/img/logo_small.png" class="img-fluid" style="width: 50%; margin-left: 25%;">
+
         			</a>
 
 					<ul class="sidebar-nav">
@@ -100,8 +102,13 @@
             			</a>
 					</li>
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="{% url 'invoices' %}">
+						<a class="sidebar-link" href="{% url 'receivables' %}">
              				<i class="fa-solid fa-receipt"></i><span class="align-middle" id="sidebar_title_invoices"></span>
+            			</a>
+					</li>
+						<li class="sidebar-item">
+						<a class="sidebar-link" href="{% url 'payables' %}">
+             				<i class="fa-regular fa-credit-card"></i><span class="align-middle" id="sidebar_title_payables"></span>
             			</a>
 					</li>
 
@@ -155,6 +162,12 @@
 					{% endblock %}
 
 				</div>
+				<div id="loading_screen_wrapper">
+					<div id="loading_screen">
+						<img id="spinner" src="/static/img/loading.gif" class="img-fluid">
+					</div>
+				</div>
+
 			</main>
 
 

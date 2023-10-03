@@ -173,3 +173,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 
 }
+
+
+FORM_RECOGNIZER_ENDPOINT = os.environ.get("FORM_RECOGNIZER_ENDPOINT", "")
+FORM_RECOGNIZER_KEY = os.environ.get("FORM_RECOGNIZER_KEY", "")
