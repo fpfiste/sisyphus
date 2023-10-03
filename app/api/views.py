@@ -20,8 +20,7 @@ from .components.docwriter.storno import InvoiceCancellationDoc
 from .components.levensteindistance import Levenshtein
 from .serializers import *
 import datetime as dt
-from api.components import Invoice, DeliveryNote
-from api.components import FormRecognizer
+from .components.docparser.ms_form_recognizer import FormRecognizer
 
 
 
