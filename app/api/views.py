@@ -1397,7 +1397,7 @@ class PayablesViewSet(viewsets.ModelViewSet):
         if settings.FORM_RECOGNIZER_ENDPOINT == None or settings.FORM_RECOGNIZER_KEY == None:
             return Response({'message': 'Form recognizer connection was not specified'}, status=status.HTTP_404_NOT_FOUND)
 
-        rec = FormRecognizer('https://documentpareser.cognitiveservices.azure.com/', 'af4b03092bd6432ea404e99aeaa84007')
+        rec = FormRecognizer(settings.FORM_RECOGNIZER_ENDPOINT, settings.FORM_RECOGNIZER_KEY)
 
         pdf = request.FILES['file'].open()
         data = rec.analyse_invoice(pdf)
