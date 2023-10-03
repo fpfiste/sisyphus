@@ -362,6 +362,7 @@ class Projects(models.Model):
         db_table = 'projects'
 
 
+
 class Receivables(models.Model):
     id_invoice = models.AutoField(primary_key=True)
     invoice_date = models.DateField()
@@ -369,8 +370,8 @@ class Receivables(models.Model):
     fk_invoice_state = models.ForeignKey(InvoiceStates, models.DO_NOTHING, db_column='fk_invoice_state')
     fk_invoice_terms = models.ForeignKey(InvoiceTerms, models.DO_NOTHING, db_column='fk_invoice_terms')
     fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat')
-    net_total = models.DecimalField(max_digits=11, decimal_places=2)
-    total = models.DecimalField(max_digits=11, decimal_places=2)
+    net_total = models.DecimalField(max_digits=11, decimal_places=2,  blank=True, null=True)
+    total = models.DecimalField(max_digits=11, decimal_places=2,  blank=True, null=True)
     fk_currency = models.ForeignKey(Currencies, models.DO_NOTHING, db_column='fk_currency')
     fk_project = models.ForeignKey(Projects, models.DO_NOTHING, db_column='fk_project')
     discount = models.DecimalField(max_digits=3, decimal_places=3, blank=True, null=True)

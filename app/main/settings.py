@@ -154,6 +154,9 @@ LOGO_X_OFFSET = 5
 LOGO_Y_OFFSET = 0
 
 
+
+
+
 COMPANY = {
             'name': 'Pfister Transporte AG',
             'address' : 'Buchsistrasse 10',

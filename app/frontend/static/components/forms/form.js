@@ -464,7 +464,6 @@ class BootstrapForm{
       }
 
       submit(url, method){
-        $('#loading_screen_wrapper').toggle();
 
 
         let form = $('#' + this.id)
@@ -474,13 +473,13 @@ class BootstrapForm{
 
         if (this.is_valid == false){
             alert('Alle Felder ausfüllen!')
-            location.reload();
+
             return
         }
 
         let array = this.serialize();
 
-
+        $('#loading_screen_wrapper').toggle();
         $.ajax({
            url: url,
            type: method,

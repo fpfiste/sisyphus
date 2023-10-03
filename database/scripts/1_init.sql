@@ -558,8 +558,8 @@ CREATE TABLE public.receivables (
 	fk_invoice_state int4 NOT NULL,
 	fk_invoice_terms int4 NOT NULL,
 	fk_vat int4 NOT NULL,
-	net_total numeric(11, 2) NOT NULL,
-	total numeric(11, 2) NOT NULL,
+	net_total numeric(11, 2) NULL,
+	total numeric(11, 2) NULL,
 	fk_currency int4 NOT NULL,
 	fk_project int4 NOT NULL,
 	discount numeric(3, 3) NULL,
@@ -768,5 +768,6 @@ CREATE TABLE public.asset_absences (
 	CONSTRAINT asset_absences_fk_asset_9b20034e_fk_assets_id_asset FOREIGN KEY (fk_asset) REFERENCES public.assets(id_asset) DEFERRABLE INITIALLY DEFERRED,
 	CONSTRAINT asset_absences_fk_asset_absence_cod_83dd00a8_fk_asset_abs FOREIGN KEY (fk_asset_absence_code) REFERENCES public.asset_absence_codes(id_asset_absence_code) DEFERRABLE INITIALLY DEFERRED
 );
+
 CREATE INDEX asset_absences_fk_asset_9b20034e ON public.asset_absences USING btree (fk_asset);
 CREATE INDEX asset_absences_fk_asset_absence_code_83dd00a8 ON public.asset_absences USING btree (fk_asset_absence_code);
