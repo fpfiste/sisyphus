@@ -17,6 +17,7 @@ urlpatterns = [
     path('receivables', views.render_invoices, name='receivables'),
     path('payables', views.render_payables, name='payables'),
     path('billing', views.render_billing, name='billing'),
+    path('settings', views.render_settings, name='settings'),
     path('accounts/logout/', views.logout_view, name='logout'),
     path('accounts/login/', views.login_view, name='login'),
 ]

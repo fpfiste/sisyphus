@@ -1,6 +1,8 @@
+import io
 import os
 from reportlab.lib import pagesizes
 from reportlab.lib.units import cm, mm
+from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
@@ -23,19 +25,17 @@ class Document():
         self.page_counter = 0
 
 
-    def set_logo(self, logo_path:str='',  logo_width=550, logo_height=120, logo_x=0, logo_y=0):
 
-        if os.path.exists(logo_path):
-            self.logo = {
-                'logo_path' : logo_path,
-                'logo_width' : logo_width,
-                'logo_height': logo_height,
-                'logo_x' : logo_x,
-                'logo_y' : logo_y
-            }
-        else:
-            print(logo_path)
-            raise Exception('logo path not found')
+
+    def set_logo(self, logo:str='',  logo_width=550, logo_height=120, logo_x=0, logo_y=0):
+        self.logo = {
+            'logo' : logo,
+            'logo_width' : float(logo_width),
+            'logo_height': float(logo_height),
+            'logo_x' : float(logo_x),
+            'logo_y' : float(logo_y)
+        }
+
     def set_customer(self,  id, name, address, pcode, city, country):
         self.customer = {
             'id' : id,
@@ -73,16 +73,19 @@ class Document():
         ## Logo
         c.scale(1, -1)
         c.setLineWidth(0.2)
-        x_margin = self.logo['logo_x'] * mm
-        y_margin = self.logo['logo_y'] * mm
-        w = self.logo['logo_width'] * mm
-        h = self.logo['logo_height'] *mm
-        c.drawImage(self.logo['logo_path'], x_margin, -( y_margin+h), width=w, height=h)
+        x_margin = self.logo['logo_x'] * cm
+        y_margin = self.logo['logo_y'] * cm
+        w = self.logo['logo_width'] * cm
+        h = self.logo['logo_height'] *cm
+
+        image = ImageReader(io.BytesIO(self.logo['logo']))
+        c.drawImage(image, x_margin, -( y_margin+h), width=w, height=h)
         # Title Section
         # Again Inverting Scale For strings insertion
         c.scale(1, -1)
         # Again Setting the origin back to (0,0) of top-left
         #·c.translate(-10, -40)
+
 
 
 

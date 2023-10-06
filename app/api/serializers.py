@@ -41,6 +41,12 @@ class ClearingTypeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CoinfigSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = Config
+        fields = '__all__'
 
 class CompanySerializer(serializers.ModelSerializer):
 

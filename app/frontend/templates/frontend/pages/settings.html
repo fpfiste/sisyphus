@@ -1,0 +1,137 @@
+{% extends 'frontend/base.html' %}
+
+{% block title%}{{page_config.title}}{% endblock %}
+
+{% block content %}
+
+<div class="row" style="height: 80vh;">
+  <div class="col-3" style="height:100%;">
+    <ul class="nav nav-tabs flex-column">
+      <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#profile">Profile</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#reset_password">Reset Password</a>
+      </li>
+      {% if user.is_superuser %}
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#company">Company</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#doc_config">Document Config</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#form_recoginizer">Microsoft Form Recoginizer</a>
+      </li>
+        {% endif %}
+    </ul>
+  </div>
+  <div class="col-9">
+    <div class="tab-content" style="height:100%">
+      <div class="tab-pane container fade active show" style="max-width: 100%; height: 100%;" id="profile">
+      <div class="card" style="height:100%;">
+        <div class="card-header" style="height:5%;">Profile</div>
+        <div class="card-body" style="height:90%;">
+        </div>
+        <div class="card-footer" style="height:5%;">
+        </div>
+      </div>
+    </div>
+      <div class="tab-pane container fade"style="max-width: 100%; height: 100%;" id="reset_password">
+           <div class="card" style="height:100%;">
+        <div class="card-header" style="height:5%;">
+          Form Recognizer
+        </div>
+        <div class="card-body" style="height:90%;">
+            <div class="form-group form-check">
+                <label for="old_password">Old Password</label>
+                <input type="password"  class="form-control" id="old_password" >
+            </div>
+            <div class="form-group form-check">
+                <label for="new_pass_word">New Password</label>
+                <input type="password"  class="form-control" id="new_pass_word" >
+            </div>
+            <div class="form-group form-check">
+                <label for="confirm_new_pass_word">Confirm New Password</label>
+                <input type="password"  class="form-control" id="confirm_new_pass_word" >
+            </div>
+        </div>
+        <div class="card-footer" style="height:5%;">
+            <button type="button" id="btn_save_pw" class="btn btn-danger">Save</button>
+        </div>
+      </div>
+      </div>
+
+      {% if user.is_superuser %}
+      <div class="tab-pane container fade" style="max-width: 100%; height: 100%;" id="company">
+      <div class="card" style="height:100%;">
+        <div class="card-header" style="height:5%;">Company</div>
+        <div class="card-body" style="height:90%;">
+
+        </div>
+        <div class="card-footer" style="height:5%;">
+        </div>
+      </div>
+    </div>
+        <div class="tab-pane container fade " style="max-width: 100%; height: 100%;" id="doc_config">
+      <div class="card" style="height:100%;">
+        <div class="card-header" style="height:5%;">Document Config</div>
+        <div class="card-body" style="height:90%;">
+            <form id="upload-file" enctype="multipart/form-data">
+              <div class="form-group">
+                <label for="logo_input">Logo</label>
+                <input type="file" class="form-control" id="logo_input" aria-describedby="emailHelp">
+              </div>
+              <div class="form-group form-check-inline">
+                <label for="logo_width">Width</label>
+                <input type="number" min="0" value="5" max="21" class="form-control" id="logo_width" aria-describedby="emailHelp">
+              </div>
+              <div class="form-group form-check-inline">
+                <label for="logo_height">Height</label>
+                <input type="number" min="0" value="3" max="20" class="form-control" id="logo_height" aria-describedby="emailHelp">
+              </div>
+              <div class="form-group form-check-inline">
+                <label for="logo_x_offset">X-Offset</label>
+                <input type="number" min="0" max="20" value="0" class="form-control" id="logo_x_offset" aria-describedby="emailHelp">
+              </div>
+              <div class="form-group form-check-inline">
+                <label for="logo_y_offset">Y-Offset</label>
+                <input type="number" min="0" max="20" value="0" class="form-control" id="logo_y_offset" aria-describedby="emailHelp">
+              </div>
+            </form>
+              <hr>
+
+              <div id="document_header_preview" style="position:relative;"></div>
+        </div>
+        <div class="card-footer" style="height:5%;">
+            <button type="button" id="btn_save_doc" class="btn btn-danger">Save</button>
+        </div>
+      </div>
+    </div>
+        <div class="tab-pane container fade" style="max-width: 100%; height:100%;" id="form_recoginizer">
+      <div class="card" style="height:100%;">
+        <div class="card-header" style="height:5%;">
+          Form Recognizer
+        </div>
+        <div class="card-body" style="height:90%;">
+            <div class="form-group form-check">
+                <label for="ms_form_rec_endpoint">Form Recognizer Endpoint</label>
+                <input type="url"  class="form-control" id="ms_form_rec_endpoint" >
+            </div>
+            <div class="form-group form-check">
+                <label for="ms_form_rec_key">Form Recognizer Key</label>
+                <input type="password"  class="form-control" id="ms_form_rec_key" >
+            </div>
+        </div>
+        <div class="card-footer" style="height:5%;">
+            <button type="button" id="btn_save_rec" class="btn btn-danger">Save</button>
+        </div>
+      </div>
+    </div>
+      {% endif %}
+  </div>
+  </div>
+
+</div>
+
+{% endblock %}

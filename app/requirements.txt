@@ -14,3 +14,4 @@ svglib
 pdfrw
 django-filter
 azure-ai-formrecognizer
+cryptography

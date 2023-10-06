@@ -1,12 +1,17 @@
+import base64
+import io
 import os
 from itertools import chain
 from operator import attrgetter
 import traceback
+from cryptography.fernet import Fernet
+from PIL import Image
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db.models import Q
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 import json
@@ -15,7 +20,7 @@ import re
 from rest_framework.views import APIView
 from django.db.models import F
 from main import settings
-from .components import Invoice
+from .components import Invoice, DeliveryNote
 from .components.docwriter.schedule import SchedulePDF
 from .components.docwriter.storno import InvoiceCancellationDoc
 from .components.levensteindistance import Levenshtein
@@ -111,6 +116,100 @@ class AssetViewSet(viewsets.ModelViewSet):
         return data
         #return data
 
+
+class ConfigViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = Config.objects.all()
+    serializer_class = CoinfigSerializer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
+        queryset = Config.objects.all()
+        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
+        data = queryset.filter(**params).order_by('-pk')
+        return data
+        #return data
+
+
+    @action(methods=['POST'], detail=False)
+    def setDocumentConf(self, request):
+
+
+        file_bytes = request.FILES['file'].read()
+
+        logo = ('logo', '', file_bytes)
+        logo_width = ('logo_width', request.data['logo_width'], None)
+        logo_height = ('logo_height', request.data['logo_height'], None)
+        logo_x_offset = ('logo_x_offset', request.data['logo_x_offset'], None)
+        logo_y_offset = ('logo_y_offset', request.data['logo_y_offset'], None)
+
+        params = [logo, logo_width, logo_height, logo_x_offset, logo_y_offset]
+
+
+        for i in params:
+            print(len(Config.objects.filter(config_key=i[0])))
+            if len(Config.objects.filter(config_key=i[0])) == 0:
+                cnf = Config(config_key=i[0], value_string=i[1], value_bytes=i[2])
+                cnf.save()
+
+
+
+            else:
+                cnf = Config.objects.get(config_key=i[0])
+                cnf.value_string = i[1]
+                cnf.value_bytes = i[2]
+                cnf.save()
+
+
+
+
+
+        return Response(data={}, status=status.HTTP_200_OK)
+
+    @action(methods=['POST'], detail=False)
+    def setRecoginizerConfig(self, request):
+
+        code_bytes = settings.SECRET_KEY.encode("utf-8")
+        key = base64.urlsafe_b64encode(code_bytes.ljust(32)[:32])
+
+        fernet = Fernet(key)
+
+
+
+        key = fernet.encrypt(str.encode(request.data['key']))
+
+        enpoint = ('ms_form_recoginizer_endpoint', request.data['endpoint'], None)
+        key = ('ms_form_recognizer_key', key, key)
+
+
+        params = [enpoint, key]
+
+
+        for i in params:
+            if len(Config.objects.filter(config_key=i[0])) == 0:
+                cnf = Config(config_key=i[0], value_string=i[1], value_bytes=i[2])
+                cnf.save()
+
+
+
+            else:
+                cnf = Config.objects.get(config_key=i[0])
+                cnf.value_string = i[1]
+                cnf.value_bytes = i[2]
+                cnf.save()
+
+
+
+
+
+        return Response(data={}, status=status.HTTP_200_OK)
 
 
 
@@ -420,12 +519,10 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
 
     @transaction.atomic
     def create(self, request):
-        print(request.data)
         try:
             sales = []
             tasks = []
             request.data._mutable = True
-            print('here')
             if 'sales[]' in request.data and len(request.data['sales[]']) > 0:
                 sales = Sales.objects.filter(id_sale__in=request.data.pop('sales[]'))
             if 'tasks[]' in request.data and len(request.data['tasks[]']) > 0:
@@ -441,7 +538,6 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
                 serializer = ReceivablesSerializer(data=request.data)
 
                 if not serializer.is_valid():
-                    print(serializer.errors)
                     return Response({'message': 'Something is wrong with your input'},
                                     status=status.HTTP_400_BAD_REQUEST)
 
@@ -471,12 +567,11 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
 
                 doc = Invoice(invoice.pk,  invoice.invoice_date, invoice.invoice_text, vat.vat, currency.currency_abbreviation, currency.currency_account_nr, terms.due_days, language='de',output_path=settings.TMP_FOLDER, discount=invoice.discount)
 
-
-                doc.set_logo(logo_path=settings.LOGO_PATH,
-                             logo_width=settings.LOGO_WIDTH,
-                             logo_height=settings.LOGO_HEIGHT,
-                             logo_x=settings.LOGO_X_OFFSET,
-                             logo_y=settings.LOGO_Y_OFFSET
+                doc.set_logo(logo=Config.objects.get(config_key='logo').value_bytes,
+                             logo_width=Config.objects.get(config_key='logo_width').value_string,
+                             logo_height=Config.objects.get(config_key='logo_height').value_string,
+                             logo_x=Config.objects.get(config_key='logo_x_offset').value_string,
+                             logo_y=Config.objects.get(config_key='logo_y_offset').value_string
                              )
 
                 customer = project.fk_customer
@@ -500,6 +595,7 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
                         unit_price=task.unit_price,
                         pos_type='T'
                     )
+
 
 
                 for sale in sales:
@@ -583,15 +679,12 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
 
                 )
 
-
-                doc.set_logo(logo_path=settings.LOGO_PATH,
-                             logo_width=settings.LOGO_WIDTH,
-                             logo_height=settings.LOGO_HEIGHT,
-                             logo_x=settings.LOGO_X_OFFSET,
-                             logo_y=settings.LOGO_Y_OFFSET
+                doc.set_logo(logo=Config.objects.get(config_key='logo').value_bytes,
+                             logo_width=Config.objects.get(config_key='logo_width').value_string,
+                             logo_height=Config.objects.get(config_key='logo_height').value_string,
+                             logo_x=Config.objects.get(config_key='logo_x_offset').value_string,
+                             logo_y=Config.objects.get(config_key='logo_y_offset').value_string
                              )
-
-
 
                 doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
                                  customer.company_city, customer.fk_country.country_code)
@@ -647,12 +740,13 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
             )
 
 
-            doc.set_logo(logo_path=settings.LOGO_PATH,
-                         logo_width=settings.LOGO_WIDTH,
-                         logo_height=settings.LOGO_HEIGHT,
-                         logo_x=settings.LOGO_X_OFFSET,
-                         logo_y=settings.LOGO_Y_OFFSET
+            doc.set_logo(logo=Config.objects.get(config_key='logo').value_bytes,
+                         logo_width=Config.objects.get(config_key='logo_width').value_string,
+                         logo_height=Config.objects.get(config_key='logo_height').value_string,
+                         logo_x=Config.objects.get(config_key='logo_x_offset').value_string,
+                         logo_y=Config.objects.get(config_key='logo_y_offset').value_string
                          )
+
 
 
 
@@ -684,11 +778,11 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
                           output_path=settings.TMP_FOLDER,
                           discount=invoice.discount)
 
-            doc.set_logo(logo_path=settings.LOGO_PATH,
-                         logo_width=settings.LOGO_WIDTH,
-                         logo_height=settings.LOGO_HEIGHT,
-                         logo_x=settings.LOGO_X_OFFSET,
-                         logo_y=settings.LOGO_Y_OFFSET
+            doc.set_logo(logo=Config.objects.get(config_key='logo').value_bytes,
+                         logo_width=Config.objects.get(config_key='logo_width').value_string,
+                         logo_height=Config.objects.get(config_key='logo_height').value_string,
+                         logo_x=Config.objects.get(config_key='logo_x_offset').value_string,
+                         logo_y=Config.objects.get(config_key='logo_y_offset').value_string
                          )
 
 
@@ -786,6 +880,7 @@ class SalesViewSet(viewsets.ModelViewSet):
 
 
 
+
     def get_queryset(self):
         """
         Optionally restricts the returned purchases to a given user,
@@ -856,11 +951,11 @@ class SalesViewSet(viewsets.ModelViewSet):
 
         doc = DeliveryNote('de', output_path=settings.TMP_FOLDER)
 
-        doc.set_logo(logo_path=settings.LOGO_PATH,
-                     logo_width=settings.LOGO_WIDTH,
-                     logo_height=settings.LOGO_HEIGHT,
-                     logo_x=settings.LOGO_X_OFFSET,
-                     logo_y=settings.LOGO_Y_OFFSET
+        doc.set_logo(logo=Config.objects.get(config_key='logo').value_bytes,
+                     logo_width=Config.objects.get(config_key='logo_width').value_string,
+                     logo_height=Config.objects.get(config_key='logo_height').value_string,
+                     logo_x=Config.objects.get(config_key='logo_x_offset').value_string,
+                     logo_y=Config.objects.get(config_key='logo_y_offset').value_string
                      )
 
         sale = Sales.objects.get(pk=pk)
@@ -1188,40 +1283,45 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['PUT'])
     def close(self, request,pk):
-        task = Tasks.objects.get(id_task=pk)
-        if (task.fk_project != None and \
-            task.task_date_from != None and \
-            task.task_date_to != None and \
-            task.task_time_from != None and \
-            task.task_time_to != None and \
-            task.amount != None and \
-            task.unit_price != None and \
-            task.description != None and \
-            task.fk_unit != None and \
-            task.fk_employee_1 != None and \
-            task.fk_currency != None and \
-            task.fk_vat != None and \
-            task.fk_clearing_type != None):
+        request.data._mutable = True
 
-            task.fk_task_state = TaskStates.objects.get(id_task_state = 4)
-            task.save()
-            serializer = TaskSerializer(instance=task)
+        request.data['fk_task_state'] = 4
 
+
+        if (request.data['id_task'] not in ('', None) and \
+            request.data['fk_project'] not in ('', None) and \
+            request.data['description']not in ('', None) and \
+            request.data['amount'] not in ('', None) and \
+            request.data['unit_price'] not in ('', None) and \
+            request.data['fk_currency'] not in ('', None) and \
+            request.data['fk_employee_1'] not in ('', None) and \
+            request.data['fk_unit'] not in ('', None) and \
+            request.data['fk_vat'] not in ('', None) and \
+            request.data['fk_clearing_type'] not in ('', None) ):
+
+            task = Tasks.objects.get(id_task=pk)
+            serializer = self.get_serializer(task, data=request.data)
+
+            serializer.is_valid(raise_exception=True)
+
+            self.perform_update(serializer)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            return Response({'message': 'Task can not be closed due to missing data'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Task can not be closed due to missing data'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['GET'])
     def pdf(self, request, pk):
 
         doc = DeliveryNote('de', output_path=settings.TMP_FOLDER)
 
-        doc.set_logo(logo_path=settings.LOGO_PATH,
-                     logo_width=settings.LOGO_WIDTH,
-                     logo_height=settings.LOGO_HEIGHT,
-                     logo_x=settings.LOGO_X_OFFSET,
-                     logo_y=settings.LOGO_Y_OFFSET
+        doc.set_logo(logo=Config.objects.get(config_key='logo').value_bytes,
+                     logo_width=Config.objects.get(config_key='logo_width').value_string,
+                     logo_height=Config.objects.get(config_key='logo_height').value_string,
+                     logo_x=Config.objects.get(config_key='logo_x_offset').value_string,
+                     logo_y=Config.objects.get(config_key='logo_y_offset').value_string
                      )
+
 
         task = Tasks.objects.get(pk=pk)
         customer = task.fk_project.fk_customer
@@ -1390,19 +1490,36 @@ class PayablesViewSet(viewsets.ModelViewSet):
             return Response({'message': 'Something is wrong'}, status=status.HTTP_404_NOT_FOUND)
 
 
-        print(request.data)
 
     @action(detail=False, methods=['POST'])
     def extract_data(self, request):
 
-        if settings.FORM_RECOGNIZER_ENDPOINT == None or settings.FORM_RECOGNIZER_KEY == None:
+        try:
+            endpoint = Config.objects.get(config_key='ms_form_recoginizer_endpoint')
+            key = Config.objects.get(config_key='ms_form_recognizer_key')
+        except ObjectDoesNotExist:
             return Response({'message': 'Form recognizer connection was not specified'}, status=status.HTTP_404_NOT_FOUND)
 
-        rec = FormRecognizer(settings.FORM_RECOGNIZER_ENDPOINT, settings.FORM_RECOGNIZER_KEY)
+        key_string = bytes(key.value_bytes).decode("utf-8")
+        secret_key = settings.SECRET_KEY.encode("utf-8")
+        secret_key = base64.urlsafe_b64encode(secret_key.ljust(32)[:32])
+
+        fernet = Fernet(secret_key)
+
+        key = fernet.decrypt(key_string).decode('utf-8')
+
+        rec = FormRecognizer(endpoint.value_string, key)
 
         pdf = request.FILES['file'].open()
         data = rec.analyse_invoice(pdf)
         print(data)
+
+
+
+
+
+
+
 
 
 
@@ -1464,6 +1581,7 @@ class PayablesViewSet(viewsets.ModelViewSet):
 
 
 
+
         response = {
 
             'fk_company' : comp[0].id_company if len(comp) > 0 else '',
@@ -1480,6 +1598,7 @@ class PayablesViewSet(viewsets.ModelViewSet):
 
 
         return Response(response, status=status.HTTP_200_OK)
+
 
 
 

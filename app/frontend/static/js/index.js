@@ -1,20 +1,36 @@
 $(document).ready(function(){
     let page = window.location.pathname;
+    let page_config;
+    let fields;
 
+    $('#loading_screen_wrapper').toggle();
     $.ajax({
           url: '/_config',
           dataType: 'json',
+          async : true,
           success: function (response) {
             let lang_cookie = Cookies.get('sisyphus_language');
+            page_config = response['pages'][page]
+            fields = response['fields']
             $.each(response['translations'], (key, value)=> {
                 $('#' + key).text(value[lang_cookie])
             })
-            console.log(page)
+
             let page_title = response['pages'][page]['title'][lang_cookie]
-            console.log(page_title)
             $('#page_title').text(page_title);
+            document.title = page_title;
+
+            $.fn.setUp(page_config, fields);
+
+            $.each(page_config['remove_buttons'], (key, value)=>{
+                $('#' + value).remove();
+
+            })
+            $('#loading_screen_wrapper').toggle();
           }
     });
+
+
 
     $('#language_selector').on('change', function() {
         console.log($(this).val())
@@ -38,7 +54,7 @@ $(document).ready(function(){
     })
 
     let lang = Cookies.get('sisyphus_language');
-    console.log()
+
     if (!lang) {
         lang = 'CH'
         $('#language_selector').val('ch')

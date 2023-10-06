@@ -96,6 +96,9 @@ DATABASES = {
 
 
 
+
+
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -119,6 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
+
 
 TIME_ZONE = ('Europe/Zurich')
 
@@ -145,27 +149,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-### Document Header
-
-LOGO_PATH = os.path.join(STATIC_ROOT, 'img', 'doc_header.jpg')
-LOGO_WIDTH = 200
-LOGO_HEIGHT = 40
-LOGO_X_OFFSET = 5
-LOGO_Y_OFFSET = 0
 
 
 
 
 
 COMPANY = {
-            'name': 'Pfister Transporte AG',
-            'address' : 'Buchsistrasse 10',
-            'pcode' : '3380',
-            'city' : 'Wangen an der Aare',
+            'name': 'Pfister Data Solutions',
+            'address' : 'Zürichstrasse 9',
+            'pcode' : '6004',
+            'city' : 'Luzern',
             'country' : 'CH',
-            'email' : 'info@pfister-transporte.ch',
-            'phone' : '+41 32 631 21 88',
-            'vat_number' : '07AABCS1429B1Z'
+            'email' : 'fabian.pfister@hotmail.com   ',
+            'phone' : '+41 79 957 25 54',
+            'vat_number' : ''
         }
 
 
@@ -178,5 +175,3 @@ REST_FRAMEWORK = {
 }
 
 
-FORM_RECOGNIZER_ENDPOINT = os.environ.get("FORM_RECOGNIZER_ENDPOINT", "")
-FORM_RECOGNIZER_KEY = os.environ.get("FORM_RECOGNIZER_KEY", "")

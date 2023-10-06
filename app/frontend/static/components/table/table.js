@@ -37,6 +37,7 @@ class BootstrapDataTable{
          return element;
       };
 
+
       checkbox_field(checked, disabled) {
         if (checked) {
              return  '<td><input type="checkbox" checked '+disabled+'/></td>'
@@ -121,13 +122,13 @@ class BootstrapDataTable{
                 //* continue if the fieldname is url
 
                if (config.display_type == 'action_checkbox'){
-                    row += this.checkbox_field(element[field], config.disabled)
+                    row += this.checkbox_field(element[field], '')
                } else if (element[field] == null) {
                 row += '<td></td>'
                } else if(config.display_type == 'text') {
                     row += this.text_field(element[field])
                 } else if (config.display_type == 'checkbox') {
-                    row += this.checkbox_field(element[field], config.disabled)
+                    row += this.checkbox_field(element[field], 'disabled')
                 } else if (config.display_type == 'fk_field') {
                     row += this.fk_field(config.api_endpoint, config.display_field, element[field])
 

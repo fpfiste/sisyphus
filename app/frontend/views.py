@@ -1,8 +1,8 @@
 import json
 from http.client import HTTPResponse
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
@@ -25,6 +25,7 @@ def render_home(request, pk=None):
 
 
 
+
 def logout_view(request):
     logout(request)
     return redirect(reverse('login'))
@@ -32,6 +33,7 @@ def logout_view(request):
 
 def send_config(request):
     return  JsonResponse(config)
+
 
 
 def login_view(request):
@@ -174,13 +176,6 @@ def render_billing(request, pk=None):
 
 
 
-
-
-
-
-
-
-
 @permission_required('api.add_payables', )
 @permission_required('api.add_payables', )
 @permission_required('api.add_payables', )
@@ -190,3 +185,17 @@ def render_payables(request, pk=None):
     page_config = config['pages'][url]
     data = {'page_config': page_config}
     return render(request, page_config['template'], data)
+
+
+def render_settings(request,pk=None):
+    url = request.path.split('/' + str(pk))[0]
+    page_config = config['pages'][url]
+    user_detail = User.objects.get(username=request.user)
+    data = {'page_config': page_config,
+            'user': user_detail}
+    return render(request, page_config['template'], data)
+
+
+
+
+

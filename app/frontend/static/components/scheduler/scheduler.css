@@ -4,7 +4,7 @@
 
 #scheduler_container {
     overflow:scroll;
-    max-height: 41vh;
+
     border-right: 0.1px solid;
     border-left: 0.1px solid;
     border-bottom: 0.1px solid;
@@ -40,17 +40,23 @@
 #schedule_table thead {
     background: white;
     border-color: lightgray;
+    height:10%;
+      position: -webkit-sticky;
+        position: sticky;
+        top: 0;
+        background-color: white;
+        z-index: 10;
 
 }
 
 
-#schedule_table  thead {
-  position: -webkit-sticky;
-  position: sticky;
-  top: 0;
-  background-color: white;
-  z-index: 10;
-  height: 5% !important;
+#schedule_table  tbody {
+    height: 80%
+
+}
+#schedule_table  tfoot {
+    height: 10%
+
 }
 
 #scheduler_title_row {
@@ -163,6 +169,7 @@ thead th{
 .task_lane {
     background: linear-gradient(to right, transparent 95px, lightgray 1px),linear-gradient(to right, transparent 23px, #e5e5e5 0.1px, transparent 24.2px, transparent 47px, #e5e5e5 0.1px, transparent 48.2px, transparent 71px, #e5e5e5 0.1px, transparent 72.2px);
     background-size: 96px;
+    padding-left: 0px;
 
 
 }

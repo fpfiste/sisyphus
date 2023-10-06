@@ -4,129 +4,103 @@
 
 class BootstrapForm{
 
-      constructor({container, id, fields, validation, ajax_url, language, exclude = [], required = [], disabled=[]}) {
+      constructor({container, id, fields, validation, ajax_url, language, exclude = [], required = [], disabled=[], method='GET'}) {
           this.container = container;
           this.ajax_url = ajax_url;
           this.id = id;
-          this.exclude = exclude;
           this.required = required;
           this.fields = fields;
           this.data = null;
           this.disabled = disabled;
           this.is_valid = false;
           this.language = language
+          this.method = method
       }
 
+      set_required({fields=[]}) {
+        $.each(this.fields, (key, value) => {
+            let required = (fields.includes(key)) ? true : false;
+            console.log('#' + this.id + ' #' + key)
+            $('#' + this.id + ' #' + key).prop('required', required);
 
 
+        })
 
-      input_field({id, title, type, placeholder, min, max, required, disabled}) {
-        if (placeholder === undefined){
-            placeholder = ''
-        }
+      }
 
-        if (min === undefined){
-            min = ''
-        } else {
-            min = 'min="'+ min +'"'
-        }
-
-        if (max === undefined){
-            max = ''
-        } else {
-            max = 'max="'+ max +'"'
-        }
-
-        if (required === undefined){
-            required = ''
-        } else {
-            required = 'required="'+ required +'"'
-        }
-
-        if (disabled) {
-            disabled = 'disabled'
-        } else {
-            disabled = ''
-        }
-
+      text_input({id, title, max_length, pattern, disabled, required}) {
         let html = '<div class="form-group">'
         html += '<label for="'+id+'">'+title+'</label>'
-        html += '<input type="'+type+'" name="'+id+'" class="form-control" id="'+id+'" ' + placeholder + ' ' + min + ' ' + max + ' ' + required+' ' + disabled +'></div>'
-
+        html += '<input type="text" name="'+id+'" class="form-control" id="'+id+'"' + disabled+' ' + required +'></div>'
         return html
       }
-      select({id, title, required, ajax_url, api_endpoint_filter, options,value_field, description_field, disabled, multiple}){
-           let name = id;
-          if (required) {
-            required = 'required'
-          } else {
-            required = ''
-          }
 
-         if (disabled) {
-            disabled = 'disabled'
-        } else {
-            disabled = ''
-        }
+      number_input({id, title, min, max, disabled, required}) {
+          let html = '<div class="form-group">'
+          html += '<label for="'+id+'">'+title+'</label>'
+          html += '<input type="number" name="'+id+'" class="form-control" id="'+id+'"' + min + ' ' + max + ' ' + disabled+' ' + required +'></div>'
+        return html
+      }
 
-        if (multiple) {
-            multiple = 'multiple'
-            name = id + '[]'
-        } else {
-            multiple = ''
-        }
-          let html = '<div class="form-group"><label for="'+id+'">'+title+'</label><select class="form-control" id="'+id+'" name="'+id+'" '+required+' '+ disabled + ' ' + multiple + '>'
+      date_input({id, title, disabled, required}) {
+          let html = '<div class="form-group">'
+          html += '<label for="'+id+'">'+title+'</label>'
+          html += '<input type="date" name="'+id+'" class="form-control" id="'+id+'"' + disabled+' ' + required +'></div>'
+        return html
+      }
+
+      time_input({id, title, disabled, required}) {
+          let html = '<div class="form-group">'
+          html += '<label for="'+id+'">'+title+'</label>'
+          html += '<input type="time" name="'+id+'" class="form-control" id="'+id+'"' + disabled+' ' + required +'></div>'
+        return html
+      }
+
+      file_upload({id, title, disabled, required}) {
+          let html = '<div class="form-group">'
+          html += '<label for="'+id+'">'+title+'</label>'
+          html += '<input type="file" name="'+id+'" class="form-control" id="'+id+'" ' + placeholder + ' ' + disabled+' ' + required +'></div>'
+        return html
+      }
+
+      email_input({id, title, disabled, required}) {
+          let html = '<div class="form-group">'
+          html += '<label for="'+id+'">'+title+'</label>'
+          html += '<input type="email" name="'+id+'" class="form-control" id="'+id+'"' + disabled+' ' + required +'></div>'
+        return html
+      }
+
+      fk_field({id, title, required, disabled, url, value_field, description_field}) {
+          let html = '<div class="form-group"><label for="'+id+'">'+title+'</label><select class="form-control" id="'+id+'" name="'+id+'" '+required+' '+ disabled+'>'
 
           html += '<option value="">-----------</option>'
 
-          if (ajax_url){
-                  let url = ajax_url + '?' + api_endpoint_filter
-                  $.ajax({
-                        url: url,
-                        async: false,
-                        success: function (result) {
+          $.ajax({
+                url: url,
+                async: false,
+                success: function (result) {
+                   $.each(result,(key,value) => {
+                       html += '<option value="'+value[value_field]+'">'+value[description_field]+'</option>'
+                    })
+                }
+            });
 
-                           $.each(result,(key,value) => {
-
-                               html += '<option value="'+value[value_field]+'">'+value[description_field]+'</option>'
-                               return html
-                            })
-                        }
-                    });
-
-          } else if (options) {
-
-                $.each(options,(key,value) => {
-                            html += '<option value="'+key+'">'+value[this.language]+'</option>'
-                            return html
-                })
+          return html
 
 
+      }
+
+      select({id, title, required, options, value_field, description_field, disabled}){
+          let name = id;
+          let html = '<div class="form-group"><label for="'+id+'">'+title+'</label><select class="form-control" id="'+id+'" name="'+id+'" '+required+' '+ disabled+'>'
+          html += '<option value="">-----------</option>'
+            $.each(options,(key,value) => {
+                        html += '<option value="'+key+'">'+value[this.language]+'</option>'
+            })
+            return html
           }
 
-
-
-
-        return html
-      }
       textarea({id, title, placeholder, required, disabled}) {
-        if (placeholder === undefined){
-            placeholder = ''
-        }
-
-
-        if (required === undefined){
-            required = ''
-        } else {
-            required = 'required="'+ required +'"'
-        }
-
-        if (disabled) {
-            disabled = 'disabled'
-        } else {
-            disabled = ''
-        }
-
             let html = '<div class="form-group">'
             html += '<label for="'+id+'">'+title+'</label>'
             html += '<textarea id="'+id+'" name="'+id+'" style="width:100%; display:block;" ' + placeholder + ' '  + required+' ' + disabled +'></textarea>'
@@ -138,9 +112,7 @@ class BootstrapForm{
         let html = '<div class="form-group jsonfield">'
         html +='<label for="'+id+'">'+title+'</label>'
         html +='<input type="hidden" class="form-control" id="'+id+'" name="'+id+'" placeholder="">'
-
         html += '<table class="table table-bordered">'
-
         html += '<tbody>'
         html += '<tr>'
         html += '<td><input type="text" class="form-control jsonfield_attribute" placeholder=""></td>'
@@ -149,20 +121,11 @@ class BootstrapForm{
         html += '</tr>'
         html += '</tbody>'
         html += '</table>'
-
-
         html += '</div>'
-
-
-
         return html
       }
 
-
       build(){
-      let field = ''
-        let csrf_token = Cookies.get('csrftoken');
-
         $(this.container).empty();
 
 
@@ -171,76 +134,57 @@ class BootstrapForm{
 
         let skip = this.exclude;
         let req = this.required;
-        let disabled = this.disabled;
+        let disabled_fields = this.disabled;
 
-        if (!skip) {
-            skip = [];
-        }
 
-        if (!req) {
-            req = [];
-        }
-
-        if (!disabled) {
-            disabled = [];
-        }
-
+        // looo all field configs and build fields
         $.each(this.fields,(key,value) => {
 
-            if (skip.includes(key)){
-                return;
-            }
+            let input_type = value.input_type;
+            let title = value.title[this.language];
 
-            if (req.includes(key)) {
-                value.required = true;
-            }
+            let required = (req.includes(key)) ? 'required' : '';
+            let disabled = (disabled_fields.includes(key)) ? 'disabled' : '';
 
-            if (disabled.includes(key)){
-                value.disabled = true;
+            let field;
 
-            } else {
-                value.disabled = false;
-            }
-            if (value.input_type == 'select'){
-                field = this.select({
-                                            id:key,
-                                            title: value.title[this.language],
-                                            ajax_url:value.api_endpoint,
-                                            options: value.options,
-                                            value_field: value.pk_field,
-                                            description_field: value.display_field,
-                                            required:value.required,
-                                            disabled:value.disabled,
-                                            multiple: value.multiple,
-                                            api_endpoint_filter: value.api_filter
-                                         })
-            } else if (value.input_type =='textarea') {
-                field = this.textarea({  id:key,
-                                         title: value.title[this.language],
-                                         required: value.required,
-                                         disabled:value.disabled,
-                                         })
+            console.log(input_type)
+            switch (input_type) {
+                case 'text_input':
+                    field = this.text_input({id: key, title: title, required:required, disabled:disabled});
+                    break;
 
-            } else if (value.input_type == 'jsonfield') {
-                    field = this.jsonfield({  id:key,
-                                 title: value.title[this.language],
-                                 required: value.required,
-                                 disabled:value.disabled,
-                                 })
-
-
-            }else {
-               field = this.input_field({
-                                         id:key,
-                                         title: value.title[this.language],
-                                         type: value.input_type,
-                                         min: value.min,
-                                         max: value.max,
-                                         required: value.required,
-                                         disabled:value.disabled,
-                                         })
+                case 'number_input':
+                    field = this.number_input({id: key, title: title, min: value.min, max: value.max, required:required, disabled:disabled});
+                    break;
+                case 'date_input':
+                    field = this.date_input({id: key, title: title, required:required, disabled:disabled});
+                    break;
+                case 'time_input':
+                    field = this.time_input({id: key, title: title, required:required, disabled:disabled});
+                    break;
+                case 'file_upload':
+                    field = this.file_upload({id: key, title: title, required:required, disabled:disabled});
+                    break;
+                case 'email_input':
+                    field = this.email_input({id: key, title: title, required:required, disabled:disabled})
+                    break;
+                case 'fk_field':
+                    let url = (value.api_filter == 'undefined') ? value.api_endpoint : value.api_endpoint + '?' + value.api_filter
+                    field = this.fk_field({id: key, title: title, url: url, required:required, disabled:disabled, value_field: value.pk_field, description_field: value.display_field})
+                    break;
+                case 'select':
+                    field = this.select({id: key, title: title, options: value.options, value_field:value.pk_field, description_field: value.display_field, required:required, disabled:disabled})
+                    break;
+                case 'textarea':
+                    field = this.textarea({id: key, title:title, required:required, disabled:disabled})
+                    break;
+                case 'jsonfield':
+                    field = this.jsonfield({id:key, title:title, required:required, disabled:disabled})
+                    break;
 
             }
+
             $('#' + this.id).append(field)
 
         });
@@ -251,11 +195,14 @@ class BootstrapForm{
       validate(){
         let form = $('#' + this.id)
         let form_fields = $(form).find(':input')
-
         let valid = true
         $.each(form_fields, (key,value)=>{
-            if ((value.required == true) && (value.value == '')){
+            console.log(value)
+            if ($(value).prop('validity').valid == false){
                 valid = false
+                $(value).css('border-color', 'red')
+            } else {
+                $(value).css('border-color', 'green')
             }
         })
 
@@ -298,17 +245,14 @@ class BootstrapForm{
       serialize() {
         let form = $('#' + this.id)
         let form_fields = $(form).find(':input')
+
         $.each(form_fields, (key,value)=>{
             $(value).prop('disabled', false);
         })
 
         this.populate_json_field()
 
-
-
-
         let array = $(form).serialize();
-
 
         $.each(this.fields, (key,value)=>{
             if (this.disabled.includes(key)){
@@ -316,13 +260,44 @@ class BootstrapForm{
             }
         })
 
-
         return array;
       }
 
-      add_event_handlers() {
-           $("#" + this.id + " input[type='hidden']").on('change', (event)=> {
 
+      submit(url){
+        let form = $('#' + this.id)
+        let form_fields = $(form).find(':input')
+
+        this.validate();
+
+        if (this.is_valid == false){
+            return
+        }
+
+        let array = this.serialize();
+
+
+        $('#loading_screen_wrapper').toggle();
+        $.ajax({
+           url: url,
+           type: this.method,
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           data:array,
+           success: function(response) {
+              $('#loading_screen_wrapper').toggle();
+              location.reload();
+           },
+           error: function(error){
+            console.log(error)
+           console.log('here')
+
+            //location.reload();
+           }
+        });
+      }
+
+    add_event_handlers() {
+           $("#" + this.id + " input[type='hidden']").on('change', (event)=> {
             let target = event.target
 
             let table = $(target).siblings('table')
@@ -330,8 +305,6 @@ class BootstrapForm{
 
             let json = JSON.parse($(event.target).val());
             let html = ''
-
-
 
             if (Object.keys(json).length > 0){
 
@@ -356,15 +329,13 @@ class BootstrapForm{
                         html += '<td><span class="custom_field_action_item custom_field_action_add"><i class="fa-regular fa-plus"></i></span></td>'
                         html += '</tr>'
                     $(table).find('tbody').append(html)
-
-
             }
 
            $("#" + this.id + " .fa-trash-can").on('click', function() {
                 $(this).parent().parent().parent().remove();
            })
-           $("#" + this.id + " .fa-plus").on('click', (event)=> {
 
+           $("#" + this.id + " .fa-plus").on('click', (event)=> {
                 let html = '<tr>'
                         html += '<td><input type="text" class="form-control jsonfield_attribute" value=""></td>'
                         html += '<td><input type="text" class="form-control jsonfield_value" value=""></td>'
@@ -375,7 +346,7 @@ class BootstrapForm{
                 $("#" + this.id + " .fa-trash-can").on('click', (event)=> {
 
                     $(event.target).parent().parent().parent().remove();
-           })
+                })
            })
 
 
@@ -457,45 +428,7 @@ class BootstrapForm{
            })
            })
 
-
-
-
-
       }
 
-      submit(url, method){
-
-
-        let form = $('#' + this.id)
-        let form_fields = $(form).find(':input')
-
-        this.validate();
-
-        if (this.is_valid == false){
-            alert('Alle Felder ausfüllen!')
-
-            return
-        }
-
-        let array = this.serialize();
-
-        $('#loading_screen_wrapper').toggle();
-        $.ajax({
-           url: url,
-           type: method,
-           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
-           data:array,
-           success: function(response) {
-              $('#loading_screen_wrapper').toggle();
-              location.reload();
-           },
-           error: function(error){
-            console.log(error)
-           console.log('here')
-
-            //location.reload();
-           }
-        });
-      }
 }
 

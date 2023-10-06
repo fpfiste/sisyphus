@@ -1,4 +1,69 @@
 
+jQuery.fn.setUp = function(page_config, fields) {
+    // create table instance
+    let lang_cookie = Cookies.get('sisyphus_language');
+
+
+    // CREATE FORM INSTANCE
+    let create_form_fields = {};
+
+    $.each(page_config['create_form_fields'], (key,value)=>{
+       create_form_fields[value] = fields[value];
+    })
+
+    let create_form = new BootstrapForm({
+            container: '#form_container',
+            id: 'create_form',
+            ajax_url: page_config['ajax_url'],
+            validation:true,
+            fields: create_form_fields,
+            required : page_config['create_form_fields_required'],
+            language: lang_cookie,
+            method:'POST'
+    })
+
+    create_form.build();
+
+    // SALES TABLE INSTANCE
+    let sales_table_fields = {};
+
+    $.each(page_config['sales_table_fields'], (key,value)=>{
+       sales_table_fields[value] = fields[value];
+    })
+
+    let sales_table = new BootstrapDataTable({
+                        container:'#overview-table',
+                        id: 'sales_billing_table',
+                        fields: sales_table_fields,
+                        ajax_url: '/api/sales/',
+                        query_params: '?fk_sales_status=1&fk_clearing_type=2',
+                        pk_field: page_config['pk'],
+                        language: lang_cookie,
+                    })
+    sales_table.build();
+
+    // TASK TABLE INSTANCE
+    let task_table_fields = {};
+
+    $.each(page_config['task_table_fields'], (key,value)=>{
+       task_table_fields[value] = fields[value];
+    })
+
+    let task_table = new BootstrapDataTable({
+                        container:'#overview-table',
+                        id: "task_billing_table",
+                        fields: task_table_fields,
+                        ajax_url: '/api/tasks/',
+                        query_params: '?fk_task_state=4&fk_clearing_type=2',
+                        ajax_url: page_config['ajax_url'],
+                        pk_field: page_config['pk'],
+                        language: lang_cookie,
+                    })
+    task_table.build();
+
+}
+
+/*
 $(document).ready(function(){
     let page_config
     let url = '/billing'
@@ -6,7 +71,7 @@ $(document).ready(function(){
 
 
     $('#loading_screen_wrapper').toggle();
-    //*** read the config file ***//
+
     $.ajax({
           url: '/_config',
           async: false,
@@ -102,11 +167,11 @@ $(document).ready(function(){
 
 
     $('#btn_add').on('click', function() {
-        $('#loading_screen_wrapper').toggle();
         create_form.validate()
 
         if (create_form.is_valid == false) {
             alert('Form is not valid')
+            return
         }
 
         let form_data = create_form.serialize();
@@ -130,6 +195,7 @@ $(document).ready(function(){
         })
 
         if ((tasks.length == 0) && (sales.length == 0)){
+            alert
             return
         }
 
@@ -143,6 +209,9 @@ $(document).ready(function(){
             'sales' : sales,
             'tasks' : tasks,
         }
+
+        $('#loading_screen_wrapper').toggle();
+
         $.ajax({
            url: '/api/receivables/',
            type: 'POST',
@@ -165,4 +234,4 @@ $(document).ready(function(){
     })
 
 
-});
+});*/
