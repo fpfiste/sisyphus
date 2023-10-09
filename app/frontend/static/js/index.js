@@ -3,12 +3,12 @@ $(document).ready(function(){
     let page_config;
     let fields;
 
-    $('#loading_screen_wrapper').toggle();
     $.ajax({
           url: '/_config',
           dataType: 'json',
           async : true,
           success: function (response) {
+            $('#loading_screen_wrapper').show();
             let lang_cookie = Cookies.get('sisyphus_language');
             page_config = response['pages'][page]
             fields = response['fields']
@@ -26,7 +26,7 @@ $(document).ready(function(){
                 $('#' + value).remove();
 
             })
-            $('#loading_screen_wrapper').toggle();
+            $('#loading_screen_wrapper').hide();
           }
     });
 

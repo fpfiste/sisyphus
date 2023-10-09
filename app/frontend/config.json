@@ -46,6 +46,7 @@
   },
 
   "fields" : {
+
         "task_template": {
           "title": {
             "en": "Template",
@@ -96,6 +97,7 @@
           "title": {"en": "Amount", "ch": "Menge"},
           "display_type": "text",
           "input_type": "number_input",
+          "step": "0.01",
           "min": "0",
           "max": "99999999"
         },
@@ -103,6 +105,7 @@
           "title": {"en": "Price per unit", "ch": "Preis pro Einheit"},
           "display_type": "text",
           "input_type": "number_input",
+          "step": "0.01",
           "min": "0",
           "max": "9999999999"
         },
@@ -150,6 +153,7 @@
           "display_type": "fk_field",
           "input_type": "fk_field",
           "api_endpoint": "/api/employees",
+          "api_filter": "fk_sys_rec_status=1",
           "pk_field": "id_employee",
           "display_field": "employee_internal_alias"
         },
@@ -158,6 +162,7 @@
           "display_type": "fk_field",
           "input_type": "fk_field",
           "api_endpoint": "/api/employees",
+          "api_filter": "fk_sys_rec_status=1",
           "pk_field": "id_employee",
           "display_field": "employee_internal_alias"
         },
@@ -166,6 +171,8 @@
           "display_type": "fk_field",
           "input_type": "fk_field",
           "api_endpoint": "/api/assets",
+          "api_filter": "fk_sys_rec_status=1",
+
           "pk_field": "id_asset",
           "display_field": "asset_internal_alias"
         },
@@ -174,6 +181,8 @@
           "display_type": "fk_field",
           "input_type": "fk_field",
           "api_endpoint": "/api/assets",
+          "api_filter": "fk_sys_rec_status=1",
+
           "pk_field": "id_asset",
           "display_field": "asset_internal_alias"
         },
@@ -213,7 +222,7 @@
           "input_type": "fk_field",
           "api_endpoint": "/api/countries",
           "pk_field": "id_country",
-          "display_field": "emoji_code"
+          "display_field": "country_title"
         },
         "fk_sys_rec_status": {
           "title": {"en": "Status", "ch": "Status"},
@@ -255,6 +264,11 @@
           "input_type": "jsonfield",
            "custom_field_options" : {"assigned_project": {"en": "Assigned Project", "ch": "Zugeteiltes Projekt"}, "year_of_production": {"en":  "Year of Production", "ch":  "Produktions Jahr"}}
         },
+        "vat_number" : {
+          "title": {"en": "VAT Number", "ch": "MWST-Nummer"},
+          "display_type": "text",
+          "input_type": "text_input"
+        },
         "id_project": {
           "title": {"en": "Project ID", "ch": "Projekt Nr."},
           "display_type": "text",
@@ -272,6 +286,8 @@
           "display_type": "fk_field",
           "input_type": "fk_field",
           "api_endpoint": "/api/companies",
+          "api_filter": "fk_sys_rec_status=1",
+
           "pk_field": "id_company",
           "display_field": "company_internal_alias"
         },
@@ -327,6 +343,8 @@
           "display_type": "fk_field",
           "input_type": "fk_field",
           "api_endpoint": "/api/companies",
+          "api_filter": "fk_sys_rec_status=1",
+
           "pk_field": "id_company",
           "display_field": "company_internal_alias"
         },
@@ -502,6 +520,7 @@
         "title": {"en": "Discount %", "ch": "Rabatt %"},
         "display_type": "text",
         "input_type": "number_input",
+        "step": "0.01",
         "min": "0",
         "max": "100"
       },
@@ -544,6 +563,7 @@
           "title": {"en": "Total Net", "ch": "Total Netto"},
           "display_type": "text",
           "input_type": "number_input",
+          "step": "0.01",
           "min": "0",
           "max": "9999999999"
         },
@@ -551,6 +571,7 @@
           "title": {"en": "VAT", "ch": "MWST"},
           "display_type": "text",
           "input_type": "number_input",
+          "step": "0.01",
           "min": "0",
           "max": "9999999999"
 
@@ -559,6 +580,7 @@
           "title": {"en": "Total", "ch": "Total"},
           "display_type": "text",
           "input_type": "number_input",
+          "step": "0.01",
           "min": "0",
           "max": "9999999999"
         },
@@ -567,11 +589,49 @@
           "display_type": "jsonfield",
           "input_type": "jsonfield",
            "custom_field_options" : {"assigned_project": {"en": "Assigned Project", "ch": "Zugeteiltes Projekt"}, "year_of_production": {"en":  "Year of Production", "ch":  "Produktions Jahr"}}
+        },
+        "doc_logo_width": {
+          "title": {"en": "Logo width", "ch": "Logo Breite"},
+          "display_type": "text",
+          "input_type": "number_input",
+          "step": "0.01",
+          "min": "0",
+          "max": "9999999999"
+        },
+        "doc_logo_height": {
+          "title": {"en": "Logo height", "ch": "Logo Höhe"},
+          "display_type": "text",
+          "input_type": "number_input",
+          "step": "0.01",
+          "min": "0",
+          "max": "9999999999"
+        },
+        "doc_logo_x_offset": {
+          "title": {"en": "X-Offset", "ch": "Logo Abstand links"},
+          "display_type": "text",
+          "step": "0.01",
+          "input_type": "number_input",
+          "min": "0",
+          "max": "21"
+        },
+        "doc_logo_y_offset": {
+          "title": {"en": "Y-Offset", "ch": "Logo Abstand oben"},
+          "display_type": "text",
+          "input_type": "number_input",
+          "step": "0.01",
+          "min": "0",
+          "max": "9999999999"
+        },
+        "doc_logo": {
+          "title": {"en": "Logo upload", "ch": "Logo hochladen"},
+          "display_type": "text",
+          "input_type": "file"
+        },
+        "image_binary": {
+          "title": {"en": "", "ch": ""},
+          "display_type": "text",
+          "input_type": "hidden"
         }
-
-
-
-
 
   },
 
@@ -600,6 +660,7 @@
     "/companies": {
       "title": {"en": "Companies", "ch": "Unternehmen"},
       "ajax_url" : "/api/companies/",
+      "ajax_url_filter": "?id_company__gt=0",
       "js": "/static/js/pages/master_data_page.js",
       "template" : "frontend/pages/table.html",
       "table_id" : "company_table",
@@ -695,7 +756,7 @@
       "create_form_fields_required" : ["fk_project", "description"],
       "update_form_fields" : ["id_task", "task_date_from", "task_time_from", "task_date_to", "task_time_to", "fk_task_state","amount", "fk_unit", "description", "internal_info","customer_reference", "fk_project", "fk_employee_1", "fk_employee_2", "fk_asset_1", "fk_asset_2", "unit_price", "fk_currency", "fk_vat","fk_clearing_type", "custom_fields"],
       "update_form_fields_required" :  ["id_task","fk_project", "description"],
-      "close_form_fields_required" :  ["id_task","fk_project", "description", "amount", "unit_price", "fk_currency", "fk_employee_1", "fk_unit", "fk_vat", "fk_clearing_type"],
+      "close_form_fields_required" :  ["id_task","fk_project", "description", "amount", "unit_price", "fk_currency", "fk_employee_1", "fk_unit", "fk_vat", "fk_clearing_type", "task_date_from", "task_date_to", "task_time_from", "task_time_to"],
       "update_form_fields_disabled" : ["id_task", "fk_task_state"]
 
 
@@ -726,14 +787,11 @@
       "template" : "frontend/pages/table.html",
       "table_id" : "tasks_table",
       "pk" : "id_invoice",
-      "table_fields" : ["id_asset", "asset_internal_alias", "asset_description", "fk_asset_type", "fk_company", "fk_sys_rec_status"],
-      "filter_form_fields" : ["id_asset", "asset_internal_alias", "fk_asset_type", "fk_company", "fk_sys_rec_status"],
-      "create_form_fields" : ["asset_internal_alias", "asset_description", "fk_asset_type", "fk_company", "fk_sys_rec_status", "custom_fields"],
-      "create_form_fields_required" : ["asset_internal_alias", "asset_description", "fk_asset_type", "fk_company", "fk_sys_rec_status", "custom_fields"],
-      "update_form_fields" : ["id_asset","asset_internal_alias", "asset_description", "fk_asset_type", "fk_company", "fk_sys_rec_status", "custom_fields"],
-      "update_form_fields_required" : ["id_asset","asset_internal_alias", "asset_description", "fk_asset_type", "fk_company", "fk_sys_rec_status", "custom_fields"],
-      "update_form_fields_disabled" : ["id_asset"],
-      "remove_buttons" : ["btn_delete", "btn_close_task" , "btn_print"]
+      "table_fields" : ["id_invoice", "invoice_date", "fk_project", "fk_invoice_state","fk_currency","net_total", "discount", "total", "fk_invoice_terms", "fk_vat"],
+      "filter_form_fields" : ["id_invoice", "invoice_date", "fk_project", "fk_invoice_state","fk_invoice_terms","fk_currency","net_total", "discount", "total", "fk_invoice_terms", "fk_vat"],
+      "update_form_fields" : ["id_invoice", "invoice_date", "fk_project", "fk_invoice_state","fk_invoice_terms","fk_currency","net_total", "discount", "total", "fk_invoice_terms", "fk_vat"],
+      "update_form_fields_disabled" :["id_invoice", "invoice_date", "fk_project", "fk_invoice_state","fk_invoice_terms","fk_currency","net_total", "discount", "total", "fk_invoice_terms", "fk_vat"],
+      "remove_buttons" : ["btn_close_task" , "btn_save"]
 
 
 },
@@ -755,24 +813,40 @@
     "/payables": {
       "title": {"en": "Payables", "ch": "Kreditoren"},
       "ajax_url" : "/api/payables/",
-      "js": "/static/js/pages/master_data_page.js",
+      "js": "/static/js/pages/payables.js",
       "template" : "frontend/pages/table.html",
       "table_id" : "tasks_table",
       "pk" : "id_payable",
       "table_fields" : ["id_payable", "invoice_id", "invoice_date", "fk_customer", "net_total", "vat", "total", "fk_invoice_status", "fk_terms", "fk_currency"],
-      "filter_form_fields" : ["id_payable", "invoice_id", "invoice_date", "fk_customer", "fk_invoice_status", "fk_terms", "fk_currency"],
-      "create_form_fields" : ["invoice_id", "invoice_date", "fk_customer", "net_total", "vat", "total", "fk_invoice_status", "fk_terms", "fk_currency", "positions"],
-      "create_form_fields_required" : ["invoice_id", "invoice_date", "fk_customer", "net_total", "vat", "total", "fk_invoice_status", "fk_terms", "fk_currency"],
-      "update_form_fields" : ["id_payable","invoice_id", "invoice_date", "fk_customer", "net_total", "vat", "total", "fk_invoice_status", "fk_terms", "fk_currency", "positions"],
-      "update_form_fields_required" : ["id_payable","invoice_id", "invoice_date", "fk_customer", "net_total", "vat", "total", "fk_invoice_status", "fk_terms", "fk_currency"],
+      "filter_form_fields" : ["id_payable", "invoice_id", "invoice_date", "fk_company", "fk_invoice_status", "fk_terms", "fk_currency"],
+      "create_form_fields" : ["file_upload","invoice_id", "invoice_date", "fk_company", "net_total", "vat", "total", "fk_invoice_status", "fk_terms", "fk_currency", "positions"],
+      "create_form_fields_required" : ["invoice_id", "invoice_date", "fk_company", "net_total", "vat", "total", "fk_invoice_status", "fk_terms", "fk_currency"],
+      "update_form_fields" : ["id_payable","invoice_id", "invoice_date", "fk_company", "net_total", "vat", "total", "fk_invoice_status", "fk_terms", "fk_currency", "positions"],
+      "update_form_fields_required" : ["id_payable","invoice_id", "invoice_date", "fk_company", "net_total", "vat", "total", "fk_invoice_status", "fk_terms", "fk_currency"],
 
       "update_form_fields_disabled" : ["id_payable"]
     },
      "/settings": {
       "title": {"en": "Settings", "ch": "Einstellungen"},
-      "ajax_url" : "",
+      "ajax_url" : "/api/config",
       "js": "/static/js/pages/settings.js",
       "template" : "frontend/pages/settings.html",
+      "table_id" : "",
+      "pk" : "",
+      "profile_fields" : ["id_employee","employee_first_name", "employee_last_name","employee_street", "employee_zipcode", "employee_city", "fk_country", "employee_email", "employee_cell_phone"],
+      "profile_fields_required" : ["id_employee","employee_first_name", "employee_last_name","employee_street", "employee_zipcode", "employee_city", "fk_country"],
+      "profile_fields_disabled" : ["id_employee"],
+      "company_fields" :  ["id_company","company_internal_alias","company_name", "company_street","company_zipcode", "company_city", "fk_country", "vat_number"],
+      "company_fields_required" : ["id_company","company_internal_alias","company_name", "company_street","company_zipcode", "company_city", "fk_country"],
+      "company_fields_disabled" : ["id_company"],
+       "doc_config_fields" : ["file_upload","doc_logo_width", "doc_logo_height", "doc_logo_x_offset", "doc_logo_y_offset", "doc_logo", "image_binary"],
+       "doc_config_fields_required" : ["doc_logo_width", "doc_logo_height", "doc_logo_x_offset", "doc_logo_y_offset", "image_binary"]
+     },
+    "/accounts/login/": {
+      "title": {"en": "Settings", "ch": "Einstellungen"},
+      "ajax_url" : "",
+      "js": "/static/js/pages/login.js",
+      "template" : "frontend/pages/login.html",
       "table_id" : "",
       "pk" : "",
       "sections": {
@@ -855,7 +929,7 @@
           "min": "",
           "max": "",
           "pk_field": "id_country",
-          "display_field": "country_code"
+          "display_field": "country_title"
         },
         "fk_sys_rec_status": {
           "title": {
@@ -962,8 +1036,6 @@
 }
   }
 }
-
-
 
 
 

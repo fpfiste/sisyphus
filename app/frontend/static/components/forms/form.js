@@ -35,10 +35,10 @@ class BootstrapForm{
         return html
       }
 
-      number_input({id, title, min, max, disabled, required}) {
+      number_input({id, title, min, max, disabled, required, step}) {
           let html = '<div class="form-group">'
           html += '<label for="'+id+'">'+title+'</label>'
-          html += '<input type="number" name="'+id+'" class="form-control" id="'+id+'"' + min + ' ' + max + ' ' + disabled+' ' + required +'></div>'
+          html += '<input type="number" name="'+id+'" class="form-control" step="'+step+'" id="'+id+'"' + min + ' ' + max + ' ' + disabled+' ' + required +'></div>'
         return html
       }
 
@@ -59,7 +59,7 @@ class BootstrapForm{
       file_upload({id, title, disabled, required}) {
           let html = '<div class="form-group">'
           html += '<label for="'+id+'">'+title+'</label>'
-          html += '<input type="file" name="'+id+'" class="form-control" id="'+id+'" ' + placeholder + ' ' + disabled+' ' + required +'></div>'
+          html += '<input type="file" name="'+id+'" class="form-control" id="'+id+'" ' + disabled+' ' + required +'></div>'
         return html
       }
 
@@ -125,6 +125,12 @@ class BootstrapForm{
         return html
       }
 
+      hidden_input({id, title, required, disabled}) {
+        let html = '<div class="form-group">'
+        html +='<input type="hidden" class="form-control" id="'+id+'" name="'+id+'" placeholder="">'
+        return html
+      }
+
       build(){
         $(this.container).empty();
 
@@ -148,14 +154,13 @@ class BootstrapForm{
 
             let field;
 
-            console.log(input_type)
             switch (input_type) {
                 case 'text_input':
                     field = this.text_input({id: key, title: title, required:required, disabled:disabled});
                     break;
 
                 case 'number_input':
-                    field = this.number_input({id: key, title: title, min: value.min, max: value.max, required:required, disabled:disabled});
+                    field = this.number_input({id: key, title: title, min: value.min, max: value.max, required:required, disabled:disabled, step:value.step});
                     break;
                 case 'date_input':
                     field = this.date_input({id: key, title: title, required:required, disabled:disabled});
@@ -182,6 +187,8 @@ class BootstrapForm{
                 case 'jsonfield':
                     field = this.jsonfield({id:key, title:title, required:required, disabled:disabled})
                     break;
+                case 'hidden' :
+                    field = this.hidden_input({id:key, title:title, required:required, disabled:disabled})
 
             }
 
@@ -197,7 +204,6 @@ class BootstrapForm{
         let form_fields = $(form).find(':input')
         let valid = true
         $.each(form_fields, (key,value)=>{
-            console.log(value)
             if ($(value).prop('validity').valid == false){
                 valid = false
                 $(value).css('border-color', 'red')
@@ -288,16 +294,14 @@ class BootstrapForm{
               location.reload();
            },
            error: function(error){
-            console.log(error)
-           console.log('here')
 
-            //location.reload();
+            location.reload();
            }
         });
       }
 
     add_event_handlers() {
-           $("#" + this.id + " input[type='hidden']").on('change', (event)=> {
+           $("#" + this.id + " #custom_fields").on('change', (event)=> {
             let target = event.target
 
             let table = $(target).siblings('table')

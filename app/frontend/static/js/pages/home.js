@@ -1,22 +1,8 @@
 
-$(document).ready(function(){
-    let page_config
-    let url = '/assets/absences'
+jQuery.fn.setUp = function(page_config, fields) {
 
-
-    $('#loading_screen_wrapper').toggle();
-
-    //*** read the config file ***//
-    $.ajax({
-          url: '/_config',
-          async: false,
-          dataType: 'json',
-          success: function (response) {
-            page_config = response['pages'][url]
-            translations = response['translations']
-
-          }
-    });
+    // create table instance
+    let lang_cookie = Cookies.get('sisyphus_language');
 
     //*** read the open tasks ***//
     $.ajax({
@@ -57,5 +43,5 @@ $(document).ready(function(){
 
 
 
+}
 
-});

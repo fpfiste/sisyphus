@@ -2,14 +2,13 @@
 
 class BootstrapDataTable{
 
-      constructor({container, id, fields, pk_field, ajax_url, query_params = '', exclude=[], language}) {
+      constructor({container, id, fields, pk_field, ajax_url, query_params = '', language}) {
           this.container = container;
           this.id = id;
           this.fields = fields;
           this.pk_field = pk_field;
           this.ajax_url = ajax_url;
           this.query_params = query_params
-          this.exclude = exclude;
           this.language = language;
           this.build_grid()
 
@@ -27,10 +26,6 @@ class BootstrapDataTable{
 
         //return result;
       }
-
-
-
-
 
       text_field(element) {
          element =  '<td>'+element+'</td>'
@@ -75,11 +70,8 @@ class BootstrapDataTable{
         let header = '<thead style="position:sticky; top:0; background:white;">'
 
         $.each(this.fields,(key,value) => {
-            if (this.exclude.includes(key)) {
-                return
-            } else {
                 header += '<th>'+value.title[this.language]+'</th>'
-            }
+
         });
         return header
 
@@ -112,11 +104,6 @@ class BootstrapDataTable{
 
             //* loop all elements of the current record
             $.each(this.fields,(field,config) => {
-
-                if (this.exclude.includes(field)) {
-                    return;
-                }
-
 
                 //* get corresponding field based on the field name from the data object
                 //* continue if the fieldname is url

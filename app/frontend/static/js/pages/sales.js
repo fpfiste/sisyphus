@@ -113,7 +113,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     });
 
     $( "#sales_template" ).on( "change", function() {
-        $('#loading_screen_wrapper').toggle();
+        $('#loading_screen_wrapper').show();
 
         let template_id = $(this).val();
 
@@ -132,7 +132,7 @@ jQuery.fn.setUp = function(page_config, fields) {
 
               })
 
-              $('#loading_screen_wrapper').toggle();
+              $('#loading_screen_wrapper').hide();
            },
            error: function(error){
             console.log(error)
@@ -156,7 +156,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     })
 
     $('#btn_print').on('click', function() {
-        $('#loading_screen_wrapper').toggle();
+        $('#loading_screen_wrapper').show();
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/tasks/' + pk + '/pdf/'
         $.ajax({
@@ -165,7 +165,7 @@ jQuery.fn.setUp = function(page_config, fields) {
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
                 console.log(response)
-                $('#loading_screen_wrapper').toggle();
+                $('#loading_screen_wrapper').hide();
                 window.open(response['file_url'], '_blank').focus();
 
 

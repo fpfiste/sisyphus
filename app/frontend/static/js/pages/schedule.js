@@ -2,11 +2,12 @@
 jQuery.fn.setUp = function(page_config, fields) {
     // create table instance
     let lang_cookie = Cookies.get('sisyphus_language');
+    console.log('here')
 
-    let employee_label = (lang_cookie = 'en') ? 'Employees' : 'Mitarbeiter'
-    let resource_label = (lang_cookie = 'en') ? 'Resources' : 'Hilfsmittel'
-    let open_task_label = (lang_cookie = 'en') ? 'Open Tasks' : 'Offene Aufträge'
-    let employee_type_label = (lang_cookie = 'en') ? 'Emplyoee Types' : 'Mitarbeiter Typen'
+    let employee_label = (lang_cookie == 'en') ? 'Employees' : 'Mitarbeiter'
+    let resource_label = (lang_cookie == 'en') ? 'Resources' : 'Hilfsmittel'
+    let open_task_label = (lang_cookie == 'en') ? 'Open Tasks' : 'Offene Aufträge'
+    let employee_type_label = (lang_cookie == 'en') ? 'Emplyoee Types' : 'Mitarbeiter Typen'
 
     // create scheduler
 
@@ -72,7 +73,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     update_form.build();
 
     $( "#task_template" ).on( "change", function() {
-            $('#loading_screen_wrapper').toggle();
+            $('#loading_screen_wrapper').show();
 
         let template_id = $(this).val();
 
@@ -91,7 +92,7 @@ jQuery.fn.setUp = function(page_config, fields) {
                 $('#'+ key).val(value)
 
               })
-                  $('#loading_screen_wrapper').toggle();
+                  $('#loading_screen_wrapper').hide();
 
            },
            error: function(error){
@@ -128,7 +129,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     });
 
     $('#btn_print').on('click', function() {
-        $('#loading_screen_wrapper').toggle();
+        $('#loading_screen_wrapper').show();
 
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/tasks/' + pk + '/pdf/'
@@ -137,7 +138,7 @@ jQuery.fn.setUp = function(page_config, fields) {
            type: 'GET',
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
-                    $('#loading_screen_wrapper').toggle();
+                    $('#loading_screen_wrapper').hide();
 
                 window.open(response['file_url'], '_blank').focus();
            },

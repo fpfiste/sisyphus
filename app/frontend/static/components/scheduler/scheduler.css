@@ -169,7 +169,7 @@ thead th{
 .task_lane {
     background: linear-gradient(to right, transparent 95px, lightgray 1px),linear-gradient(to right, transparent 23px, #e5e5e5 0.1px, transparent 24.2px, transparent 47px, #e5e5e5 0.1px, transparent 48.2px, transparent 71px, #e5e5e5 0.1px, transparent 72.2px);
     background-size: 96px;
-    padding-left: 0px;
+    padding-left: 0px !important;
 
 
 }

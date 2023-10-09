@@ -1,11 +1,146 @@
 
+jQuery.fn.setUp = function(page_config, fields) {
+
+    // create table instance
+    let lang_cookie = Cookies.get('sisyphus_language');
+
+    // Table setup with field form config file
+    let table_fields = {};
+
+    $.each(page_config['table_fields'], (key,value)=>{
+       table_fields[value] = fields[value];
+    })
+
+    let table = new BootstrapDataTable({
+                        container:'#overview-table',
+                        id: page_config['table_id'],
+                        fields: table_fields,
+                        ajax_url: page_config['ajax_url'],
+                        pk_field: page_config['pk'],
+                        language: lang_cookie,
+                    })
+    table.build();
+
+        // filter form instance
+
+    let filter_form_fields = {};
+
+    $.each(page_config['filter_form_fields'], (key,value)=>{
+       filter_form_fields[value] = fields[value];
+    })
+
+    let filter_form = new BootstrapForm({
+            container: '#form_filter_container',
+            id: 'filter_form',
+            ajax_url: page_config['ajax_url'],
+            validation:false,
+            fields: filter_form_fields,
+            language: lang_cookie,
+            method:'GET'
+    })
+
+    filter_form.build();
+
+
+    // update form instance
+    let update_form_fields = {};
+
+    $.each(page_config['update_form_fields'], (key,value)=>{
+       update_form_fields[value] = fields[value];
+    })
+
+    let update_form = new BootstrapForm({
+            container: '#update_form_container',
+            id: 'update_form',
+            ajax_url: page_config['ajax_url'],
+            validation:true,
+            fields: update_form_fields,
+            disabled : page_config['update_form_fields_disabled'],
+            language: lang_cookie,
+            method: 'PUT'
+
+    })
+
+    update_form.build();
+
+        // add evetn listeners
+    $( "#btn_filter" ).on( "click", function() {
+      let query_params = $('#filter_form').serialize();
+      table.query_params = '?' + query_params
+      table.build();
+    });
+
+    $( "#btn_reset" ).on( "click", function() {
+        $('#filter_form').trigger("reset");
+        $('#btn_filter').click();
+    });
+
+    $('#btn_print').on('click', function() {
+        let pk = $('#update_form #id_invoice').val();
+
+        let url = page_config['ajax_url'] + pk + '/pdf'
+
+        $.ajax({
+           url: url,
+           type: 'GET',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           success: function(response) {
+                var doc = window.open(response['file_url'], '_blank');
+
+                location.reload();
+                doc.focus();
+           },
+           error: function(error){
+            alert(error)
+            location.reload();
+            console.log(error)
+           }
+        });
+    })
+
+    $('#btn_delete').on('click', function() {
+
+        update_form.required = ['id_task']
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = '/api/receivables/' + pk + '/'
+
+        let task_state = $('#fk_invoice_state').val()
+
+        if (task_state >= 2) {
+            alert('Invoice cannot be canceld since it was already booked')
+            location.reload();
+        }
+
+        $.ajax({
+           url: url,
+           type: 'DELETE',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           success: function(response) {
+                console.log(response)
+                window.open(response['file_url'], '_blank').focus();
+                location.reload();
+
+           },
+           error: function(error){
+            console.log(error)
+            alert(error)
+            location.reload();
+           }
+        });
+    })
+
+}
+
+
+
+/*
+
 $(document).ready(function(){
     let page_config
     let url = '/receivables'
     let lang_cookie = Cookies.get('sisyphus_language');
 
     $('#btn_close_task, #btn_save, #btn_create' ).remove();
-    //*** read the config file ***//
     $.ajax({
           url: '/_config',
           async: false,
@@ -64,72 +199,6 @@ $(document).ready(function(){
     update_form.build();
 
 
-    // add evetn listeners
-    $( "#btn_filter" ).on( "click", function() {
-      let query_params = $('#filter_form').serialize();
-      table.query_params = '?' + query_params
-      table.build();
-    });
 
-    $( "#btn_reset" ).on( "click", function() {
-        $('#filter_form').trigger("reset");
-        $('#btn_filter').click();
-    });
-
-    $('#btn_print').on('click', function() {
-        let pk = $('#update_form #id_invoice').val();
-        $('#loading_screen_wrapper').toggle();
-
-        let url = page_config['ajax_url'] + pk + '/pdf'
-
-        $.ajax({
-           url: url,
-           type: 'GET',
-           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
-           success: function(response) {
-                var doc = window.open(response['file_url'], '_blank');
-                $('#loading_screen_wrapper').toggle();
-
-                location.reload();
-                doc.focus();
-           },
-           error: function(error){
-            alert(error)
-            location.reload();
-            console.log(error)
-           }
-        });
-    })
-
-    $('#btn_delete').on('click', function() {
-        $('#loading_screen_wrapper').toggle();
-
-        update_form.required = ['id_task']
-        let pk = $('#update_form #' + page_config['pk']).val()
-        let url = '/api/receivables/' + pk + '/'
-
-        let task_state = $('#fk_invoice_state').val()
-
-        if (task_state >= 2) {
-            alert('Invoice cannot be canceld since it was already booked')
-            location.reload();
-        }
-
-        $.ajax({
-           url: url,
-           type: 'DELETE',
-           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
-           success: function(response) {
-                console.log(response)
-                window.open(response['file_url'], '_blank').focus();
-                    $('#loading_screen_wrapper').toggle();
-
-           },
-           error: function(error){
-            console.log(error)
-            alert(error)
-            location.reload();
-           }
-        });
-    })
 });
+*/

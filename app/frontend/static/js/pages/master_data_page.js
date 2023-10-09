@@ -18,6 +18,7 @@ jQuery.fn.setUp = function(page_config, fields) {
                         id: page_config['table_id'],
                         fields: table_fields,
                         ajax_url: page_config['ajax_url'],
+                        query_params : page_config['ajax_url_filter'],
                         pk_field: page_config['pk'],
                         language: lang_cookie,
                     })

@@ -13,11 +13,10 @@ FROM '/docker-entrypoint-initdb.d/auth_user.csv'
 DELIMITER ','
 CSV HEADER;
 
-COPY public.countries(country,country_code)
+COPY public.countries(country, country_code, emoji_code, country_title)
 FROM '/docker-entrypoint-initdb.d/countries.csv'
 DELIMITER ','
 CSV HEADER;
-
 
 COPY public.currencies(currency,currency_abbreviation,currency_account_nr)
 FROM '/docker-entrypoint-initdb.d/currencies.csv'
@@ -88,5 +87,10 @@ CSV HEADER;
 
 COPY public.clearing_type(clearing_type)
 FROM '/docker-entrypoint-initdb.d/clearing_type.csv'
+DELIMITER ','
+CSV HEADER;
+
+COPY public.companies(id_company,company_name,company_street,company_zipcode,fk_country,company_city,company_internal_alias,company_email,is_customer,is_supplier,is_subcontractor,fk_sys_rec_status,is_own_company,vat_number)
+FROM '/docker-entrypoint-initdb.d/companies.csv'
 DELIMITER ','
 CSV HEADER;

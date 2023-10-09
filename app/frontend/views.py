@@ -36,9 +36,12 @@ def send_config(request):
 
 
 
+
 def login_view(request):
     request.session['push_sent'] = None
     form = AuthenticationForm()
+    url = request.path
+    page_config = config['pages'][url]
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
@@ -51,10 +54,17 @@ def login_view(request):
                 login(request, user)
                 return redirect(reverse('index'))
 
-    return render(request, 'frontend/pages/login.html', {'login_form': form})
+    return render(request, 'frontend/pages/login.html', {'login_form': form, 'page_config':page_config})
 
 
 
+
+
+
+@permission_required('api.add_tasks', )
+@permission_required('api.view_tasks', )
+@permission_required('api.change_tasks', )
+@permission_required('api.delete_tasks', )
 def render_schedule(request, pk=None):
 
     user = User.objects.get(username=request.user)
@@ -176,6 +186,8 @@ def render_billing(request, pk=None):
 
 
 
+
+
 @permission_required('api.add_payables', )
 @permission_required('api.add_payables', )
 @permission_required('api.add_payables', )
@@ -187,6 +199,10 @@ def render_payables(request, pk=None):
     return render(request, page_config['template'], data)
 
 
+
+
+
+@login_required()
 def render_settings(request,pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]

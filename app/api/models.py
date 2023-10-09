@@ -97,6 +97,7 @@ class AuthUser(models.Model):
     is_active = models.BooleanField()
     date_joined = models.DateTimeField()
     avatar = models.CharField(blank=True, null=True)
+    fk_employee = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -164,18 +165,23 @@ class Companies(models.Model):
     company_zipcode = models.CharField(max_length=50)
     fk_country = models.ForeignKey('Countries', models.DO_NOTHING, db_column='fk_country')
     company_city = models.CharField(max_length=50)
-    company_internal_alias = models.CharField(max_length=50)
+    company_internal_alias = models.CharField(unique=True, max_length=50)
     company_email = models.CharField(max_length=50, blank=True, null=True)
-    is_customer = models.BooleanField()
-    is_supplier = models.BooleanField()
-    is_subcontractor = models.BooleanField()
+    is_customer = models.BooleanField(blank=True, null=True)
+    is_supplier = models.BooleanField(blank=True, null=True)
+    is_subcontractor = models.BooleanField(blank=True, null=True)
     fk_sys_rec_status = models.ForeignKey('SysRecStates', models.DO_NOTHING, db_column='fk_sys_rec_status')
     custom_fields = models.JSONField(blank=True, null=True)
     is_own_company = models.BooleanField(blank=True, null=True)
+    vat_number = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'companies'
+
+
+
+
 
 
 class Config(models.Model):
@@ -194,6 +200,7 @@ class Countries(models.Model):
     country = models.CharField(max_length=50)
     country_code = models.CharField(max_length=3)
     emoji_code = models.CharField(max_length=10, blank=True, null=True)
+    country_title = models.CharField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -308,10 +315,15 @@ class Employees(models.Model):
     custom_fields = models.JSONField(blank=True, null=True)
     fk_company = models.ForeignKey(Companies, models.DO_NOTHING, db_column='fk_company')
     fk_user = models.ForeignKey(AuthUser, models.DO_NOTHING, db_column='fk_user', blank=True, null=True)
+    avatar = models.BinaryField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'employees'
+
+
+
+
 
 
 class InvoiceStates(models.Model):
@@ -360,6 +372,10 @@ class Payables(models.Model):
     class Meta:
         managed = False
         db_table = 'payables'
+
+
+
+
 
 
 class Projects(models.Model):
@@ -416,7 +432,6 @@ class Sales(models.Model):
         db_table = 'sales'
 
 
-
 class SalesState(models.Model):
     id_sales_state = models.AutoField(primary_key=True)
     sales_state = models.CharField(unique=True, max_length=20)
@@ -424,7 +439,6 @@ class SalesState(models.Model):
     class Meta:
         managed = False
         db_table = 'sales_state'
-
 
 
 class SysRecStates(models.Model):
@@ -435,7 +449,6 @@ class SysRecStates(models.Model):
     class Meta:
         managed = False
         db_table = 'sys_rec_states'
-
 
 
 class TaskStates(models.Model):

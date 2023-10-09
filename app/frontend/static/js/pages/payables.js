@@ -1,61 +1,75 @@
 
-$(document).ready(function(){
-    let page_config
-    let url = '/payables'
-    let lang_cookie = Cookies.get('sisyphus_language');
-
-    $('#btn_close_task' ).remove();
-    //*** read the config file ***//
-    $.ajax({
-          url: '/_config',
-          async: false,
-          dataType: 'json',
-          success: function (response) {
-            page_config = response['pages'][url]
-            translations = response['translations']
-          }
-    });
 
 
+jQuery.fn.setUp = function(page_config, fields) {
 
     // create table instance
+    let lang_cookie = Cookies.get('sisyphus_language');
+
+
+    // Table setup with field form config file
+    let table_fields = {};
+
+    $.each(page_config['table_fields'], (key,value)=>{
+       table_fields[value] = fields[value];
+    })
+
     let table = new BootstrapDataTable({
                         container:'#overview-table',
                         id: page_config['table_id'],
-                        fields: page_config['fields'],
+                        fields: table_fields,
                         ajax_url: page_config['ajax_url'],
                         pk_field: page_config['pk'],
                         language: lang_cookie,
-                        exclude: ['file_upload', 'positions']
-
                     })
+    table.build();
 
+    // filter form instance
 
-    // create form insstances
+    let filter_form_fields = {};
+
+    $.each(page_config['filter_form_fields'], (key,value)=>{
+       filter_form_fields[value] = fields[value];
+    })
+
     let filter_form = new BootstrapForm({
             container: '#form_filter_container',
             id: 'filter_form',
             ajax_url: page_config['ajax_url'],
             validation:false,
-            fields: page_config['fields'],
+            fields: filter_form_fields,
             language: lang_cookie,
-            exclude: ['file_upload']
-
-
-
+            method:'GET'
     })
 
+    filter_form.build();
+
+    // create form instance
+
+    let create_form_fields = {};
+
+    $.each(page_config['create_form_fields'], (key,value)=>{
+       create_form_fields[value] = fields[value];
+    })
 
     let create_form = new BootstrapForm({
             container: '#create_form_container',
             id: 'create_form',
             ajax_url: page_config['ajax_url'],
             validation:true,
-            fields: page_config['fields'],
-            exclude: ['id_payable', 'fk_invoice_status'],
-            required : ['invoice_id', 'fk_terms',  'invoice_date', 'fk_company', 'fk_currency', 'net_total', 'vat', 'total'],
-            language: lang_cookie
+            fields: create_form_fields,
+            required : page_config['create_form_fields_required'],
+            language: lang_cookie,
+            method:'POST'
+    })
 
+    create_form.build();
+
+    // update form instance
+    let update_form_fields = {};
+
+    $.each(page_config['update_form_fields'], (key,value)=>{
+       update_form_fields[value] = fields[value];
     })
 
     let update_form = new BootstrapForm({
@@ -63,54 +77,41 @@ $(document).ready(function(){
             id: 'update_form',
             ajax_url: page_config['ajax_url'],
             validation:true,
-            fields: page_config['fields'],
-            disabled : ['id_payable', 'fk_invoice_status', ],
-            required : ['id_payable', 'invoice_id', 'fk_terms',  'invoice_date', 'fk_company', 'fk_currency', 'net_total', 'vat', 'total'],
+            fields: update_form_fields,
+            disabled : page_config['update_form_fields_disabled'],
+            required : page_config['update_form_fields_required'],
             language: lang_cookie,
-                        exclude: ['file_upload']
-
-
+            method: 'PUT'
 
     })
 
-   // build components
-    table.build();
-    filter_form.build();
-    create_form.build();
     update_form.build();
 
 
-    // add evetn listeners
+
+        // add evetn listeners
     $( "#btn_filter" ).on( "click", function() {
       let query_params = $('#filter_form').serialize();
       table.query_params = '?' + query_params
       table.build();
     });
-
     $( "#btn_reset" ).on( "click", function() {
         $('#filter_form').trigger("reset");
         $('#btn_filter').click();
     });
-
     $( "#btn_add" ).on( "click", function() {
-        let url = page_config['ajax_url']
-        create_form.submit(url, 'POST')
+        create_form.submit(page_config['ajax_url']);
     });
-
-
-
     $( "#btn_save" ).on( "click", function() {
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = page_config['ajax_url'] +pk + '/'
-        update_form.submit(url, 'PUT');
+        update_form.submit(url, 'POST');
     });
 
 
 
     $('#file_upload').on('change', function() {
-        $('#loading_screen_wrapper').toggle();
-
-        console.log(this)
+        $('#loading_screen_wrapper').show();
 
         var that = this;
 
@@ -120,7 +121,6 @@ $(document).ready(function(){
         formData.append("file", this.files[0], this.files[0].name);
         formData.append("upload_file", true);
 
-        console.log(formData)
 
         $.ajax({
             type: "POST",
@@ -141,12 +141,11 @@ $(document).ready(function(){
                         $('#create_form #'+ key).val(value).trigger('change');
 
                     });
-                    $('#loading_screen_wrapper').toggle();
+                    $('#loading_screen_wrapper').hide();
 
             },
             error: function (error) {
                 console.log(error)
-                alert(error);
                 location.reload();
             },
             async: true,
@@ -163,4 +162,4 @@ $(document).ready(function(){
     })
 
 
-});
+}

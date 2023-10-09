@@ -126,6 +126,7 @@ class ConfigViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
+
     def get_queryset(self):
         """
         Optionally restricts the returned purchases to a given user,
@@ -134,21 +135,45 @@ class ConfigViewSet(viewsets.ModelViewSet):
         queryset = Config.objects.all()
         params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
         data = queryset.filter(**params).order_by('-pk')
+
         return data
         #return data
 
+    @action(methods=['POST'], detail=False)
+    def setCompany(self, request):
+        request.data._mutable = True
+
+        request.data['fk_sys_rec_status'] = 1
+        request.data['id_employee'] = 0
+
+        try:
+            instance = Companies.objects.get(id_company=0)
+            srl = CompanySerializer(data=request.data, instance=instance)
+        except Companies.DoesNotExist as e:
+            srl = CompanySerializer(data=request.data)
+
+        if srl.is_valid():
+            srl.save()
+
+            return Response(data={}, status=status.HTTP_200_OK)
+
+        return Response(data={}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=['POST'], detail=False)
     def setDocumentConf(self, request):
 
 
-        file_bytes = request.FILES['file'].read()
 
-        logo = ('logo', '', file_bytes)
-        logo_width = ('logo_width', request.data['logo_width'], None)
-        logo_height = ('logo_height', request.data['logo_height'], None)
-        logo_x_offset = ('logo_x_offset', request.data['logo_x_offset'], None)
-        logo_y_offset = ('logo_y_offset', request.data['logo_y_offset'], None)
+        content_type, binaries = request.data['file'].split(',')
+        data = base64.b64decode(binaries)
+
+        print(binaries)
+
+        logo = ('doc_logo', content_type, data)
+        logo_width = ('doc_logo_width', request.data['doc_logo_width'], None)
+        logo_height = ('doc_logo_height', request.data['doc_logo_height'], None)
+        logo_x_offset = ('doc_logo_x_offset', request.data['doc_logo_x_offset'], None)
+        logo_y_offset = ('doc_logo_y_offset', request.data['doc_logo_y_offset'], None)
 
         params = [logo, logo_width, logo_height, logo_x_offset, logo_y_offset]
 
@@ -229,11 +254,15 @@ class CompanyViewSet(viewsets.ModelViewSet):
         Optionally restricts the returned purchases to a given user,
         by filtering against a `username` query parameter in the URL.
         """
+        print(self.request.query_params)
+
         queryset = Companies.objects.all()
 
         params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
 
+
         data = queryset.filter(**params).order_by('-pk')
+
         return data
 
 
@@ -435,6 +464,27 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         data = queryset.filter(**params).order_by('-pk')
         return data
 
+
+
+
+
+    @action(methods=['GET'], detail=False)
+    def get_employee_by_username(self, request):
+        try:
+            user_id = AuthUser.objects.get(username=request.user).pk
+
+            employee = Employees.objects.get(fk_user=user_id)
+
+            srl = EmployeeSerializer(instance=employee)
+
+            return Response(srl.data, status=status.HTTP_200_OK)
+        except AuthUser.DoesNotExist:
+            return Response({'message' : 'User Does Not Exist'}, status.HTTP_200_OK)
+        except Employees.DoesNotExist:
+            return Response({'message' : 'Employee Does Not Exist'}, status.HTTP_200_OK)
+
+
+
 class InvoiceStateViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -517,12 +567,17 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
         return data
 
 
+
     @transaction.atomic
     def create(self, request):
         try:
             sales = []
             tasks = []
             request.data._mutable = True
+
+
+
+            print(request.data)
             if 'sales[]' in request.data and len(request.data['sales[]']) > 0:
                 sales = Sales.objects.filter(id_sale__in=request.data.pop('sales[]'))
             if 'tasks[]' in request.data and len(request.data['tasks[]']) > 0:
@@ -533,6 +588,7 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
 
             request.data['fk_invoice_state'] = 1
             request.data['invoice_date'] = dt.date.today().strftime('%Y-%m-%d')
+            request.data['discount'] = float(request.data['discount']) / 100
 
             with transaction.atomic():
                 serializer = ReceivablesSerializer(data=request.data)
@@ -567,11 +623,11 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
 
                 doc = Invoice(invoice.pk,  invoice.invoice_date, invoice.invoice_text, vat.vat, currency.currency_abbreviation, currency.currency_account_nr, terms.due_days, language='de',output_path=settings.TMP_FOLDER, discount=invoice.discount)
 
-                doc.set_logo(logo=Config.objects.get(config_key='logo').value_bytes,
-                             logo_width=Config.objects.get(config_key='logo_width').value_string,
-                             logo_height=Config.objects.get(config_key='logo_height').value_string,
-                             logo_x=Config.objects.get(config_key='logo_x_offset').value_string,
-                             logo_y=Config.objects.get(config_key='logo_y_offset').value_string
+                doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
+                             logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
+                             logo_height=Config.objects.get(config_key='doc_logo_height').value_string,
+                             logo_x=Config.objects.get(config_key='doc_logo_x_offset').value_string,
+                             logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
                              )
 
                 customer = project.fk_customer
@@ -584,6 +640,7 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
 
                 doc.set_company(**company_detail)
 
+
                 for task in tasks:
                     doc.add_position(
                         position_id=task.id_task,
@@ -595,6 +652,8 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
                         unit_price=task.unit_price,
                         pos_type='T'
                     )
+
+
 
 
 
@@ -621,10 +680,12 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
 
                 return Response({'file_url': url}, status=status.HTTP_200_OK)
         except ValueError as v:
+            print(v)
             return Response({'message': str(v)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             print(e)
             return Response({'message': 'Unknown Error'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
@@ -679,11 +740,11 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
 
                 )
 
-                doc.set_logo(logo=Config.objects.get(config_key='logo').value_bytes,
-                             logo_width=Config.objects.get(config_key='logo_width').value_string,
-                             logo_height=Config.objects.get(config_key='logo_height').value_string,
-                             logo_x=Config.objects.get(config_key='logo_x_offset').value_string,
-                             logo_y=Config.objects.get(config_key='logo_y_offset').value_string
+                doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
+                             logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
+                             logo_height=Config.objects.get(config_key='doc_logo_height').value_string,
+                             logo_x=Config.objects.get(config_key='doc_logo_x_offset').value_string,
+                             logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
                              )
 
                 doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
@@ -739,12 +800,11 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
                 currency.currency_abbreviation
             )
 
-
-            doc.set_logo(logo=Config.objects.get(config_key='logo').value_bytes,
-                         logo_width=Config.objects.get(config_key='logo_width').value_string,
-                         logo_height=Config.objects.get(config_key='logo_height').value_string,
-                         logo_x=Config.objects.get(config_key='logo_x_offset').value_string,
-                         logo_y=Config.objects.get(config_key='logo_y_offset').value_string
+            doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
+                         logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
+                         logo_height=Config.objects.get(config_key='doc_logo_height').value_string,
+                         logo_x=Config.objects.get(config_key='doc_logo_x_offset').value_string,
+                         logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
                          )
 
 
@@ -778,11 +838,11 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
                           output_path=settings.TMP_FOLDER,
                           discount=invoice.discount)
 
-            doc.set_logo(logo=Config.objects.get(config_key='logo').value_bytes,
-                         logo_width=Config.objects.get(config_key='logo_width').value_string,
-                         logo_height=Config.objects.get(config_key='logo_height').value_string,
-                         logo_x=Config.objects.get(config_key='logo_x_offset').value_string,
-                         logo_y=Config.objects.get(config_key='logo_y_offset').value_string
+            doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
+                         logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
+                         logo_height=Config.objects.get(config_key='doc_logo_height').value_string,
+                         logo_x=Config.objects.get(config_key='doc_logo_x_offset').value_string,
+                         logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
                          )
 
 
@@ -1487,18 +1547,20 @@ class PayablesViewSet(viewsets.ModelViewSet):
             srl.save()
             return Response({'data': srl.data}, status=status.HTTP_200_OK)
         else:
+            print(srl.errors)
             return Response({'message': 'Something is wrong'}, status=status.HTTP_404_NOT_FOUND)
+
+
 
 
 
     @action(detail=False, methods=['POST'])
     def extract_data(self, request):
+        print(request.data)
 
-        try:
-            endpoint = Config.objects.get(config_key='ms_form_recoginizer_endpoint')
-            key = Config.objects.get(config_key='ms_form_recognizer_key')
-        except ObjectDoesNotExist:
-            return Response({'message': 'Form recognizer connection was not specified'}, status=status.HTTP_404_NOT_FOUND)
+        endpoint = Config.objects.get(config_key='ms_form_recoginizer_endpoint')
+        key = Config.objects.get(config_key='ms_form_recognizer_key')
+
 
         key_string = bytes(key.value_bytes).decode("utf-8")
         secret_key = settings.SECRET_KEY.encode("utf-8")
@@ -1513,15 +1575,6 @@ class PayablesViewSet(viewsets.ModelViewSet):
         pdf = request.FILES['file'].open()
         data = rec.analyse_invoice(pdf)
         print(data)
-
-
-
-
-
-
-
-
-
 
         vendor = re.sub(r'\W+', '', data['vendor_name'])
         comp = Companies.objects.annotate(lev_dist=Levenshtein(F('company_name'), vendor)).order_by('lev_dist')
@@ -1576,12 +1629,6 @@ class PayablesViewSet(viewsets.ModelViewSet):
             tax = data['tax']['value']['amount']
             currency = []
 
-
-
-
-
-
-
         response = {
 
             'fk_company' : comp[0].id_company if len(comp) > 0 else '',
@@ -1589,18 +1636,15 @@ class PayablesViewSet(viewsets.ModelViewSet):
             'fk_terms' : InvoiceTerms.objects.filter(due_days__lte=due_days).order_by('-due_days')[0].id_invoice_term,
             'invoice_date' : data['invoice_date'],
             'fk_currency' : currency[0].id_currency if len(currency) > 0 else '',
-            'vat' : tax,
-            'net_total' : net_total,
-            'total' : total,
+            'vat' : float(tax),
+            'net_total' : float(net_total),
+            'total' : float(total),
             'positions': data['items']
         }
 
 
 
         return Response(response, status=status.HTTP_200_OK)
-
-
-
 
 
 

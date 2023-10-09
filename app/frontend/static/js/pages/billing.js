@@ -32,12 +32,12 @@ jQuery.fn.setUp = function(page_config, fields) {
     })
 
     let sales_table = new BootstrapDataTable({
-                        container:'#overview-table',
+                        container:'#sales_billing',
                         id: 'sales_billing_table',
                         fields: sales_table_fields,
                         ajax_url: '/api/sales/',
                         query_params: '?fk_sales_status=1&fk_clearing_type=2',
-                        pk_field: page_config['pk'],
+                        pk_field: 'id_sale',
                         language: lang_cookie,
                     })
     sales_table.build();
@@ -50,18 +50,111 @@ jQuery.fn.setUp = function(page_config, fields) {
     })
 
     let task_table = new BootstrapDataTable({
-                        container:'#overview-table',
+                        container:'#task_billing',
                         id: "task_billing_table",
                         fields: task_table_fields,
                         ajax_url: '/api/tasks/',
                         query_params: '?fk_task_state=4&fk_clearing_type=2',
                         ajax_url: page_config['ajax_url'],
-                        pk_field: page_config['pk'],
+                        pk_field: 'id_task',
                         language: lang_cookie,
                     })
     task_table.build();
 
+    $('#fk_project, #fk_vat, #fk_currency').on('change', function() {
+      let query_params = $('#create_form').serialize();
+      console.log(query_params)
+      let project = 'fk_project=' + $('#fk_project').val();
+      let vat = '&fk_vat=' + $('#fk_vat').val();
+      let currency = '&fk_currency='+ $('#fk_currency').val();
+
+      sales_table.query_params = '?' + project+ vat+currency+ '&fk_sales_status=1&fk_clearing_type=2'
+      task_table.query_params = '?' + project+ vat+currency+'&fk_task_state=4&fk_clearing_type=2'
+      sales_table.build();
+      task_table.build();
+
+
+    });
+
+    $( "#btn_reset" ).on( "click", function() {
+        $('#filter_form').trigger("reset");
+        $('#btn_filter').click();
+        sales_table.query_params = '?fk_sales_status=2&fk_clearing_type=2'
+        sales_table.build()
+        task_table.query_params = '?fk_task_state=4&fk_clearing_type=2'
+        task_table.build()
+    });
+
+
+    $('#btn_add').on('click', function() {
+        create_form.validate()
+
+        if (create_form.is_valid == false) {
+            return
+        }
+
+        let form_data = create_form.serialize();
+
+        let sales = []
+        $('#sales_billing_table tbody td:first-child input:checked').each(function(){
+            let selected = $(this)[0].checked
+            if (selected){
+                sales.push($(this).parent().parent().attr('data-row-pk'))
+            }
+
+        })
+
+        let tasks = []
+        $('#task_billing_table tbody td:first-child input:checked').each(function(){
+            let selected = $(this)[0].checked
+            if (selected){
+                tasks.push($(this).parent().parent().attr('data-row-pk'))
+            }
+
+        })
+
+        console.log(tasks)
+
+        if ((tasks.length == 0) && (sales.length == 0)){
+            return
+        }
+
+        let data = {
+            'fk_project': $('#fk_project').val(),
+            'fk_vat': $('#fk_vat').val(),
+            'fk_currency': $('#fk_currency').val(),
+            'invoice_text' : $('#invoice_text').val(),
+            'fk_invoice_terms': $('#fk_invoice_terms').val(),
+            'discount' : $('#discount').val(),
+            'sales' : sales,
+            'tasks' : tasks,
+        }
+
+        $('#loading_screen_wrapper').toggle();
+
+        $.ajax({
+           url: '/api/receivables/',
+           type: 'POST',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           data:data,
+
+           success: function(response) {
+                $('#loading_screen_wrapper').toggle();
+                var doc = window.open(response['file_url'], '_blank');
+                location.reload();
+                doc.focus();
+
+           },
+           error: function(error){
+            alert(error['responseJSON']['message'])
+            location.reload();
+           }
+        });
+
+    })
+
 }
+
 
 /*
 $(document).ready(function(){

@@ -15,7 +15,6 @@ class Scheduler{
           this.set_date_url = '/api/tasks/setDate/'
           this.schedule_date = Cookies.get('scheduler_date')  || new Date().toISOString().split('T')[0];
           this.excluded_employee_types = (Cookies.get('excluded_employee_types')  || '').split(',');
-          console.log(this.excluded_employee_types)
           this.employee_label= employee_label
           this.employee_type_label = employee_type_label
           this.asset_label= asset_label
