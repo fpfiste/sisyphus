@@ -2,6 +2,9 @@
 
 {
   "translations": {
+        "home_greeting" : {"en": "Hi", "ch": "Hallo"},
+        "home_ongoing_tasks" : {"en" :  "Ongoing Tasks", "ch":  "Laufende Aufträge"},
+        "home_news" : {"en" :  "Messages", "ch":  "Nachrichten"},
         "password_input_label" : {"en":  "Password", "ch": "Passwort"},
         "user_input_label" : {"en":  "Username", "ch": "Benutzer"},
         "sidebar_title_planning": {"en": "Planning", "ch": "Planung"},

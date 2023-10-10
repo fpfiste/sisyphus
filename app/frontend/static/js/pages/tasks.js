@@ -180,7 +180,7 @@ jQuery.fn.setUp = function(page_config, fields) {
            error: function(error){
             console.log(error)
             alert(error);
-            loaction.reload();
+            location.reload();
            }
         });
     })

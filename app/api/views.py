@@ -464,7 +464,11 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         data = queryset.filter(**params).order_by('-pk')
         return data
 
-
+    @action(methods=['GET'], detail=False)
+    def get_active_user(self, request):
+        user = AuthUser.objects.get(username=request.user)
+        data = {'firstname' : user.first_name}
+        return Response(data, status=status.HTTP_200_OK)
 
 
 
@@ -1176,8 +1180,6 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = TaskSerializer(instance=task)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-
     def get_queryset(self):
         """
         Optionally restricts the returned purchases to a given user,
@@ -1471,6 +1473,18 @@ class TaskViewSet(viewsets.ModelViewSet):
         }
 
         return Response(data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'])
+    def get_ongoing_tasks(self, request):
+        ts = dt.datetime.now()
+
+        date = ts.date()
+        time = ts.time()
+        tasks = Tasks.objects.filter(task_date_from__lte=date, task_time_from__lte=time, task_date_to__gte=date, task_time_to__gte=time)
+
+        srl = TaskSerializer(data=tasks)
+
+        return Response(srl.data, status=status.HTTP_200_OK)
 
 class UnitViewSet(viewsets.ModelViewSet):
     """

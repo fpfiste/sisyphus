@@ -35,8 +35,6 @@ def send_config(request):
     return  JsonResponse(config)
 
 
-
-
 def login_view(request):
     request.session['push_sent'] = None
     form = AuthenticationForm()
@@ -175,7 +173,7 @@ def render_invoices(request, pk=None):
 
 
 
-@permission_required('api.add_invoices', )
+@permission_required('api.add_receivables', )
 @permission_required('api.view_tasks',)
 def render_billing(request, pk=None):
     url = request.path.split('/' + str(pk))[0]

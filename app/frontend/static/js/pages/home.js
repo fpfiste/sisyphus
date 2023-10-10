@@ -4,6 +4,22 @@ jQuery.fn.setUp = function(page_config, fields) {
     // create table instance
     let lang_cookie = Cookies.get('sisyphus_language');
 
+    // GET THE ACTIVE USER
+    $.ajax({
+          url: '/api/employees/get_active_user/',
+          async: true,
+          dataType: 'json',
+          success: function (response) {
+            let greeting = $('#home_greeting').text()
+            console.log(greeting)
+            $('#home_greeting').text(greeting + ', '+ response['firstname'])
+            console.log($('#home_greeting').text())
+
+
+          }
+    });
+
+
     //*** read the open tasks ***//
     $.ajax({
           url: '/api/tasks/getoverview/',
