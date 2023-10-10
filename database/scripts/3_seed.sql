@@ -94,3 +94,8 @@ COPY public.companies(id_company,company_name,company_street,company_zipcode,fk_
 FROM '/docker-entrypoint-initdb.d/companies.csv'
 DELIMITER ','
 CSV HEADER;
+
+COPY public.config(config_key, value_string)
+FROM '/docker-entrypoint-initdb.d/config.csv'
+DELIMITER ','
+CSV HEADER;
