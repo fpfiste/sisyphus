@@ -356,8 +356,9 @@ class CountryViewSet(viewsets.ModelViewSet):
         """
         queryset = Countries.objects.all()
         params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
+        data = queryset.filter(**params).order_by('pk')
         return data
+
 
 
 
@@ -592,16 +593,15 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
 
             request.data['fk_invoice_state'] = 1
             request.data['invoice_date'] = dt.date.today().strftime('%Y-%m-%d')
-            request.data['discount'] = float(request.data['discount']) / 100
+            request.data['discount'] = float(request.data['discount']) / 100 if request.data['discount'] != "" else 0.00
 
             with transaction.atomic():
                 serializer = ReceivablesSerializer(data=request.data)
 
                 if not serializer.is_valid():
+                    print(serializer.errors)
                     return Response({'message': 'Something is wrong with your input'},
                                     status=status.HTTP_400_BAD_REQUEST)
-
-
 
 
 
