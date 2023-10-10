@@ -850,7 +850,7 @@
       "ajax_url" : "/api/config",
       "message": {"en":  "You do not have the required permissions to see this page. Contact the System administrator.", "ch":  "Du hast nicht die benötigen Rechte für diese Seite. Kontaktiere den Administrator. "},
       "template" : "frontend/pages/403.html",
-       "js": "/static/js/403.js"
+       "js": "/static/js/pages/403.js"
      },
     "/accounts/login/": {
       "title": {"en": "Settings", "ch": "Einstellungen"},
