@@ -845,6 +845,12 @@
        "doc_config_fields" : ["file_upload","doc_logo_width", "doc_logo_height", "doc_logo_x_offset", "doc_logo_y_offset", "doc_logo", "image_binary"],
        "doc_config_fields_required" : ["doc_logo_width", "doc_logo_height", "doc_logo_x_offset", "doc_logo_y_offset", "image_binary"]
      },
+     "/errors/403": {
+      "title": {"en": "Permission Denied", "ch": "Zugang verweigert"},
+      "ajax_url" : "/api/config",
+      "message": {"en":  "You do not have the required permissions to see this page. Contact the System administrator.", "ch":  "Du hast nicht die benötigen Rechte für diese Seite. Kontaktiere den Administrator. "},
+      "template" : "frontend/pages/403.html"
+     },
     "/accounts/login/": {
       "title": {"en": "Settings", "ch": "Einstellungen"},
       "ajax_url" : "",
