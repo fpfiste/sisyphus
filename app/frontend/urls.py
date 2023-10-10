@@ -20,4 +20,5 @@ urlpatterns = [
     path('settings', views.render_settings, name='settings'),
     path('accounts/logout/', views.logout_view, name='logout'),
     path('accounts/login/', views.login_view, name='login'),
+    path('errors/403', views.render_403, name='error_403'),
 ]

@@ -173,8 +173,8 @@ def render_invoices(request, pk=None):
 
 
 
-@permission_required('api.add_receivables', )
-@permission_required('api.view_tasks',)
+@permission_required('api.add_receivables', '/errors/403')
+@permission_required('api.view_tasks', '/errors/403s')
 def render_billing(request, pk=None):
     url = request.path.split('/' + str(pk))[0]
 
@@ -209,6 +209,14 @@ def render_settings(request,pk=None):
             'user': user_detail}
     return render(request, page_config['template'], data)
 
+@login_required()
+def render_403(request,pk=None):
+    url = request.path.split('/' + str(pk))[0]
+    page_config = config['pages'][url]
+    user_detail = User.objects.get(username=request.user)
+    data = {'page_config': page_config,
+            'user': user_detail}
+    return render(request, page_config['template'], data)
 
 
 
