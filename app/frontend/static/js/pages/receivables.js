@@ -85,15 +85,17 @@ jQuery.fn.setUp = function(page_config, fields) {
            type: 'GET',
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
+           console.log(response)
                 var doc = window.open(response['file_url'], '_blank');
 
                 location.reload();
                 doc.focus();
            },
            error: function(error){
+           console.log(error)s
             alert(error)
             location.reload();
-            console.log(error)
+
            }
         });
     })

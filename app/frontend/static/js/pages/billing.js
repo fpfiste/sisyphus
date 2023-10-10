@@ -139,6 +139,7 @@ jQuery.fn.setUp = function(page_config, fields) {
            data:data,
 
            success: function(response) {
+                console.log(response)
                 $('#loading_screen_wrapper').toggle();
                 var doc = window.open(response['file_url'], '_blank');
                 location.reload();

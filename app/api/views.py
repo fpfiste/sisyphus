@@ -688,7 +688,7 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
             return Response({'message': str(v)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             print(e)
-            return Response({'message': 'Unknown Error'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
