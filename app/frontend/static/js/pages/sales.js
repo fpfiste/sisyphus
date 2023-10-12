@@ -143,7 +143,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     $('#btn_delete').on('click', function() {
         update_form.required = ['id_task']
         let pk = $('#update_form #' + page_config['pk']).val()
-        let url = '/api/tasks/' + pk + '/'
+        let url = '/api/sales/' + pk + '/'
 
         let task_state = $('#fk_task_state').val()
 
@@ -156,7 +156,8 @@ jQuery.fn.setUp = function(page_config, fields) {
     })
 
     $('#btn_print').on('click', function() {
-        $('#loading_screen_wrapper').show();
+        $('#loading_screen_wrapper').toggle();
+
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/sales/' + pk + '/pdf/'
         $.ajax({
@@ -165,46 +166,48 @@ jQuery.fn.setUp = function(page_config, fields) {
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
                 console.log(response)
-                $('#loading_screen_wrapper').hide();
                 window.open(response['file_url'], '_blank').focus();
-
+                    $('#loading_screen_wrapper').toggle();
 
            },
            error: function(error){
-            console.log(error)
-            alert(error);
-            loaction.reload();
+           console.log(error)
+           alert(error)
+           location.reload()
+
            }
         });
     })
 
 
 
-
     $('#update_modal').on('show.bs.modal', function() {
-        let task_status = $('#update_form #fk_task_state').val()
+            $('#loading_screen_wrapper').toggle();
+
+        let task_status = $('#update_form #fk_sales_status').val()
         console.log(task_status)
         if (
-            (task_status == "4") ||
-            (task_status == "5") ||
-            (task_status == "6")
+            (task_status == "3") ||
+            (task_status == "2") ||
+            (task_status == "-1")
         ){
-                $('#update_form').find('input').prop('disabled', true)
+
+                $('#update_form').find(':input').prop('disabled', true)
                 $('#btn_delete').prop('disabled', true)
                 $('#btn_close_task').prop('disabled', true)
                 $('#btn_save').prop('disabled', true)
 
         } else {
-            $('#update_form').find('input').prop('disabled', false)
-            $('#update_form #id_task').prop('disabled', true);
-            $('#update_form #fk_task_state').prop('disabled', true);
+            $('#update_form').find(':input').prop('disabled', false)
+            $('#update_form #id_sale').prop('disabled', true);
+            $('#update_form #fk_sales_status').prop('disabled', true);
             $('#btn_delete').prop('disabled', false)
             $('#btn_close_task').prop('disabled', false)
             $('#btn_save').prop('disabled', false)
         }
+            $('#loading_screen_wrapper').toggle();
 
     })
-
 };
 
 
