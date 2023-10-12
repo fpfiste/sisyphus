@@ -1,2 +1,2 @@
 "id_company","company_name","company_street","company_zipcode","fk_country","company_city","company_internal_alias","company_email","is_customer","is_supplier","is_subcontractor","fk_sys_rec_status","is_own_company","vat_number"
-0,xxxxxx,xxxxxx,XXXXX,1,XXXXX,XXXXX,,false,false,false,1,true,NULL
+0,xxxxxx,xxxxxx,XXXXX,1,XXXXX,XXXXX,,false,false,false,1,true,XXXXXX

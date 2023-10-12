@@ -158,7 +158,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     $('#btn_print').on('click', function() {
         $('#loading_screen_wrapper').show();
         let pk = $('#update_form #' + page_config['pk']).val()
-        let url = '/api/tasks/' + pk + '/pdf/'
+        let url = '/api/sales/' + pk + '/pdf/'
         $.ajax({
            url: url,
            type: 'GET',

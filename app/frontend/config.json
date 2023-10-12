@@ -240,6 +240,12 @@
           "display_type": "text",
           "input_type": "email_input"
         },
+        "phone_number": {
+          "title": {"en": "Phone", "ch": "Telefon"},
+          "display_type": "text",
+          "input_type": "text_input"
+
+        },
         "is_customer": {
           "title": {"en": "Customer", "ch": "Kunde"},
           "display_type": "checkbox",
@@ -839,8 +845,8 @@
       "profile_fields" : ["id_employee","employee_first_name", "employee_last_name","employee_street", "employee_zipcode", "employee_city", "fk_country", "employee_email", "employee_cell_phone"],
       "profile_fields_required" : ["id_employee","employee_first_name", "employee_last_name","employee_street", "employee_zipcode", "employee_city", "fk_country"],
       "profile_fields_disabled" : ["id_employee"],
-      "company_fields" :  ["id_company","company_internal_alias","company_name", "company_street","company_zipcode", "company_city", "fk_country", "vat_number"],
-      "company_fields_required" : ["id_company","company_internal_alias","company_name", "company_street","company_zipcode", "company_city", "fk_country"],
+      "company_fields" :  ["id_company","company_internal_alias","company_name", "company_street","company_zipcode", "company_city", "fk_country", "vat_number", "company_email", "phone_number"],
+      "company_fields_required" : ["id_company","company_internal_alias","company_name", "company_street","company_zipcode", "company_city", "fk_country", "company_email", "phone_number"],
       "company_fields_disabled" : ["id_company"],
        "doc_config_fields" : ["file_upload","doc_logo_width", "doc_logo_height", "doc_logo_x_offset", "doc_logo_y_offset", "doc_logo", "image_binary"],
        "doc_config_fields_required" : ["doc_logo_width", "doc_logo_height", "doc_logo_x_offset", "doc_logo_y_offset", "image_binary"]

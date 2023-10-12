@@ -642,8 +642,11 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
                 company_detail = settings.COMPANY
                 company_detail['agent'] = request.user
 
-                doc.set_company(**company_detail)
-
+                company = Companies.objects.get(id_company=0)
+                doc.set_company(name=company.company_name, address=company.company_street,
+                                pcode=company.company_zipcode, city=company.company_city,
+                                country=company.fk_country.country_code, email=company.company_email,
+                                vat_number=company.vat_number, agent=request.user, phone=company.phone_number)
 
                 for task in tasks:
                     doc.add_position(
@@ -760,7 +763,11 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
                 company_detail = settings.COMPANY
                 company_detail['agent'] = request.user
 
-                doc.set_company(**company_detail)
+                company = Companies.objects.get(id_company=0)
+                doc.set_company(name=company.company_name, address=company.company_street,
+                                pcode=company.company_zipcode, city=company.company_city,
+                                country=company.fk_country.country_code, email=company.company_email,
+                                vat_number=company.vat_number, agent=request.user, phone=company.phone_number)
 
                 doc.draw()
 
@@ -821,7 +828,11 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
             company_detail = settings.COMPANY
             company_detail['agent'] = request.user
 
-            doc.set_company(**company_detail)
+            company = Companies.objects.get(id_company=0)
+            doc.set_company(name=company.company_name, address=company.company_street, pcode=company.company_zipcode,
+                            city=company.company_city, country=company.fk_country.country_code,
+                            email=company.company_email, vat_number=company.vat_number, agent=request.user,
+                            phone=company.phone_number)
 
             doc.draw()
         else:
@@ -857,7 +868,11 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
             company_detail = settings.COMPANY
             company_detail['agent'] = request.user
 
-            doc.set_company(**company_detail)
+            company = Companies.objects.get(id_company=0)
+            doc.set_company(name=company.company_name, address=company.company_street, pcode=company.company_zipcode,
+                            city=company.company_city, country=company.fk_country.country_code,
+                            email=company.company_email, vat_number=company.vat_number, agent=request.user,
+                            phone=company.phone_number)
 
             for task in tasks:
                 doc.add_position(
@@ -1015,11 +1030,11 @@ class SalesViewSet(viewsets.ModelViewSet):
 
         doc = DeliveryNote('de', output_path=settings.TMP_FOLDER)
 
-        doc.set_logo(logo=Config.objects.get(config_key='logo').value_bytes,
-                     logo_width=Config.objects.get(config_key='logo_width').value_string,
-                     logo_height=Config.objects.get(config_key='logo_height').value_string,
-                     logo_x=Config.objects.get(config_key='logo_x_offset').value_string,
-                     logo_y=Config.objects.get(config_key='logo_y_offset').value_string
+        doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
+                     logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
+                     logo_height=Config.objects.get(config_key='doc_logo_height').value_string,
+                     logo_x=Config.objects.get(config_key='doc_logo_x_offset').value_string,
+                     logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
                      )
 
         sale = Sales.objects.get(pk=pk)
@@ -1030,9 +1045,12 @@ class SalesViewSet(viewsets.ModelViewSet):
         company_detail = settings.COMPANY
         company_detail['agent'] = request.user
 
+        company = Companies.objects.get(id_company=0)
+        doc.set_company(name=company.company_name, address=company.company_street, pcode=company.company_zipcode,
+                        city=company.company_city, country=company.fk_country.country_code, email=company.company_email,
+                        vat_number=company.vat_number, agent=request.user, phone=company.phone_number)
 
-        doc.set_company(**company_detail)
-
+        print(sale.amount)
         doc.add_position(
             sale.id_sale,
             sale.sale_date,
@@ -1044,6 +1062,7 @@ class SalesViewSet(viewsets.ModelViewSet):
             sale.customer_reference
 
         )
+
 
         doc.draw()
 
@@ -1377,12 +1396,14 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         doc = DeliveryNote('de', output_path=settings.TMP_FOLDER)
 
-        doc.set_logo(logo=Config.objects.get(config_key='logo').value_bytes,
-                     logo_width=Config.objects.get(config_key='logo_width').value_string,
-                     logo_height=Config.objects.get(config_key='logo_height').value_string,
-                     logo_x=Config.objects.get(config_key='logo_x_offset').value_string,
-                     logo_y=Config.objects.get(config_key='logo_y_offset').value_string
+        doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
+                     logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
+                     logo_height=Config.objects.get(config_key='doc_logo_height').value_string,
+                     logo_x=Config.objects.get(config_key='doc_logo_x_offset').value_string,
+                     logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
                      )
+
+
 
 
         task = Tasks.objects.get(pk=pk)
@@ -1394,19 +1415,23 @@ class TaskViewSet(viewsets.ModelViewSet):
         company_detail['agent'] = request.user
 
 
-        doc.set_company(**company_detail)
+        company = Companies.objects.get(id_company=0)
+        doc.set_company(name= company.company_name, address= company.company_street, pcode=company.company_zipcode,city=company.company_city,country=company.fk_country.country_code,email=company.company_email, vat_number=company.vat_number, agent=request.user, phone=company.phone_number)
 
+        print(task.amount)
         doc.add_position(
             task.id_task,
             task.task_date_to,
             task.task_time_to,
             task.description,
-            task.fk_unit.unit,
-            task.amount,
+            task.fk_unit.unit if task.fk_unit else '',
+            task.amount ,
 
             task.customer_reference
 
         )
+
+
 
         doc.draw()
 
