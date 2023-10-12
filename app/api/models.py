@@ -174,14 +174,11 @@ class Companies(models.Model):
     custom_fields = models.JSONField(blank=True, null=True)
     is_own_company = models.BooleanField(blank=True, null=True)
     vat_number = models.CharField(max_length=100, blank=True, null=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'companies'
-
-
-
-
 
 
 class Config(models.Model):
@@ -322,10 +319,6 @@ class Employees(models.Model):
         db_table = 'employees'
 
 
-
-
-
-
 class InvoiceStates(models.Model):
     id_invoice_state = models.AutoField(primary_key=True)
     invoice_state = models.CharField(max_length=20)
@@ -372,10 +365,6 @@ class Payables(models.Model):
     class Meta:
         managed = False
         db_table = 'payables'
-
-
-
-
 
 
 class Projects(models.Model):

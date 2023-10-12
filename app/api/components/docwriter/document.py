@@ -71,18 +71,20 @@ class Document():
         #c.translate(10, 100)
 
         ## Logo
-        c.scale(1, -1)
-        c.setLineWidth(0.2)
-        x_margin = self.logo['logo_x'] * cm
-        y_margin = self.logo['logo_y'] * cm
-        w = self.logo['logo_width'] * cm
-        h = self.logo['logo_height'] *cm
 
-        image = ImageReader(io.BytesIO(self.logo['logo']))
-        c.drawImage(image, x_margin, -( y_margin+h), width=w, height=h)
-        # Title Section
-        # Again Inverting Scale For strings insertion
-        c.scale(1, -1)
+
+        if self.logo['logo'] not in (None, ''):
+            c.scale(1, -1)
+            c.setLineWidth(0.2)
+            x_margin = self.logo['logo_x'] * cm
+            y_margin = self.logo['logo_y'] * cm
+            w = self.logo['logo_width'] * cm
+            h = self.logo['logo_height'] * cm
+            image = ImageReader(io.BytesIO(self.logo['logo']))
+            c.drawImage(image, x_margin, -( y_margin+h), width=w, height=h)
+            # Title Section
+            # Again Inverting Scale For strings insertion
+            c.scale(1, -1)
         # Again Setting the origin back to (0,0) of top-left
         #·c.translate(-10, -40)
 
@@ -102,7 +104,8 @@ class Document():
         c.drawString(2 * cm, 6 * cm,  self.company['name'])
         c.drawString(2 * cm, 6.5 * cm, self.company['address'])
         c.drawString(2 * cm, 7 * cm, f'{self.company["country"]}-{self.company["pcode"]} {self.company["city"]}')
-        c.drawString(2 * cm, 7.5 * cm, f"MWST-NR: { self.company['vat_number']}")
+        if self.company['vat_number'] not in (None, ''):
+            c.drawString(2 * cm, 7.5 * cm, f"MWST-NR: { self.company['vat_number']}")
 
         return c
 

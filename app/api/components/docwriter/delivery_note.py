@@ -1,3 +1,4 @@
+import decimal
 
 from .document import Document
 from reportlab.lib.units import cm
@@ -76,8 +77,13 @@ class DeliveryNote(Document):
 
         ypos = 17
         c.setFont("Helvetica", 10)
-        c.drawRightString(16.5 * cm, ypos * cm, self.position['unit'])
-        c.drawRightString(19 * cm, ypos * cm, "%.2f" % self.position["amount"])
+
+        if self.position['unit'] not in (None, ''):
+            c.drawRightString(16.5 * cm, ypos * cm, self.position['unit'])
+
+        print(type(self.position['amount']))
+        if  isinstance(self.position['amount'], (int, float, decimal.Decimal)):
+            c.drawRightString(19 * cm, ypos * cm, "%.2f" % self.position["amount"])
 
 
         ypos = self.addy(ypos, c, 3)
@@ -100,6 +106,7 @@ class DeliveryNote(Document):
         c.showPage()
 
         c.save()
+
 
         return
 
