@@ -92,7 +92,7 @@ jQuery.fn.setUp = function(page_config, fields) {
                 doc.focus();
            },
            error: function(error){
-           console.log(error)s
+           console.log(error)
             alert(error)
             location.reload();
 
