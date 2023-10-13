@@ -80,7 +80,17 @@ class CustomModelViewSet(viewsets.ModelViewSet):
 
             srl = self.get_serializer_class()(self.queryset, many=True)
 
-            data = srl.data[page_start:page_end]
+            if params.get('LIMIT'):
+                page_size = int(params.pop('LIMIT'))
+                if params.get('PAGE'):
+                    page = int(params.pop('PAGE'))
+                else:
+                    page = 1
+
+                data = srl.data[page_start:page_end]
+            else:
+                data = srl.data
+
             num_pages = len(srl.data) // page_size + 1
 
             data = {

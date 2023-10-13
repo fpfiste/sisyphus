@@ -158,16 +158,13 @@ class BootstrapDataTable{
 
       build(){
             let url = this.ajax_url + '?LIMIT=' + this.page_size + '&PAGE=' + this.page+ '&'  + this.query_params
-            console.log(url)
         $.when(
 
             this.ajax_call(url, 'GET')
         ).done((data)=> {
-            console.log(data)
             this.data = data['data'];
             this.max_pages = data['num_pages']
             this.page = data['page']
-            console.log(data['page'])
             this.build_grid();
             this.populate();
             this.draw_event_handlers();
@@ -215,7 +212,6 @@ class BootstrapDataTable{
             });
 
             $('#id_page_size').on('change', (event)=> {
-                console.log(this.page_size)
                 this.page_size = $('#id_page_size').val();
 
                 this.build();
@@ -247,7 +243,6 @@ class BootstrapDataTable{
 
             $('.page-number').on('click', (event)=> {
                 let page = $(event.currentTarget).attr('data-page-nr')
-                console.log(event.currentTarget)
                 this.page = Number(page)
                 this.build();
 

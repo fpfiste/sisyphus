@@ -109,7 +109,7 @@ jQuery.fn.setUp = function(page_config, fields) {
 
           let logo_content_type = ''
           let logo_bytes = ''
-          $.each(response, (key, value)=>{
+          $.each(response['data'], (key, value)=>{
             console.log('#doc_form #'+ value['config_key'])
              if (value['config_key'] == 'doc_logo') {
                 logo_content_type = value['value_string']

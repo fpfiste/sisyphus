@@ -37,17 +37,36 @@ class BootstrapForm{
         let promises = []
         let keys = []
         $.each(fk_fields, (key, value)=>{
-            let url = value[1].api_endpoint + '?' + value[1].api_filter
+
+        let endpoint = value[1].api_endpoint
+        let filter = (value[1].api_filter == null) ?  '' : value[1].api_filter
+             let url = endpoint + '?' + filter
+
             promises.push(this.ajax_call(url, 'GET', value[0]))
             keys.push(value[0])
         })
 
         let instance = this
         $.when.apply($, promises).done(function(){
+
             let results ={};
-            $.each(arguments, (i,row) => {
-                results[keys[i]] = row[0]['data']
-            });
+
+            let params = Array.from(arguments)
+            console.log('here')
+            console.log(params.length)
+            if (params.length > 0) {
+                if (params[0]['page_size'] != null) {
+                    params = [arguments, ]
+                }
+                console.log(params)
+
+                $.each(params, (i,row) => {
+                    results[keys[i]] = row[0]['data']
+                });
+
+
+            }
+                console.log('here')
             console.log(results)
             instance.populate(results)
 
@@ -169,7 +188,7 @@ class BootstrapForm{
       }
 
       populate(fk_data){
-
+        console.log(fk_data)
         $(this.container).empty();
 
 
@@ -179,7 +198,6 @@ class BootstrapForm{
         let skip = this.exclude;
         let req = this.required;
         let disabled_fields = this.disabled;
-
 
         // looo all field configs and build fields
         $.each(this.fields,(key,value) => {
