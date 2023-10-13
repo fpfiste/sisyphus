@@ -111,7 +111,8 @@ jQuery.fn.setUp = function(page_config, fields) {
         update_form.submit(url, 'PUT');
     });
 
-    $( "#task_template" ).on( "change", function() {
+    waitForEl('#task_template', function() {
+        $( "#task_template" ).on( "change", function() {
         $('#loading_screen_wrapper').show();
 
         let template_id = $(this).val();
@@ -138,6 +139,9 @@ jQuery.fn.setUp = function(page_config, fields) {
            }
         });
     });
+
+    });
+
 
     $('#btn_close_task').on('click', function() {
         update_form.set_required({fields:page_config['close_form_fields_required']})

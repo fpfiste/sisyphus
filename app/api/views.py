@@ -9,13 +9,13 @@ from PIL import Image
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db.models import Q
-from rest_framework import viewsets, status, permissions
+from rest_framework import viewsets, status, permissions, mixins
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.decorators import action, api_view
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.response import Response
 import json
-
+from django.core.paginator import Paginator
 import re
 from rest_framework.views import APIView
 from django.db.models import F
@@ -31,10 +31,80 @@ from .components.docparser.ms_form_recognizer import FormRecognizer
 
 
 
+class CustomModelViewSet(viewsets.ModelViewSet):
+
+    def get_serializer_class(self):
+
+        if self.action == "list":
+            self.serializer_class.Meta.depth = 1
+        else:
+            #print(self.action)
+            self.serializer_class.Meta.depth = 0
+        #print(self.serializer_class.Meta.depth)
+        return self.serializer_class
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `username` query parameter in the URL.
+        """
 
 
 
-class AssetAbsenceCodesViewSet(viewsets.ModelViewSet):
+        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key not in ['csrfmiddlewaretoken', 'LIMIT', 'PAGE']])
+        data = self.queryset.filter(**params).order_by('-pk')
+        return data
+
+
+
+
+    def list(self, request):
+        try:
+            self.queryset = self.get_queryset()
+
+            params = self.request.query_params.dict()
+            page_size = 10
+            page = 1
+
+            if params.get('LIMIT'):
+                page_size = int(params.pop('LIMIT'))
+
+            if params.get('PAGE'):
+                page = int(params.pop('PAGE'))
+
+            page_start = (int(page) -1 ) * page_size
+            page_end = page * page_size
+
+
+
+
+            srl = self.get_serializer_class()(self.queryset, many=True)
+
+            data = srl.data[page_start:page_end]
+            num_pages = len(srl.data) // page_size + 1
+
+            data = {
+                'page_size':page_size,
+                'page':page,
+                'num_pages': num_pages,
+                'data' : data
+
+            }
+
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+
+
+
+
+
+
+
+
+
+
+class AssetAbsenceCodesViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -43,18 +113,10 @@ class AssetAbsenceCodesViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = AssetAbsenceCodes.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
-class AssetAbsenceViewSet(viewsets.ModelViewSet):
+
+class AssetAbsenceViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -64,19 +126,10 @@ class AssetAbsenceViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissions,)
 
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = AssetAbsences.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
 
-class AssetTypesViewSet(viewsets.ModelViewSet):
+class AssetTypesViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -85,18 +138,10 @@ class AssetTypesViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = AssetTypes.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
-class AssetViewSet(viewsets.ModelViewSet):
+
+class AssetViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -105,19 +150,9 @@ class AssetViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = Assets.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
-        #return data
 
 
-class ConfigViewSet(viewsets.ModelViewSet):
+class ConfigViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -126,18 +161,6 @@ class ConfigViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = Config.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-
-        return data
-        #return data
 
     @action(methods=['POST'], detail=False)
     def setCompany(self, request):
@@ -239,7 +262,7 @@ class ConfigViewSet(viewsets.ModelViewSet):
 
 
 
-class CompanyViewSet(viewsets.ModelViewSet):
+class CompanyViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -248,26 +271,16 @@ class CompanyViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        print(self.request.query_params)
-
-        queryset = Companies.objects.all()
-
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
+    #list_serializer = CompanyListSerializer
+    #crud_serializer = CompanyCRUDSerializer
 
 
-        data = queryset.filter(**params).order_by('-pk')
 
-        return data
 
 
     @transaction.atomic
     def create(self, request):
+
         serializer = CompanySerializer(data=request.data)
 
         serializer.is_valid()
@@ -296,7 +309,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
 
 
-                    project_serializer = ProjectsSerializer(data=project_data)
+                    project_serializer = ProjectSerializer(data=project_data)
 
                     project_serializer.is_valid()
 
@@ -315,7 +328,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
 
 
-class ClearingTypeViewSet(viewsets.ModelViewSet):
+class ClearingTypeViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -324,23 +337,12 @@ class ClearingTypeViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = ClearingType.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
 
 
 
-
-
-class CountryViewSet(viewsets.ModelViewSet):
+class CountryViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -349,20 +351,10 @@ class CountryViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = Countries.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('pk')
-        return data
 
 
 
-
-class CurrencyViewSet(viewsets.ModelViewSet):
+class CurrencyViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -371,20 +363,11 @@ class CurrencyViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = Currencies.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
 
 
-class EmployeeAbsenceCodesViewSet(viewsets.ModelViewSet):
+class EmployeeAbsenceCodesViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -393,18 +376,9 @@ class EmployeeAbsenceCodesViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = EmployeeAbsenceCodes.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
-class EmployeeAbsenceViewSet(viewsets.ModelViewSet):
+class EmployeeAbsenceViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -413,18 +387,9 @@ class EmployeeAbsenceViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = EmployeeAbsences.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
-class EmployeeTypesViewSet(viewsets.ModelViewSet):
+class EmployeeTypesViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -434,18 +399,10 @@ class EmployeeTypesViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissions,)
 
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = EmployeeTypes.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
-class EmployeeViewSet(viewsets.ModelViewSet):
+
+class EmployeeViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -455,21 +412,14 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissions,)
 
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = Employees.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
+
 
     @action(methods=['GET'], detail=False)
     def get_active_user(self, request):
         user = AuthUser.objects.get(username=request.user)
         data = {'firstname' : user.first_name}
         return Response(data, status=status.HTTP_200_OK)
+
 
 
 
@@ -490,7 +440,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
 
 
 
-class InvoiceStateViewSet(viewsets.ModelViewSet):
+class InvoiceStateViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -500,18 +450,9 @@ class InvoiceStateViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissions,)
 
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = InvoiceStates.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
-class InvoiceTermsViewSet(viewsets.ModelViewSet):
+class InvoiceTermsViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -520,17 +461,8 @@ class InvoiceTermsViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = InvoiceTerms.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
-class InvoiceTextViewSet(viewsets.ModelViewSet):
+class InvoiceTextViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -540,18 +472,9 @@ class InvoiceTextViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissions,)
 
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = InvoiceTextTemplates.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
-class ReceivablesViewSet(viewsets.ModelViewSet):
+class ReceivablesViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -561,15 +484,6 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissions,)
 
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = Receivables.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
 
@@ -906,29 +820,24 @@ class ReceivablesViewSet(viewsets.ModelViewSet):
 
 
 
-class ProjectViewSet(viewsets.ModelViewSet):
+class ProjectViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
     queryset = Projects.objects.all()
-    serializer_class = ProjectsSerializer
+    serializer_class = ProjectSerializer
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
 
-    def get_queryset(self):
-
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = Projects.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
-class SalesStateViewSet(viewsets.ModelViewSet):
+
+
+
+
+
+class SalesStateViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -937,17 +846,8 @@ class SalesStateViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = SalesState.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
-class SalesViewSet(viewsets.ModelViewSet):
+class SalesViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -960,17 +860,6 @@ class SalesViewSet(viewsets.ModelViewSet):
 
 
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = Sales.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken' and key != 'invoice_text'])
-
-        data = queryset.filter(**params).order_by('-pk')
-
-        return data
 
 
     def create(self, request):
@@ -1082,7 +971,7 @@ class SalesViewSet(viewsets.ModelViewSet):
 
         return Response(data, status=status.HTTP_200_OK)
 
-class SysRecStateViewSet(viewsets.ModelViewSet):
+class SysRecStateViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -1092,17 +981,7 @@ class SysRecStateViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissions,)
 
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = SysRecStates.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
-
-class TaskStateViewSet(viewsets.ModelViewSet):
+class TaskStateViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -1136,7 +1015,7 @@ class TaskStateViewSet(viewsets.ModelViewSet):
 
 
 
-class TemplateViewSet(viewsets.ModelViewSet):
+class TemplateViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -1145,16 +1024,9 @@ class TemplateViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = Templates.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
-class TemplateTypeViewSet(viewsets.ModelViewSet):
+
+
+class TemplateTypeViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -1163,20 +1035,13 @@ class TemplateTypeViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = TemplateTypes.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
 
 
-class TaskViewSet(viewsets.ModelViewSet):
+
+
+class TaskViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -1199,6 +1064,7 @@ class TaskViewSet(viewsets.ModelViewSet):
         serializer = TaskSerializer(instance=task)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
     def get_queryset(self):
         """
         Optionally restricts the returned purchases to a given user,
@@ -1218,15 +1084,11 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         queryset = Tasks.objects.all()
 
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken' and key != 'invoice_text'])
+        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key not in ['csrfmiddlewaretoken' , 'invoice_text', 'LIMIT', 'PAGE']])
 
-        if 'limit' in params:
-            limit = params.pop('limit')
-        else:
-            limit = 20
 
-        data = queryset.filter(**params).order_by('-pk')[:limit]
 
+        data = queryset.filter(**params).order_by('-pk')
 
         return data
 
@@ -1511,7 +1373,7 @@ class TaskViewSet(viewsets.ModelViewSet):
 
         return Response(srl.data, status=status.HTTP_200_OK)
 
-class UnitViewSet(viewsets.ModelViewSet):
+class UnitViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -1520,18 +1382,10 @@ class UnitViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = Units.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
 
-class VATViewSet(viewsets.ModelViewSet):
+
+class VATViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -1540,18 +1394,8 @@ class VATViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = Vat.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-        return data
 
-
-class PayablesViewSet(viewsets.ModelViewSet):
+class PayablesViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -1561,23 +1405,13 @@ class PayablesViewSet(viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissions,)
 
 
-    def get_queryset(self):
-        """
-        Optionally restricts the returned purchases to a given user,
-        by filtering against a `username` query parameter in the URL.
-        """
-        queryset = Payables.objects.all()
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key != 'csrfmiddlewaretoken'])
-        data = queryset.filter(**params).order_by('-pk')
-
-        print(data)
-        return data
 
 
 
     def create(self, request):
         request.data._mutable = True
 
+        print(request.data)
         request.data['fk_invoice_status'] = 1
 
         srl = PayableSerializer(data=request.data)
@@ -1588,6 +1422,7 @@ class PayablesViewSet(viewsets.ModelViewSet):
         else:
             print(srl.errors)
             return Response({'message': 'Something is wrong'}, status=status.HTTP_404_NOT_FOUND)
+
 
 
 

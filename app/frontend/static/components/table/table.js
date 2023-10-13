@@ -11,7 +11,9 @@ class BootstrapDataTable{
           this.query_params = query_params
           this.language = language;
           this.build_grid()
-
+          this.max_pages;
+          this.page_size = 10;
+          this.page = 1
       }
 
       ajax_call(url, type, data) {
@@ -28,8 +30,10 @@ class BootstrapDataTable{
       }
 
       text_field(element) {
-         element =  '<td>'+element+'</td>'
-         return element;
+        let value = (element == null) ? '' : element
+
+         let html =  '<td>'+value+'</td>'
+         return html;
       };
 
 
@@ -43,25 +47,10 @@ class BootstrapDataTable{
 
       }
 
-      fk_field(url_endpoint, display_field, pk) {
-            let data;
-            let url = window.location.origin + url_endpoint + '/' + pk
 
-            $.ajax({
-               url: url,
-               type: 'GET',
-               async: false,
-               success: function(response) {
-
-                 data =  response;
-               }
-            });
-
-
-            return '<td>'+data[display_field]+'</td>';
-
-
-
+      fk_field(data, display_field) {
+        let value = (data == null) ? '' : data[display_field]
+        return '<td>'+value+'</td>';
       }
 
 
@@ -78,11 +67,44 @@ class BootstrapDataTable{
 
       }
 
+      draw_pagination(){
+        let html = '<div class="form-group row" >'
+         html  += '<div class="col" style="display:flex; justify-content:flex-end;"><select id="id_page_size" class="form-select" style="min-width: 100px;width:10%;"><option selected value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option></select>'
+         html += '<nav aria-label="Page navigation example">'
+         html += '<ul class="pagination" style="margin-bottom:0px;">'
+         html +=  '<li class="page-item" id="prev-page" data-page-nr='+ (Number(this.page) - 1) +'><a class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>'
+
+
+         html += '<li class="page-item page-number" data-page-nr='+this.page+'><a class="page-link"> '+this.page+'</a></li>'
+
+         if (this.page + 1 <= this.max_pages){
+            html += '<li class="page-item page-number" data-page-nr='+(this.page+1)+'><a class="page-link"> '+(this.page + 1)+'</a></li>'
+         }
+
+         if ((this.page+2) <= this.max_pages){
+            html += '<li class="page-item page-number" data-page-nr='+(this.page+2)+'><a class="page-link"> '+(this.page + 2)+'</a></li>'
+         }
+
+
+         html += '<li class="page-item" id="next-page" data-page-nr='+ (Number(this.page) + 1) +'><a class="page-link"  aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'
+         html += '</ul>'
+         html += '</nav>'
+         html +='</div>'
+
+
+         return html
+      }
+
+
+
       build_grid() {
             $(this.container).empty();
             let header = this.draw_header()
             //* draw the grid of the new table object
-            let table_grid = '<div id="table_container" style="overflow:scroll; white-space:nowrap; height:100%;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'">'+header+'<tbody></tbody></table></div>';
+
+            //let page_size_select = '<select class="form-select"><option selected value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option></select>'
+            let pagination = this.draw_pagination()
+            let table_grid = '<div id=table_pagination>'+pagination+'</div><div id="table_container" style="overflow:scroll; white-space:nowrap; height:100%;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'">'+header+'<tbody></tbody></table></div>';
             $(this.container).append(table_grid);
 
       }
@@ -92,7 +114,7 @@ class BootstrapDataTable{
         //* remove older renderings of the object
         //* load the data to populate the table
 
-        console.log(this.data)
+        $('#id_page_size').val(this.page_size)
 
         //* loop all the rows in this.data object and add it to the table
         $.each(this.data,(key,element) => {
@@ -107,20 +129,27 @@ class BootstrapDataTable{
 
                 //* get corresponding field based on the field name from the data object
                 //* continue if the fieldname is url
+              switch(config.display_type) {
+                  case 'action_checkbox':
 
-               if (config.display_type == 'action_checkbox'){
                     row += this.checkbox_field(element[field], '')
-               } else if (element[field] == null) {
-                row += '<td></td>'
-               } else if(config.display_type == 'text') {
+                    break;
+                  case 'text':
                     row += this.text_field(element[field])
-                } else if (config.display_type == 'checkbox') {
+                    break;
+                  case 'checkbox':
                     row += this.checkbox_field(element[field], 'disabled')
-                } else if (config.display_type == 'fk_field') {
-                    row += this.fk_field(config.api_endpoint, config.display_field, element[field])
+                    break
+                  case 'fk_field':
 
+                    row += this.fk_field(element[field], config.display_field)
+                    break;
                 }
+
+
             });
+
+
             row += '</td>';
             $('#'+this.id + ' tbody').append(row);
         });
@@ -128,17 +157,30 @@ class BootstrapDataTable{
       }
 
       build(){
+            let url = this.ajax_url + '?LIMIT=' + this.page_size + '&PAGE=' + this.page+ '&'  + this.query_params
+            console.log(url)
         $.when(
-            this.ajax_call(this.ajax_url + this.query_params, 'GET')
-        ).done((data)=> {
-            this.data = data;
 
+            this.ajax_call(url, 'GET')
+        ).done((data)=> {
+            console.log(data)
+            this.data = data['data'];
+            this.max_pages = data['num_pages']
+            this.page = data['page']
+            console.log(data['page'])
             this.build_grid();
             this.populate();
             this.draw_event_handlers();
+            }
+        ).catch((error)=> {
+            console.log(error)
         })
 
-      }
+
+
+        }
+
+
 
 
       draw_event_handlers() {
@@ -172,7 +214,45 @@ class BootstrapDataTable{
                 })
             });
 
+            $('#id_page_size').on('change', (event)=> {
+                console.log(this.page_size)
+                this.page_size = $('#id_page_size').val();
 
+                this.build();
+                $('#id_page_size').val(this.page_size);
+
+            })
+
+            $('#next-page').on('click', (event)=> {
+                if (this.page >= this.max_pages){
+                    this.page = this.max_pages
+                } else {
+                this.page += 1
+                }
+                this.build();
+
+
+            })
+
+            $('#prev-page').on('click', (event)=> {
+                if (this.page <= 1){
+                    this.page = 1
+                } else {
+                this.page -= 1
+                }
+                this.build();
+
+
+            })
+
+            $('.page-number').on('click', (event)=> {
+                let page = $(event.currentTarget).attr('data-page-nr')
+                console.log(event.currentTarget)
+                this.page = Number(page)
+                this.build();
+
+
+            })
 
       }
 

@@ -15,12 +15,51 @@ class BootstrapForm{
           this.is_valid = false;
           this.language = language
           this.method = method
+          this.fk_data = {}
+      }
+
+    ajax_call(url, type, data, variable) {
+           let result = this.fk_data
+
+           return $.ajax({
+               url: url,
+               type: type,
+
+               //async:false,
+            });
+
+        //return result;
+      }
+
+      build() {
+        let fk_fields = Object.entries(this.fields).filter(v => v[1].input_type === "fk_field");
+
+        let promises = []
+        let keys = []
+        $.each(fk_fields, (key, value)=>{
+            let url = value[1].api_endpoint + '?' + value[1].api_filter
+            promises.push(this.ajax_call(url, 'GET', value[0]))
+            keys.push(value[0])
+        })
+
+        let instance = this
+        $.when.apply($, promises).done(function(){
+            let results ={};
+            $.each(arguments, (i,row) => {
+                results[keys[i]] = row[0]['data']
+            });
+            console.log(results)
+            instance.populate(results)
+
+
+
+
+        })
       }
 
       set_required({fields=[]}) {
         $.each(this.fields, (key, value) => {
             let required = (fields.includes(key)) ? true : false;
-            console.log('#' + this.id + ' #' + key)
             $('#' + this.id + ' #' + key).prop('required', required);
 
 
@@ -70,22 +109,20 @@ class BootstrapForm{
         return html
       }
 
-      fk_field({id, title, required, disabled, url, value_field, description_field}) {
+      fk_field({id, title, required, disabled, data, value_field, description_field}) {
           let html = '<div class="form-group"><label for="'+id+'">'+title+'</label><select class="form-control" id="'+id+'" name="'+id+'" '+required+' '+ disabled+'>'
 
           html += '<option value="">-----------</option>'
 
-          $.ajax({
-                url: url,
-                async: false,
-                success: function (result) {
-                   $.each(result,(key,value) => {
-                       html += '<option value="'+value[value_field]+'">'+value[description_field]+'</option>'
-                    })
-                }
-            });
+            $.each(data,(key,value) => {
+                html += '<option value="'+value[value_field]+'">'+value[description_field]+'</option>'
 
-          return html
+            })
+        return html
+
+
+
+
 
 
       }
@@ -131,7 +168,8 @@ class BootstrapForm{
         return html
       }
 
-      build(){
+      populate(fk_data){
+
         $(this.container).empty();
 
 
@@ -175,8 +213,7 @@ class BootstrapForm{
                     field = this.email_input({id: key, title: title, required:required, disabled:disabled})
                     break;
                 case 'fk_field':
-                    let url = (value.api_filter == 'undefined') ? value.api_endpoint : value.api_endpoint + '?' + value.api_filter
-                    field = this.fk_field({id: key, title: title, url: url, required:required, disabled:disabled, value_field: value.pk_field, description_field: value.display_field})
+                    field = this.fk_field({id: key, title: title, data: fk_data[key], required:required, disabled:disabled, value_field: value.pk_field, description_field: value.display_field})
                     break;
                 case 'select':
                     field = this.select({id: key, title: title, options: value.options, value_field:value.pk_field, description_field: value.display_field, required:required, disabled:disabled})

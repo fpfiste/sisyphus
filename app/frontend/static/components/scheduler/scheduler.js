@@ -350,9 +350,10 @@ class Scheduler{
 
 
         ).done((empl, empl_type, asset, tasks, open_tasks)=> {
-            this.employee_data = empl[0]
-            this.employee_types = empl_type[0]
-            this.asset_data = asset[0]
+            console.log(empl)
+            this.employee_data = empl[0]['data']
+            this.employee_types = empl_type[0]['data']
+            this.asset_data = asset[0]['data']
             this.task_data = tasks[0]
             this.open_tasks = open_tasks[0]
             this.build_grid();

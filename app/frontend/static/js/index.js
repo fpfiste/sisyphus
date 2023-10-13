@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    $('#loading_screen_wrapper').show();
     let page = window.location.pathname;
     let page_config;
     let fields;
@@ -8,7 +9,6 @@ $(document).ready(function(){
           dataType: 'json',
           async : true,
           success: function (response) {
-            $('#loading_screen_wrapper').show();
             let lang_cookie = Cookies.get('sisyphus_language');
             page_config = response['pages'][page]
             fields = response['fields']

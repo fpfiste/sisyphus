@@ -2,6 +2,9 @@ from rest_framework import serializers
 from .models import *
 
 
+
+
+
 class AssetAbsenceCodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = AssetAbsenceCodes
@@ -48,12 +51,7 @@ class CoinfigSerializer(serializers.ModelSerializer):
         model = Config
         fields = '__all__'
 
-class CompanySerializer(serializers.ModelSerializer):
 
-
-    class Meta:
-        model = Companies
-        fields = '__all__'
 
 class CountrySerializer(serializers.ModelSerializer):
 
@@ -119,10 +117,7 @@ class InvoiceCancellationSerializer(serializers.ModelSerializer):
         model = Cancellations
         fields = '__all__'
 
-class ProjectsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Projects
-        fields = '__all__'
+
 
 class SalesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -139,14 +134,12 @@ class TaskStateSerializer(serializers.ModelSerializer):
         model = TaskStates
         fields = '__all__'
 
-class TemplateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Templates
-        fields = '__all__'
+
 class TemplateTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = TemplateTypes
         fields = '__all__'
+        depth = 1
 
 
 
@@ -179,3 +172,34 @@ class InvoiceTermsSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceTerms
         fields = '__all__'
+
+
+class CompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Companies
+        fields = '__all__'
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employees
+        fields = '__all__'
+
+
+
+
+
+class ProjectSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Projects
+        fields = '__all__'
+        depth = 1
+
+class TemplateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Templates
+        fields = '__all__'
+        depth = 1
+
+
+

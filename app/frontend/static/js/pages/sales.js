@@ -112,9 +112,14 @@ jQuery.fn.setUp = function(page_config, fields) {
         update_form.submit(url, 'PUT');
     });
 
-    $( "#sales_template" ).on( "change", function() {
-        $('#loading_screen_wrapper').show();
+    console.log($('#sales_template').length)
 
+
+
+    waitForEl('#sales_template', function() {
+      $( "#sales_template" ).on( "change", function() {
+        $('#loading_screen_wrapper').show();
+        console.log('here')
         let template_id = $(this).val();
 
         $('#create_form').trigger("reset");
@@ -139,6 +144,10 @@ jQuery.fn.setUp = function(page_config, fields) {
            }
         });
     });
+    });
+
+
+
 
     $('#btn_delete').on('click', function() {
         update_form.required = ['id_task']
@@ -156,7 +165,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     })
 
     $('#btn_print').on('click', function() {
-        $('#loading_screen_wrapper').toggle();
+        $('#loading_screen_wrapper').show();
 
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/sales/' + pk + '/pdf/'
@@ -167,7 +176,7 @@ jQuery.fn.setUp = function(page_config, fields) {
            success: function(response) {
                 console.log(response)
                 window.open(response['file_url'], '_blank').focus();
-                    $('#loading_screen_wrapper').toggle();
+                location.reload();
 
            },
            error: function(error){
@@ -182,7 +191,7 @@ jQuery.fn.setUp = function(page_config, fields) {
 
 
     $('#update_modal').on('show.bs.modal', function() {
-            $('#loading_screen_wrapper').toggle();
+            $('#loading_screen_wrapper').show();
 
         let task_status = $('#update_form #fk_sales_status').val()
         console.log(task_status)
@@ -205,7 +214,7 @@ jQuery.fn.setUp = function(page_config, fields) {
             $('#btn_close_task').prop('disabled', false)
             $('#btn_save').prop('disabled', false)
         }
-            $('#loading_screen_wrapper').toggle();
+            $('#loading_screen_wrapper').hide();
 
     })
 };

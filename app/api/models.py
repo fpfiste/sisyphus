@@ -430,6 +430,8 @@ class SalesState(models.Model):
         db_table = 'sales_state'
 
 
+
+
 class SysRecStates(models.Model):
     id_sys_rec_status = models.AutoField(primary_key=True)
     sys_rec_status = models.CharField(max_length=20)
@@ -489,19 +491,20 @@ class TemplateTypes(models.Model):
 
 class Templates(models.Model):
     id_template = models.AutoField(primary_key=True)
-    fk_project = models.IntegerField(blank=True, null=True)
+    fk_project = models.ForeignKey(Projects, models.DO_NOTHING, db_column='fk_project', blank=True, null=True)
     amount = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     unit_price = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
     description = models.CharField(max_length=200, blank=True, null=True)
-    fk_currency = models.IntegerField(blank=True, null=True)
-    fk_unit = models.IntegerField(blank=True, null=True)
-    fk_vat = models.IntegerField(blank=True, null=True)
-    fk_template_type = models.IntegerField(blank=True, null=True)
+    fk_currency = models.ForeignKey(Currencies, models.DO_NOTHING, db_column='fk_currency', blank=True, null=True)
+    fk_unit = models.ForeignKey('Units', models.DO_NOTHING, db_column='fk_unit', blank=True, null=True)
+    fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat', blank=True, null=True)
+    fk_template_type = models.ForeignKey(TemplateTypes, models.DO_NOTHING, db_column='fk_template_type', blank=True, null=True)
     template_title = models.CharField(max_length=50)
 
     class Meta:
         managed = False
         db_table = 'templates'
+
 
 
 class Units(models.Model):
@@ -522,3 +525,4 @@ class Vat(models.Model):
     class Meta:
         managed = False
         db_table = 'vat'
+

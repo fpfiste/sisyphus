@@ -36,7 +36,7 @@ jQuery.fn.setUp = function(page_config, fields) {
                         id: 'sales_billing_table',
                         fields: sales_table_fields,
                         ajax_url: '/api/sales/',
-                        query_params: '?fk_sales_status=1&fk_clearing_type=2',
+                        query_params: 'fk_sales_status=1&fk_clearing_type=2',
                         pk_field: 'id_sale',
                         language: lang_cookie,
                     })
@@ -54,7 +54,7 @@ jQuery.fn.setUp = function(page_config, fields) {
                         id: "task_billing_table",
                         fields: task_table_fields,
                         ajax_url: '/api/tasks/',
-                        query_params: '?fk_task_state=4&fk_clearing_type=2',
+                        query_params: 'fk_task_state=4&fk_clearing_type=2',
                         ajax_url: page_config['ajax_url'],
                         pk_field: 'id_task',
                         language: lang_cookie,

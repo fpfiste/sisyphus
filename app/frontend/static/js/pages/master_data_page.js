@@ -1,4 +1,9 @@
 
+function get_form_field_data(fields) {
+
+
+
+}
 
 jQuery.fn.setUp = function(page_config, fields) {
 
