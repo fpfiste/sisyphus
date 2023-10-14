@@ -33,9 +33,12 @@ jQuery.fn.setUp = function(page_config, fields) {
           dataType: 'json',
           success: function (response) {
 
-              $.each(response, (key, value)=>{
-                 $('#profile_form #'+ key).val(value)
-              })
+          $.each(response['data'], (key, value)=>{
+             waitForEl('#profile_form #'+ key, function() {
+                    $('#profile_form #'+ key).val(value)
+             });
+          })
+
           }
     });
 
@@ -72,8 +75,10 @@ jQuery.fn.setUp = function(page_config, fields) {
       dataType: 'json',
       success: function (response) {
 
-          $.each(response, (key, value)=>{
-             $('#company_form #'+ key).val(value)
+          $.each(response['data'], (key, value)=>{
+             waitForEl('#company_form #'+ key, function() {
+                    $('#company_form #'+ key).val(value)
+             });
           })
       }
     });
