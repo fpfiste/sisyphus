@@ -13,6 +13,8 @@ jQuery.fn.setUp = function(page_config, fields) {
        profile_form_fields[value] = fields[value];
     })
 
+    console.log(page_config)
+
     let profile_form = new BootstrapForm({
             container: '#profile_form_container',
             id: 'profile_form',
@@ -25,22 +27,27 @@ jQuery.fn.setUp = function(page_config, fields) {
             method:'POST'
     })
 
+
     profile_form.build();
 
-    $.ajax({
-          url: '/api/employees/get_employee_by_username/',
-          async: true,
-          dataType: 'json',
-          success: function (response) {
+    waitForEl('#company_form', function() {
+         console.log('here')
+            $.ajax({
+                  url: '/api/employees/get_employee_by_username/',
+                  async: true,
+                  dataType: 'json',
+                  success: function (response) {
 
-          $.each(response['data'], (key, value)=>{
-             waitForEl('#profile_form #'+ key, function() {
-                    $('#profile_form #'+ key).val(value)
-             });
-          })
+                      $.each(response, (key, value)=>{
 
-          }
-    });
+                                $('#profile_form #'+ key).val(value)
+
+                      })
+
+                  }
+            });
+     });
+
 
 
 
@@ -67,24 +74,35 @@ jQuery.fn.setUp = function(page_config, fields) {
             method:'POST'
     })
 
+    /*
+    setTimeout(() => {
+        company_form.build();
+    }, "2000");
+*/
     company_form.build();
 
-    $.ajax({
+
+     waitForEl('#company_form', function() {
+         console.log('here')
+         $.ajax({
       url: '/api/companies/0/',
       async: true,
       dataType: 'json',
       success: function (response) {
           console.log(response)
           $.each(response, (key, value)=>{
-             waitForEl('#company_form #'+ key, function() {
-                    $('#company_form #'+ key).val(value)
-             });
+            $('#company_form #'+ key).val(value)
           })
       }
     });
+     });
+
+
+
 
 
     // DOCUMENT CONFIG
+
 
     let doc_form_fields = {};
 

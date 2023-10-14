@@ -37,13 +37,12 @@ class BootstrapForm{
         let promises = []
         let keys = []
         $.each(fk_fields, (key, value)=>{
-
-        let endpoint = value[1].api_endpoint
-        let filter = (value[1].api_filter == null) ?  '' : value[1].api_filter
-             let url = endpoint + '?' + filter
-
-            promises.push(this.ajax_call(url, 'GET', value[0]))
-            keys.push(value[0])
+            let endpoint = value[1].api_endpoint
+            let filter = (value[1].api_filter == null) ?  '' : value[1].api_filter
+                 let url = endpoint + '?' + filter
+                console.log(url)
+                promises.push(this.ajax_call(url, 'GET', value[0]))
+                keys.push(value[0])
         })
 
         let instance = this
