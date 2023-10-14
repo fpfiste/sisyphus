@@ -66,14 +66,7 @@ class CustomModelViewSet(viewsets.ModelViewSet):
             page_size = 10
             page = 1
 
-            if params.get('LIMIT'):
-                page_size = int(params.pop('LIMIT'))
 
-            if params.get('PAGE'):
-                page = int(params.pop('PAGE'))
-
-            page_start = (int(page) -1 ) * page_size
-            page_end = page * page_size
 
 
 
@@ -87,6 +80,8 @@ class CustomModelViewSet(viewsets.ModelViewSet):
                 else:
                     page = 1
 
+                page_start = (int(page) - 1) * page_size
+                page_end = page * page_size
                 data = srl.data[page_start:page_end]
             else:
                 data = srl.data
