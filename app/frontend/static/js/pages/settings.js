@@ -74,8 +74,8 @@ jQuery.fn.setUp = function(page_config, fields) {
       async: true,
       dataType: 'json',
       success: function (response) {
-
-          $.each(response['data'], (key, value)=>{
+          console.log(response)
+          $.each(response, (key, value)=>{
              waitForEl('#company_form #'+ key, function() {
                     $('#company_form #'+ key).val(value)
              });
