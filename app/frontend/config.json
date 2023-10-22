@@ -670,7 +670,7 @@
     "/companies": {
       "title": {"en": "Companies", "ch": "Unternehmen"},
       "ajax_url" : "/api/companies/",
-      "ajax_url_filter": "?id_company__gt=0",
+      "ajax_url_filter": "id_company__gt=0",
       "js": "/static/js/pages/master_data_page.js",
       "template" : "frontend/pages/table.html",
       "table_id" : "company_table",

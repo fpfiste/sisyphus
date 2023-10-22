@@ -193,13 +193,13 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
         fields = '__all__'
-        depth = 1
+
 
 class TemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Templates
         fields = '__all__'
-        depth = 1
+
 
 
 

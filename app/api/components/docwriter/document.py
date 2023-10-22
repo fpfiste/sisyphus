@@ -30,10 +30,10 @@ class Document():
     def set_logo(self, logo:str='',  logo_width=550, logo_height=120, logo_x=0, logo_y=0):
         self.logo = {
             'logo' : logo,
-            'logo_width' : float(logo_width),
-            'logo_height': float(logo_height),
-            'logo_x' : float(logo_x),
-            'logo_y' : float(logo_y)
+            'logo_width' : float(logo_width) if logo_width != ' ' else 0,
+            'logo_height': float(logo_height)  if logo_height != ' ' else 0,
+            'logo_x' : float(logo_x)  if logo_x != ' ' else 0,
+            'logo_y' : float(logo_y)  if logo_y != ' ' else 0
         }
 
     def set_customer(self,  id, name, address, pcode, city, country):

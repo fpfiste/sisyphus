@@ -48,11 +48,15 @@ class CustomModelViewSet(viewsets.ModelViewSet):
         Optionally restricts the returned purchases to a given user,
         by filtering against a `username` query parameter in the URL.
         """
-
-
+        self.serializer_class.Meta.depth = 1
 
         params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key not in ['csrfmiddlewaretoken', 'LIMIT', 'PAGE']])
+
         data = self.queryset.filter(**params).order_by('-pk')
+        #data = self.queryset.filter(id_company__gte=0).order_by('-pk')
+
+        self.serializer_class.Meta.depth = 0
+
         return data
 
 
@@ -65,10 +69,6 @@ class CustomModelViewSet(viewsets.ModelViewSet):
             params = self.request.query_params.dict()
             page_size = 10
             page = 1
-
-
-
-
 
 
             srl = self.get_serializer_class()(self.queryset, many=True)
@@ -223,7 +223,6 @@ class ConfigViewSet(CustomModelViewSet):
 
 
 
-
         return Response(data={}, status=status.HTTP_200_OK)
 
     @action(methods=['POST'], detail=False)
@@ -295,12 +294,15 @@ class CompanyViewSet(CustomModelViewSet):
 
 
         if not serializer.is_valid():
-            return Response({'message': 'Something is wrong with your input'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Something is wrong with your input (Company)'}, status=status.HTTP_400_BAD_REQUEST)
 
 
         try:
             with transaction.atomic():
                 self.perform_create(serializer)
+                print('here')
+                print(serializer.instance.pk)
+
 
                 if serializer.data['is_customer'] == True:
                     project_data = {
@@ -312,21 +314,34 @@ class CompanyViewSet(CustomModelViewSet):
                     }
 
 
+                    print(project_data)
+
+
+
 
 
                     project_serializer = ProjectSerializer(data=project_data)
-
+                    project_serializer.Meta.depth = 0
                     project_serializer.is_valid()
 
-                    if not project_serializer.is_valid():
-                        return Response({'message': 'Something is wrong with your input'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+                    if not project_serializer.is_valid():
+                        return Response({'message': 'Something is wrong with your input (Project)'}, status=status.HTTP_400_BAD_REQUEST)
+                    else:
+                        print(serializer.errors)
                     project_serializer.save()
+
+
+
+
+
 
 
                 return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
+
             return Response({'message': 'Something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -501,7 +516,6 @@ class ReceivablesViewSet(CustomModelViewSet):
 
 
 
-            print(request.data)
             if 'sales[]' in request.data and len(request.data['sales[]']) > 0:
                 sales = Sales.objects.filter(id_sale__in=request.data.pop('sales[]'))
             if 'tasks[]' in request.data and len(request.data['tasks[]']) > 0:
@@ -518,7 +532,6 @@ class ReceivablesViewSet(CustomModelViewSet):
                 serializer = ReceivablesSerializer(data=request.data)
 
                 if not serializer.is_valid():
-                    print(serializer.errors)
                     return Response({'message': 'Something is wrong with your input'},
                                     status=status.HTTP_400_BAD_REQUEST)
 
@@ -1058,7 +1071,7 @@ class TaskViewSet(CustomModelViewSet):
 
     def retrieve(self, request, pk):
         task = Tasks.objects.get(id_task=pk)
-
+        self.get_queryset()
         if task.task_date_to != None and task.task_time_to != None and task.fk_task_state.id_task_state == 2:
             ts_task = dt.datetime.combine(task.task_date_to, task.task_time_to)
             ts_now = dt.datetime.now()
@@ -1067,6 +1080,7 @@ class TaskViewSet(CustomModelViewSet):
                 task.fk_task_state = TaskStates.objects.get(id_task_state = 3)
                 task.save()
         serializer = TaskSerializer(instance=task)
+        serializer.Meta.depth = 0
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -1098,7 +1112,7 @@ class TaskViewSet(CustomModelViewSet):
         return data
 
     def create(self, request):
-
+        self.get_serializer_class()
         request.data._mutable = True
 
         date_from = request.data.get('task_date_from')
@@ -1325,6 +1339,8 @@ class TaskViewSet(CustomModelViewSet):
 
         doc = SchedulePDF(date, 'ch', output_path=settings.TMP_FOLDER)
 
+
+
         for task in tasks:
 
             if task.fk_employee_1 != None:
@@ -1342,7 +1358,7 @@ class TaskViewSet(CustomModelViewSet):
                 task.fk_employee_1.id_employee if task.fk_employee_1 != None else None,
                 task.fk_employee_2.id_employee if task.fk_employee_2 != None else None,
                 task.fk_asset_1.id_asset if task.fk_asset_1 != None else None,
-                task.fk_asset_2.id_asset if task.fk_asset_1 != None else None,
+                task.fk_asset_2.id_asset if task.fk_asset_2 != None else None,
             )
 
 

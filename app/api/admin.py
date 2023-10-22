@@ -11,3 +11,4 @@ admin.site.register(Vat)
 admin.site.register(TaskStates)
 admin.site.register(SalesState)
 
+
