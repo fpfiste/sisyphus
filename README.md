@@ -16,7 +16,7 @@ Before running Sisyphus with Docker Compose, make sure you have the following pr
 1. Clone this repository to your local environment.
 ```
 bash
-git clone https://github.com/yourusername/sisyphus.git
+git clone https://github.com/fpfiste/sisyphus.git
 ```
 2. Navigate to the project directory.
 ```
