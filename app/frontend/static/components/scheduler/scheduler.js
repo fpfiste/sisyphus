@@ -22,10 +22,7 @@ class Scheduler{
           this.build_grid()
       }
 
-      get_date(){
-        console.log(document.schedule_date)
 
-      }
       ajax_call(url, type, data) {
            let result;
 
@@ -124,8 +121,7 @@ class Scheduler{
 
 
         $.each(this.employee_data, (key,value) => {
-            console.log(this.excluded_employee_types.includes(value['fk_employee_type'].toString()));
-            if (!this.excluded_employee_types.includes(value['fk_employee_type'].toString())){
+            if (!this.excluded_employee_types.includes(value['fk_employee_type']['id_employee_type'].toString())){
                             let row = '<tr id="e'+value.id_employee+'">' +
                             '<td class="scheduler-first-column">'+value.employee_internal_alias+'</td> '+
                             '<td id="resource_lane_e'+value.id_employee+'">'+
@@ -194,7 +190,6 @@ class Scheduler{
 
         let left_offset_h = (startDate - this.scheduleDateStart) / 1000 / 60 / 60;
         let lane_height = $('#task_lane_'+row_id).height()
-        console.log(lane_height)
         let left_offset_px = width_of_time_table / 24 * left_offset_h;
         let task_span = '<li><span class="task scheduled_task badge badge-primary" style = "box-sizing: border-box; margin-left:' + left_offset_px + 'px; width:' + event_box_width + 'px;" data-row-pk="'+task_id+'">'+ task_title +'</span></li>'
         let task_lane = $('#task_lane_'+row_id + ' ul').append(task_span);
@@ -255,7 +250,6 @@ class Scheduler{
       create_event_handlers() {
             $('#scheduler_date_input').on("change", ()=> {
                 let date = $('#scheduler_date_input').val();
-                console.log(date)
                 Cookies.set('scheduler_date', date);
                 this.schedule_date = date;
 
@@ -270,7 +264,6 @@ class Scheduler{
                     url: window.location.origin +'/api/tasks/' + record_id,
                     success: function (result) {
 
-                        console.log(result)
                         $.each(result, (key, value)=>{
 
                             if (value === true){
@@ -286,16 +279,10 @@ class Scheduler{
                     })
     } );
 
-            $('#show_subus').on('change', ()=> {
-                console.log(this.show_subus)
-                this.show_subus = !this.show_subus;
-                Cookies.set('show_subus', this.show_subus);
-                this.build();
-            })
+
 
             $('#scheduler_prev_date').on('click', ()=> {
                 let d = new Date(this.schedule_date)
-                console.log(d.toISOString())
                 d.setDate(d.getDate() - 1)
                 let date = d.toISOString().split('T')[0];
                 this.schedule_date = date;
@@ -305,7 +292,6 @@ class Scheduler{
 
             $('#scheduler_next_date').on('click', ()=> {
                 let d = new Date(this.schedule_date)
-                console.log(d.toISOString())
                 d.setDate(d.getDate() + 1)
                 let date = d.toISOString().split('T')[0];
                 this.schedule_date = date;
@@ -327,6 +313,7 @@ class Scheduler{
 
                 Cookies.set('excluded_employee_types', exclude);
                 this.excluded_employee_types = exclude
+                console.log(this.excluded_employee_types)
                 this.build();
 
 
@@ -350,8 +337,8 @@ class Scheduler{
 
 
         ).done((empl, empl_type, asset, tasks, open_tasks)=> {
-            console.log(empl)
             this.employee_data = empl[0]['data']
+            console.log(this.employee_data)
             this.employee_types = empl_type[0]['data']
             this.asset_data = asset[0]['data']
             this.task_data = tasks[0]

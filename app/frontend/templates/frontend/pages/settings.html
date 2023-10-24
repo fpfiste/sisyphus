@@ -27,24 +27,24 @@
   <div class="col-9">
     <div class="tab-content" style="height:100%">
       <div class="tab-pane container fade active show" style="max-width: 100%; height: 100%;" id="profile">
-      <div class="card" style="height:100%;">
+      <div class="card" style="height: 90%;">
         <div class="card-header" style="height:5%;">Profile</div>
-        <div class="card-body" style="height:90%;">
+        <div class="card-body" style="max-height:88%; overflow: scroll;">
             <div id="profile_form_container"></div>
         </div>
-        <div class="card-footer" style="height:5%;">
+        <div class="card-footer" style="height:7%;">
             <button type="button" id="btn_save_profile" class="btn btn-danger">Save</button>
         </div>
       </div>
     </div>
       {% if user.is_superuser %}
       <div class="tab-pane container fade" style="max-width: 100%; height: 100%;" id="company">
-      <div class="card" style="height:100%;">
+      <div class="card" style="max-height:85%;">
         <div class="card-header" style="height:5%;">Company</div>
-        <div class="card-body" style="height:90%;">
+        <div class="card-body" style="height:88%; overflow: scroll;">
             <div id="company_form_container"></div>
         </div>
-        <div class="card-footer" style="height:5%;">
+        <div class="card-footer" style="height:7%;">
             <button type="button" id="btn_save_company" class="btn btn-danger">Save</button>
         </div>
       </div>
