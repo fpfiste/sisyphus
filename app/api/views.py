@@ -437,7 +437,8 @@ class EmployeeViewSet(CustomModelViewSet):
     @action(methods=['GET'], detail=False)
     def get_active_user(self, request):
         user = AuthUser.objects.get(username=request.user)
-        data = {'firstname' : user.first_name}
+        employee = Employees.objects.get(fk_user=user.id)
+        data = {'firstname' : employee.employee_first_name}
         return Response(data, status=status.HTTP_200_OK)
 
 

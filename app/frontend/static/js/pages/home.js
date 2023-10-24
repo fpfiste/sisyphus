@@ -10,6 +10,7 @@ jQuery.fn.setUp = function(page_config, fields) {
           async: true,
           dataType: 'json',
           success: function (response) {
+          console.log(response)
             let greeting = $('#home_greeting').text()
             console.log(greeting)
             $('#home_greeting').text(greeting + ', '+ response['firstname'])
