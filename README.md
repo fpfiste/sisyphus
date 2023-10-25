@@ -40,7 +40,7 @@ docker-compose -f docker-compose.prod.yml up -d
 * Initial user: root
 * Initial password: test
 
-3. Create a new superuser in the admin panel (http://localhost:1337/admin) and delete the root user.
+3. Create a new superuser in the admin panel (http://0.0.0.0:1337/admin) and delete the root user.
 4. Go to the settings page and insert the configurations 
 5. Utilize the various modules in Sisyphus to plan tasks, manage sales, handle payables, and generate invoices.
 6. Explore the user-friendly interface to streamline your enterprise's business processes.
