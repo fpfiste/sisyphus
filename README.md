@@ -32,7 +32,7 @@ docker-compose -f docker-compose.prod.yml up -d
 ```
 
 ## Usage
-1. Access the web application at http://localhost:1337 and begin using Sisyphus.
+1. Access the web application at http://0.0.0.0:1337 and begin using Sisyphus.
 * Initial user: root
 * Initial password: test
 
