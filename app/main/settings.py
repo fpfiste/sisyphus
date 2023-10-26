@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django_session_timeout.middleware.SessionTimeoutMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -150,22 +151,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 
-
-
-
-
-COMPANY = {
-            'name': 'Pfister Data Solutions',
-            'address' : 'Zürichstrasse 9',
-            'pcode' : '6004',
-            'city' : 'Luzern',
-            'country' : 'CH',
-            'email' : 'fabian.pfister@hotmail.com   ',
-            'phone' : '+41 79 957 25 54',
-            'vat_number' : ''
-        }
-
-
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -174,4 +159,5 @@ REST_FRAMEWORK = {
 
 }
 
-
+SESSION_EXPIRE_SECONDS = 60
+SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
