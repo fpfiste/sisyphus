@@ -61,20 +61,56 @@ jQuery.fn.setUp = function(page_config, fields) {
                     })
     task_table.build();
 
-    $('#fk_project, #fk_vat, #fk_currency').on('change', function() {
-      let query_params = $('#create_form').serialize();
-      console.log(query_params)
-      let project = 'fk_project=' + $('#fk_project').val();
-      let vat = '&fk_vat=' + $('#fk_vat').val();
-      let currency = '&fk_currency='+ $('#fk_currency').val();
 
-      sales_table.query_params = '?' + project+ vat+currency+ '&fk_sales_status=1&fk_clearing_type=2'
-      task_table.query_params = '?' + project+ vat+currency+'&fk_task_state=4&fk_clearing_type=2'
-      sales_table.build();
-      task_table.build();
+    waitForEl('#fk_project', function() {
+        $('#fk_project').on('change', function() {
+          console.log('here')
+          let query_params = $('#create_form').serialize();
+          console.log(query_params)
+          let project = '&fk_project=' + $('#fk_project').val();
+          let vat = '&fk_vat=' + $('#fk_vat').val();
+          let currency = '&fk_currency='+ $('#fk_currency').val();
 
+          sales_table.query_params = project+ vat+currency+ '&fk_sales_status=1&fk_clearing_type=2'
+          task_table.query_params = project+ vat+currency+'&fk_task_state=4&fk_clearing_type=2'
+          sales_table.build();
+          task_table.build();
+        });
 
-    });
+     });
+    waitForEl('#fk_vat', function() {
+        $('#fk_vat').on('change', function() {
+          console.log('here')
+          let query_params = $('#create_form').serialize();
+          console.log(query_params)
+          let project = '&fk_project=' + $('#fk_project').val();
+          let vat = '&fk_vat=' + $('#fk_vat').val();
+          let currency = '&fk_currency='+ $('#fk_currency').val();
+
+          sales_table.query_params = project+ vat+currency+ '&fk_sales_status=1&fk_clearing_type=2'
+          task_table.query_params = project+ vat+currency+'&fk_task_state=4&fk_clearing_type=2'
+          sales_table.build();
+          task_table.build();
+        });
+
+     });
+    waitForEl('#fk_currency', function() {
+        $('#fk_currency').on('change', function() {
+          console.log('here')
+          let query_params = $('#create_form').serialize();
+          console.log(query_params)
+          let project = '&fk_project=' + $('#fk_project').val();
+          let vat = '&fk_vat=' + $('#fk_vat').val();
+          let currency = '&fk_currency='+ $('#fk_currency').val();
+
+          sales_table.query_params = project+ vat+currency+ '&fk_sales_status=1&fk_clearing_type=2'
+          task_table.query_params = project+ vat+currency+'&fk_task_state=4&fk_clearing_type=2'
+          sales_table.build();
+          task_table.build();
+        });
+
+     });
+
 
     $( "#btn_reset" ).on( "click", function() {
         $('#filter_form').trigger("reset");
