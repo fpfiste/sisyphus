@@ -572,8 +572,7 @@ class ReceivablesViewSet(CustomModelViewSet):
                 doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
                                  customer.company_city, customer.fk_country.country_code)
 
-                company_detail = settings.COMPANY
-                company_detail['agent'] = request.user
+
 
                 company = Companies.objects.get(id_company=0)
                 doc.set_company(name=company.company_name, address=company.company_street,
@@ -693,9 +692,6 @@ class ReceivablesViewSet(CustomModelViewSet):
 
 
 
-                company_detail = settings.COMPANY
-                company_detail['agent'] = request.user
-
                 company = Companies.objects.get(id_company=0)
                 doc.set_company(name=company.company_name, address=company.company_street,
                                 pcode=company.company_zipcode, city=company.company_city,
@@ -758,8 +754,7 @@ class ReceivablesViewSet(CustomModelViewSet):
                              customer.company_zipcode,
                              customer.company_city, customer.fk_country.country_code)
 
-            company_detail = settings.COMPANY
-            company_detail['agent'] = request.user
+
 
             company = Companies.objects.get(id_company=0)
             doc.set_company(name=company.company_name, address=company.company_street, pcode=company.company_zipcode,
@@ -798,8 +793,6 @@ class ReceivablesViewSet(CustomModelViewSet):
             doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
                              customer.company_city, customer.fk_country.country_code)
 
-            company_detail = settings.COMPANY
-            company_detail['agent'] = request.user
 
             company = Companies.objects.get(id_company=0)
             doc.set_company(name=company.company_name, address=company.company_street, pcode=company.company_zipcode,
@@ -950,8 +943,6 @@ class SalesViewSet(CustomModelViewSet):
 
         doc.set_customer(10, customer.company_name, customer.company_street, customer.company_zipcode, customer.company_city, customer.fk_country.country_code)
 
-        company_detail = settings.COMPANY
-        company_detail['agent'] = request.user
 
         company = Companies.objects.get(id_company=0)
         doc.set_company(name=company.company_name, address=company.company_street, pcode=company.company_zipcode,
@@ -1293,8 +1284,7 @@ class TaskViewSet(CustomModelViewSet):
 
         doc.set_customer(10, customer.company_name, customer.company_street, customer.company_zipcode, customer.company_city, customer.fk_country.country_code)
 
-        company_detail = settings.COMPANY
-        company_detail['agent'] = request.user
+
 
 
         company = Companies.objects.get(id_company=0)
