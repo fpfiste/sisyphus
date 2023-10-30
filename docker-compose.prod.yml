@@ -6,6 +6,7 @@ services:
     container_name: sisyphus_db
     volumes:
       - sisyphus_prod_data:/var/lib/postgresql/data/
+      - ./database/backup/:/backup/
     env_file:
       - ./.env.prod
     expose:
