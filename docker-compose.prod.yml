@@ -6,7 +6,6 @@ services:
     container_name: sisyphus_db
     volumes:
       - sisyphus_prod_data:/var/lib/postgresql/data/
-      - ./database/backup/:/backup/
     env_file:
       - ./.env.prod
     expose:
@@ -15,6 +14,15 @@ services:
     ports:
       - '5433:5433'
     command: -p 5433
+
+  jobs:
+    build: ./background_jobs
+    container_name: sisyphus_jobs
+    volumes:
+      - ./background_jobs/backup/:/backup/
+    env_file:
+      - ./.env.prod
+    restart: always
 
   api:
     build:
