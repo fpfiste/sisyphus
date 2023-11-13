@@ -209,7 +209,7 @@ def render_settings(request,pk=None):
             'user': user_detail}
     return render(request, page_config['template'], data)
 
-
+@login_required()
 def render_403(request,pk=None):
     url = request.path.split('/' + str(pk))[0]
     page_config = config['pages'][url]
