@@ -131,12 +131,6 @@ class BootstrapForm{
 
             })
         return html
-
-
-
-
-
-
       }
 
       select({id, title, required, options, value_field, description_field, disabled}){
