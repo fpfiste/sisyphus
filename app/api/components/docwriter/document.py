@@ -111,11 +111,25 @@ class Document():
 
     def addy(self, ypos, canvas, amount):
         ypos += amount
-        if ypos >=26:
+
+        w, h = canvas._pagesize
+
+        last_line = ((h / cm ) - 3)
+
+
+        if ypos >=last_line:
             self.page_counter += 1
             page_num = canvas.getPageNumber()
+
             canvas.drawString(18 * cm, 29* cm, 'Seite: ' + str(page_num))
             canvas.showPage()
             ypos = 3
             canvas.setFont("Helvetica", 10)
         return ypos
+
+
+
+
+
+
+
