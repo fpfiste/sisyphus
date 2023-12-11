@@ -129,8 +129,7 @@ class SchedulePDF(Document):
 
         return c
 
-    def set_settings(self, c):
-        c.setFillColor(colors.black)
+
 
 
 
@@ -143,7 +142,7 @@ class SchedulePDF(Document):
         ypos = self.addy(ypos, c, 0.5)
 
         for index, employee in enumerate(self.employees):
-
+            c.setFillColor(colors.black)
             xpos = 1
             c.drawString(xpos * cm, ypos * cm, employee['name'])
 
