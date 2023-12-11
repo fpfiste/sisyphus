@@ -166,7 +166,7 @@ class SchedulePDF(Document):
 
             for task_index , task in enumerate(subset):
 
-                self.draw_task(c, ypos, task['id'], task['description'], task['asset_1'], task['asset_2'], task['ts_from'], task['ts_to'])
+                self.draw_task(c, ypos, task['id'], task['description'].replace('\n', ''), task['asset_1'], task['asset_2'], task['ts_from'], task['ts_to'])
 
 
                 c.setLineWidth(0.2)
