@@ -50,14 +50,35 @@ class CustomModelViewSet(viewsets.ModelViewSet):
         """
         self.serializer_class.Meta.depth = 1
 
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key not in ['csrfmiddlewaretoken', 'LIMIT', 'PAGE']])
+        sort = '-pk'
 
-        data = self.queryset.filter(**params).order_by('-pk')
+        if self.request.query_params.get('SORT') not in (None,'' ):
+            sort = self.request.query_params.get('SORT')
+
+        params = [[key ,value] for key, value in self.request.query_params.items() if value != '' and key not in ['csrfmiddlewaretoken', 'LIMIT', 'PAGE', 'SORT']]
+
+
+        for i, param in enumerate(params):
+            if '*' in param[1]:
+
+                param[0] = param[0] + '__icontains'
+                param[1] = param[1].replace('*', '')
+
+        params = dict(params)
+        print(params)
+
+
+
+
+
+        data = self.queryset.filter(**params).order_by(sort)
         #data = self.queryset.filter(id_company__gte=0).order_by('-pk')
 
         self.serializer_class.Meta.depth = 0
 
         return data
+
+
 
 
 
@@ -69,6 +90,7 @@ class CustomModelViewSet(viewsets.ModelViewSet):
             params = self.request.query_params.dict()
             page_size = 10
             page = 1
+
 
 
             srl = self.get_serializer_class()(self.queryset, many=True)
@@ -1348,8 +1370,8 @@ class TaskViewSet(CustomModelViewSet):
                 task.task_time_to,
                 task.fk_employee_1.id_employee if task.fk_employee_1 != None else None,
                 task.fk_employee_2.id_employee if task.fk_employee_2 != None else None,
-                task.fk_asset_1.id_asset if task.fk_asset_1 != None else None,
-                task.fk_asset_2.id_asset if task.fk_asset_2 != None else None,
+                task.fk_asset_1.asset_internal_alias if task.fk_asset_1 != None else '',
+                task.fk_asset_2.asset_internal_alias if task.fk_asset_2 != None else '',
             )
 
 

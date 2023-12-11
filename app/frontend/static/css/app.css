@@ -48,3 +48,10 @@
 .container {
     max-width:100%;
 }
+
+.btn-danger {
+    color: #fff;
+    background-color: #AC855E;
+    border-color: #AC855E;
+
+}

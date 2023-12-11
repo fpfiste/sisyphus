@@ -132,10 +132,12 @@ class Invoice(Document):
             c.setFont("Helvetica", 9)
 
             wrapper = textwrap.TextWrapper(width=50)
-            lines = wrapper.wrap(text=position["description"])
-            for line in lines:
-                c.drawString(5 * cm, ypos * cm, f'{line}')
-                ypos = self.addy(ypos, c, 0.5)
+
+            for line in position["description"].split('\n'):
+                sublines = wrapper.wrap(text=line)
+                for line in sublines:
+                    c.drawString(5 * cm, ypos * cm, f'{line}')
+                    ypos = self.addy(ypos, c, 0.5)
 
 
 

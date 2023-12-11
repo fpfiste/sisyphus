@@ -231,9 +231,9 @@ class Scheduler{
 
 
 
-                this.add_row('e'+value.fk_employee_1, value.id_task, value.fk_project + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
-                this.add_row('e'+value.fk_employee_2, value.id_task, value.fk_project + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
-                this.add_row('s'+value.fk_subcontractor, value.id_task, value.fk_project + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
+                this.add_row('e'+value.fk_employee_1, value.id_task, value.id_task + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
+                this.add_row('e'+value.fk_employee_2, value.id_task, value.id_task + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
+                this.add_row('s'+value.fk_subcontractor, value.id_task, value.id_task + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
             })
 
           $.each(this.open_tasks, (key,value) => {
