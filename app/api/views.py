@@ -59,13 +59,22 @@ class CustomModelViewSet(viewsets.ModelViewSet):
 
 
         for i, param in enumerate(params):
-            if '*' in param[1]:
-
+            if param[1][0] == '*' and param[1][-1] == '*':
                 param[0] = param[0] + '__icontains'
+                param[1] = param[1].replace('*', '')
+
+            if param[1][0] == '*' and param[1][-1] != '*':
+                param[0] = param[0] + '__iendswith'
+
+                param[1] = param[1].replace('*', '')
+
+            if param[1][0] != '*' and param[1][-1] == '*':
+                param[0] = param[0] + '__istartswith'
                 param[1] = param[1].replace('*', '')
 
         params = dict(params)
         print(params)
+
 
 
 
@@ -143,6 +152,7 @@ class AssetAbsenceCodesViewSet(CustomModelViewSet):
 
 
 
+
 class AssetAbsenceViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -151,6 +161,7 @@ class AssetAbsenceViewSet(CustomModelViewSet):
     serializer_class = AssetAbsenceSerializer
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
+
 
 
 

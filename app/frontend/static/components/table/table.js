@@ -12,7 +12,7 @@ class BootstrapDataTable{
           this.language = language;
           this.build_grid()
           this.max_pages;
-          this.page_size = 10;
+          this.page_size = 50;
           this.page = 1
       }
 
@@ -56,7 +56,7 @@ class BootstrapDataTable{
 
       draw_header() {
 
-        let header = '<thead style="position:sticky; top:0; background:white;">'
+        let header = '<thead style="position:sticky; top:0; background:white;height:10%;">'
 
         $.each(this.fields,(key,value) => {
                 header += '<th>'+value.title[this.language]+'</th>'
@@ -69,7 +69,7 @@ class BootstrapDataTable{
 
       draw_pagination(){
         let html = '<div class="form-group row" >'
-         html  += '<div class="col" style="display:flex; justify-content:flex-end;"><select id="id_page_size" class="form-select" style="min-width: 100px;width:10%;"><option selected value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option></select>'
+         html  += '<div class="col" style="display:flex; justify-content:flex-end;"><select id="id_page_size" class="form-select" style="min-width: 100px;width:10%;"><option value="10">10</option><option value="20">20</option><option value="50" selected>50</option><option value="100">100</option></select>'
          html += '<nav aria-label="Page navigation example">'
          html += '<ul class="pagination" style="margin-bottom:0px;">'
          html +=  '<li class="page-item" id="prev-page" data-page-nr='+ (Number(this.page) - 1) +'><a class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>'
