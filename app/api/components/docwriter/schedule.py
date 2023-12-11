@@ -129,6 +129,9 @@ class SchedulePDF(Document):
 
         return c
 
+    def set_settings(self, c):
+        c.setFillColor(colors.black)
+
 
 
     def draw(self):
@@ -140,7 +143,7 @@ class SchedulePDF(Document):
         ypos = self.addy(ypos, c, 0.5)
 
         for index, employee in enumerate(self.employees):
-            c.setFillColor(colors.black)
+
             xpos = 1
             c.drawString(xpos * cm, ypos * cm, employee['name'])
 
@@ -165,8 +168,13 @@ class SchedulePDF(Document):
             ypos = self.addy(ypos, c, 0.5)
 
             for task_index , task in enumerate(subset):
+                print(task['description'].replace('\n', ' '))
+                if len(task['description'].replace('\n', ' ')) > 25:
+                    task_description = task['description'].replace('\n', ' ')[:20] + '...'
+                else:
+                    task_description = task['description'].replace('\n', ' ')
 
-                self.draw_task(c, ypos, task['id'], task['description'].replace('\n', ''), task['asset_1'], task['asset_2'], task['ts_from'], task['ts_to'])
+                self.draw_task(c, ypos, task['id'], task_description, task['asset_1'], task['asset_2'], task['ts_from'], task['ts_to'])
 
 
                 c.setLineWidth(0.2)
@@ -185,7 +193,10 @@ class SchedulePDF(Document):
 
 
 
+
+
         c.save()
+
 
 
 

@@ -109,7 +109,7 @@ class Document():
 
         return c
 
-    def addy(self, ypos, canvas, amount):
+    def addy(self, ypos, canvas, amount, recreate_header=False):
         ypos += amount
 
         w, h = canvas._pagesize
@@ -125,6 +125,7 @@ class Document():
             canvas.showPage()
             ypos = 3
             canvas.setFont("Helvetica", 10)
+
         return ypos
 
 
