@@ -43,6 +43,8 @@ class CustomModelViewSet(viewsets.ModelViewSet):
         #print(self.serializer_class.Meta.depth)
         return self.serializer_class
 
+
+
     def get_queryset(self):
         """
         Optionally restricts the returned purchases to a given user,
@@ -470,8 +472,7 @@ class EmployeeViewSet(CustomModelViewSet):
     @action(methods=['GET'], detail=False)
     def get_active_user(self, request):
         user = AuthUser.objects.get(username=request.user)
-        employee = Employees.objects.get(fk_user=user.id)
-        data = {'firstname' : employee.employee_first_name}
+        data = {'firstname' : user.username}
         return Response(data, status=status.HTTP_200_OK)
 
 
@@ -1412,11 +1413,15 @@ class TaskViewSet(CustomModelViewSet):
 
         date = ts.date()
         time = ts.time()
+
         tasks = Tasks.objects.filter(task_date_from__lte=date, task_time_from__lte=time, task_date_to__gte=date, task_time_to__gte=time)
 
-        srl = TaskSerializer(data=tasks)
+        serializer = self.get_serializer(tasks, many=True)
 
-        return Response(srl.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
 
 class UnitViewSet(CustomModelViewSet):
     """
