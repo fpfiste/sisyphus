@@ -258,6 +258,12 @@ class BootstrapForm{
         }
 
 
+       reset(){
+        let form = $('#' + this.id).trigger("reset")
+        $(form).find(':input').css('border-color', '')
+       }
+
+
       populate_json_field() {
             let jsonfields =  $('#' + this.id + ' .jsonfield')
             let custom_fields = {}
@@ -311,31 +317,28 @@ class BootstrapForm{
       }
 
 
-      submit(url){
+      submit(url, callback){
         let form = $('#' + this.id)
         let form_fields = $(form).find(':input')
 
         this.validate();
 
         if (this.is_valid == false){
+             $('#loading_screen_wrapper').hide();
             return
         }
 
         let array = this.serialize();
 
 
-        $('#loading_screen_wrapper').toggle();
         $.ajax({
            url: url,
            type: this.method,
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            data:array,
-           success: function(response) {
-              $('#loading_screen_wrapper').toggle();
-              location.reload();
-           },
+           success: callback,
            error: function(error){
-
+            console.log(error);
             location.reload();
            }
         });

@@ -110,22 +110,35 @@ jQuery.fn.setUp = function(page_config, fields) {
 
     });
 
+
+    let callback = function(response) {
+
+          $('#create_modal, #update_modal').modal('hide');
+          create_form.reset()
+          update_form.reset()
+          scheduler.build();
+          $('#loading_screen_wrapper').hide();
+    }
+
     $( "#btn_add" ).on( "click", function() {
+        $('#loading_screen_wrapper').show();
         let url = page_config['ajax_url']
-        create_form.submit(url, 'POST')
+        create_form.submit(url, callback)
     });
 
     $( "#btn_save" ).on( "click", function() {
+        $('#loading_screen_wrapper').show();
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = page_config['ajax_url'] +pk + '/'
-         update_form.submit(url, 'PUT');
+         update_form.submit(url, callback);
     });
 
     $( "#btn_delete" ).on( "click", function() {
+        $('#loading_screen_wrapper').show();
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = page_config['ajax_url'] + '/' +pk + '/'
         console.log(url)
-         update_form.submit(url, 'DELETE');
+        update_form.submit(url, callback);
     });
 
     $('#btn_print').on('click', function() {
@@ -138,9 +151,9 @@ jQuery.fn.setUp = function(page_config, fields) {
            type: 'GET',
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
-                    $('#loading_screen_wrapper').hide();
 
                 window.open(response['file_url'], '_blank').focus();
+                $('#loading_screen_wrapper').hide();
            },
            error: function(error){
             console.log(error)
@@ -152,6 +165,7 @@ jQuery.fn.setUp = function(page_config, fields) {
 
 
     $('#btn_print_schedule').on('click', function() {
+        $('#loading_screen_wrapper').show();
         let url = '/api/tasks/printSchedule/?date=' + scheduler.schedule_date
         $.ajax({
            url: url,
@@ -159,170 +173,37 @@ jQuery.fn.setUp = function(page_config, fields) {
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
                 window.open(response['file_url'], '_blank').focus();
+                $('#loading_screen_wrapper').hide();
            },
            error: function(error){
             console.log(error)
            }
         });
+    })
+    $('#update_modal').on('show.bs.modal', function() {
+        let task_status = $('#update_form #fk_task_state').val()
+        console.log(task_status)
+        if (
+            (task_status == "4") ||
+            (task_status == "5") ||
+            (task_status == "6")
+        ){
+                $('#update_form').find('input').prop('disabled', true)
+                $('#btn_delete').prop('disabled', true)
+                $('#btn_close_task').prop('disabled', true)
+                $('#btn_save').prop('disabled', true)
+
+        } else {
+            $('#update_form').find('input').prop('disabled', false)
+            $('#update_form #id_task').prop('disabled', true);
+            $('#update_form #fk_task_state').prop('disabled', true);
+            $('#btn_delete').prop('disabled', false)
+            $('#btn_close_task').prop('disabled', false)
+            $('#btn_save').prop('disabled', false)
+        }
+
     })
 
 
 }
 
-/*
-$(document).ready(function(){
-    let page_config
-    let translations
-    let url = '/tasks'
-    let lang_cookie = Cookies.get('sisyphus_language');
-
-    $.ajax({
-          url: '/_config',
-          async: false,
-          dataType: 'json',
-          success: function (response) {
-            page_config = response['pages'][url]
-            translations = response['translations']
-          }
-    });
-
-
-
-    let scheduler = new Scheduler({
-            container:'#schedule_container',
-            id:'scheduler',
-            employee_label: translations['scheduler_employee_label'][lang_cookie],
-            asset_label:translations['scheduler_asset_label'][lang_cookie],
-            subcontractor_label:translations['scheduler_subcontractor_label'][lang_cookie],
-            open_task_label:translations['scheduler_open_task_label'][lang_cookie],
-            employee_type_label: translations['scheduler_employee_type_label'][lang_cookie]
-          })
-
-
-    let create_form = new BootstrapForm({
-            container: '#create_form_container',
-            id: 'create_form',
-            ajax_url: page_config['ajax_url'],
-            validation:true,
-            fields: page_config['fields'],
-            exclude: ['id_task', 'fk_invoice', 'fk_task_state'],
-            required : ['fk_project', 'description'],
-            language: lang_cookie
-
-
-    })
-    let update_form = new BootstrapForm({
-            container: '#update_form_container',
-            id: 'update_form',
-            ajax_url: page_config['ajax_url'],
-            validation:true,
-            fields: page_config['fields'],
-            exclude: ['fk_invoice', 'task_template', 'fk_invoice'],
-            disabled : ['id_task', 'fk_task_state'],
-            required : ['id_task', 'fk_project', 'description'],
-            language: lang_cookie
-    })
-
-
-    scheduler.build();
-    create_form.build();
-    update_form.build();
-
-    $( "#task_template" ).on( "change", function() {
-            $('#loading_screen_wrapper').toggle();
-
-        let template_id = $(this).val();
-
-        $('#create_form').trigger("reset");
-
-        let url = '/api/templates/'+ template_id + '/'
-
-        $.ajax({
-           url: url,
-           type: 'GET',
-           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
-           success: function(response) {
-
-              $('#task_template').val(template_id);
-              $.each(response, (key, value)=>{
-                $('#'+ key).val(value)
-
-              })
-                  $('#loading_screen_wrapper').toggle();
-
-           },
-           error: function(error){
-            console.log(error)
-            alert(error);
-            location.reload();
-           }
-        });
-    });
-
-    $( "#btn_reset" ).on( "click", function() {
-        $('#filter_form').trigger("reset");
-        $('#btn_filter').click();
-
-
-    });
-
-    $( "#btn_add" ).on( "click", function() {
-        let url = page_config['ajax_url']
-        create_form.submit(url, 'POST')
-    });
-
-    $( "#btn_save" ).on( "click", function() {
-        let pk = $('#update_form #' + page_config['pk']).val()
-        let url = page_config['ajax_url'] +pk + '/'
-         update_form.submit(url, 'PUT');
-    });
-
-    $( "#btn_delete" ).on( "click", function() {
-        let pk = $('#update_form #' + page_config['pk']).val()
-        let url = page_config['ajax_url'] + '/' +pk + '/'
-        console.log(url)
-         update_form.submit(url, 'DELETE');
-    });
-
-    $('#btn_print').on('click', function() {
-        $('#loading_screen_wrapper').toggle();
-
-        let pk = $('#update_form #' + page_config['pk']).val()
-        let url = '/api/tasks/' + pk + '/pdf/'
-        $.ajax({
-           url: url,
-           type: 'GET',
-           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
-           success: function(response) {
-                    $('#loading_screen_wrapper').toggle();
-
-                window.open(response['file_url'], '_blank').focus();
-           },
-           error: function(error){
-            console.log(error)
-            alert(error)
-            location.reload();
-           }
-        });
-    })
-
-
-    $('#btn_print_schedule').on('click', function() {
-        let url = '/api/tasks/printSchedule/?date=' + scheduler.schedule_date
-        $.ajax({
-           url: url,
-           type: 'GET',
-           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
-           success: function(response) {
-                window.open(response['file_url'], '_blank').focus();
-           },
-           error: function(error){
-            console.log(error)
-           }
-        });
-    })
-
-
-
-});
-*/

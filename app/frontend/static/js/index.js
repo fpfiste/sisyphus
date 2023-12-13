@@ -61,12 +61,17 @@ $(document).ready(function(){
         Cookies.set('sisyphus_language', 'ch')
     } else {
         $('#language_selector').val(lang)
-
     }
 
     $('.sidebar-toggle ').on('click', function(){
-
         $('#sidebar').toggle();
+    })
+
+    $('#update_modal, #create_modal').on('hide.bs.modal', function() {
+        let form = $(this).find('form').trigger('reset')
+        console.log(form)
+        //.trigger("reset")
+        $(form).find(':input').css('border-color', '')
 
     })
 

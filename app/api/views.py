@@ -922,6 +922,31 @@ class SalesViewSet(CustomModelViewSet):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
+    def update(self, request,pk):
+        request.data._mutable = True
+        sale = Sales.objects.get(id_sale=pk)
+
+        if sale.fk_sales_status.id_sales_state < 2:
+
+            serializer = self.get_serializer(sale, data=request.data)
+
+            serializer.is_valid(raise_exception=True)
+
+            self.perform_update(serializer)
+
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        else:
+            return Response({'message' : 'Sale was already closed or billed and cannot be updated anymore'}, status=status.HTTP_403_FORBIDDEN)
+
+
+
+
+
+
+
+
     def destroy(self, request, pk):
         request.data._mutable = True
 

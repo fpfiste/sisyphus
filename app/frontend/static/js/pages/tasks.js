@@ -97,18 +97,30 @@ jQuery.fn.setUp = function(page_config, fields) {
         $('#btn_filter').click();
     });
 
+
+    let callback = function(response) {
+          console.log('callback executed')
+          $('#create_modal, #update_modal').modal('hide');
+          create_form.reset()
+          update_form.reset()
+          table.build();
+          $('#loading_screen_wrapper').hide();
+    }
+
     $( "#btn_add" ).on( "click", function() {
+        $('#loading_screen_wrapper').show();
         let url = page_config['ajax_url']
-        create_form.submit(url, 'POST')
+        create_form.submit(url, callback)
     });
 
 
 
     $( "#btn_save" ).on( "click", function() {
+        $('#loading_screen_wrapper').show();
         update_form.set_required({fields: page_config['update_form_fields_required']})
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = page_config['ajax_url'] +pk + '/'
-        update_form.submit(url, 'PUT');
+        update_form.submit(url, callback);
     });
 
     waitForEl('#task_template', function() {
@@ -144,14 +156,16 @@ jQuery.fn.setUp = function(page_config, fields) {
 
 
     $('#btn_close_task').on('click', function() {
+        $('#loading_screen_wrapper').show();
         update_form.set_required({fields:page_config['close_form_fields_required']})
         console.log(update_form.required)
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/tasks/' + pk + '/close/'
-        update_form.submit(url, 'PUT');
+        update_form.submit(url, callback);
     })
 
     $('#btn_delete').on('click', function() {
+        $('#loading_screen_wrapper').show();
         update_form.required = ['id_task']
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/tasks/' + pk + '/'
@@ -163,7 +177,9 @@ jQuery.fn.setUp = function(page_config, fields) {
             location.reload();
         }
 
-        update_form.submit(url, 'DELETE');
+        update_form.method = 'DELETE'
+        update_form.submit(url, callback);
+        update_form.method = 'PUT'
     })
 
     $('#btn_print').on('click', function() {
@@ -176,8 +192,9 @@ jQuery.fn.setUp = function(page_config, fields) {
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
                 console.log(response)
-                $('#loading_screen_wrapper').hide();
+
                 window.open(response['file_url'], '_blank').focus();
+                $('#loading_screen_wrapper').hide();
 
 
            },
@@ -198,15 +215,16 @@ jQuery.fn.setUp = function(page_config, fields) {
         if (
             (task_status == "4") ||
             (task_status == "5") ||
-            (task_status == "6")
+            (task_status == "6") ||
+            (task_status == "-1")
         ){
-                $('#update_form').find('input').prop('disabled', true)
+                $('#update_form').find('input, select, textarea').prop('disabled', true)
                 $('#btn_delete').prop('disabled', true)
                 $('#btn_close_task').prop('disabled', true)
                 $('#btn_save').prop('disabled', true)
 
         } else {
-            $('#update_form').find('input').prop('disabled', false)
+            $('#update_form').find('input, select, textarea').prop('disabled', false)
             $('#update_form #id_task').prop('disabled', true);
             $('#update_form #fk_task_state').prop('disabled', true);
             $('#btn_delete').prop('disabled', false)

@@ -75,7 +75,9 @@ jQuery.fn.setUp = function(page_config, fields) {
         $('#btn_filter').click();
     });
 
+
     $('#btn_print').on('click', function() {
+        $('#loading_screen_wrapper').show();
         let pk = $('#update_form #id_invoice').val();
 
         let url = page_config['ajax_url'] + pk + '/pdf'
@@ -87,9 +89,8 @@ jQuery.fn.setUp = function(page_config, fields) {
            success: function(response) {
            console.log(response)
                 var doc = window.open(response['file_url'], '_blank');
-
-                location.reload();
                 doc.focus();
+                $('#loading_screen_wrapper').hide();
            },
            error: function(error){
            console.log(error)
@@ -101,7 +102,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     })
 
     $('#btn_delete').on('click', function() {
-
+        $('#loading_screen_wrapper').show();
         update_form.required = ['id_task']
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/receivables/' + pk + '/'
@@ -120,7 +121,10 @@ jQuery.fn.setUp = function(page_config, fields) {
            success: function(response) {
                 console.log(response)
                 window.open(response['file_url'], '_blank').focus();
-                location.reload();
+                  $('#create_modal, #update_modal').modal('hide');
+                  $('#create_form, #update_form').trigger("reset")
+                  table.build();
+                  $('#loading_screen_wrapper').hide();
 
            },
            error: function(error){

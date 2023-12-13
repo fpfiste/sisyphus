@@ -97,20 +97,31 @@ jQuery.fn.setUp = function(page_config, fields) {
         // add evetn listeners
     $( "#btn_filter" ).on( "click", function() {
       let query_params = $('#filter_form').serialize();
-      table.query_params = '?' + query_params
+      table.query_params = query_params
       table.build();
     });
     $( "#btn_reset" ).on( "click", function() {
         $('#filter_form').trigger("reset");
         $('#btn_filter').click();
     });
+    let callback = function(response) {
+          $('#create_modal, #update_modal').modal('hide');
+          create_form.reset()
+          update_form.reset()
+          table.build();
+          $('#loading_screen_wrapper').hide();
+
+    }
     $( "#btn_add" ).on( "click", function() {
-        create_form.submit(page_config['ajax_url']);
+        $('#loading_screen_wrapper').show();
+        create_form.submit(page_config['ajax_url'], callback)
     });
+
     $( "#btn_save" ).on( "click", function() {
+        $('#loading_screen_wrapper').show();
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = page_config['ajax_url'] +pk + '/'
-        update_form.submit(url, 'PUT');
+        update_form.submit(url, callback);
     });
 
 

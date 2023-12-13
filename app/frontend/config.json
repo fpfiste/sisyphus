@@ -758,9 +758,9 @@
       "filter_form_fields" : ["id_sale", "sale_date", "amount", "unit_price", "customer_reference", "fk_currency",  "fk_project", "fk_sales_status", "fk_unit","fk_clearing_type"],
       "create_form_fields" : ["sales_template","sale_date", "amount", "unit_price", "customer_reference", "description", "sale_time", "fk_currency", "fk_project", "fk_unit", "fk_vat", "fk_clearing_type"],
       "create_form_fields_required" : ["sale_date", "amount", "unit_price", "description", "sale_time", "fk_currency", "fk_project", "fk_unit", "fk_vat", "fk_clearing_type"],
-      "update_form_fields" : ["id_sale", "sale_date", "amount", "unit_price", "customer_reference", "description", "sale_time", "fk_currency",  "fk_project", "fk_unit", "fk_vat", "custom_fields", "fk_clearing_type"],
-      "update_form_fields_required" :  ["id_sale","sale_date", "amount", "unit_price", "description", "sale_time", "fk_currency", "fk_project", "fk_unit", "fk_vat", "fk_clearing_type"],
-      "update_form_fields_disabled" : ["id_sale", "fk_sale_state"],
+      "update_form_fields" : ["id_sale", "sale_date", "amount", "unit_price", "customer_reference", "description", "sale_time", "fk_sales_status","fk_currency",  "fk_project", "fk_unit", "fk_vat", "custom_fields", "fk_clearing_type"],
+      "update_form_fields_required" :  ["id_sale","sale_date", "amount", "unit_price", "description", "sale_time", "fk_sales_status","fk_currency", "fk_project", "fk_unit", "fk_vat", "fk_clearing_type"],
+      "update_form_fields_disabled" : ["id_sale", "fk_sales_status"],
       "remove_buttons": ["btn_close_task"]
     },
     "/tasks": {
@@ -825,7 +825,7 @@
       "create_form_fields" : ["fk_project", "fk_vat", "fk_currency", "fk_invoice_terms", "discount", "invoice_text"],
       "create_form_fields_required" : ["fk_project", "fk_vat", "fk_currency", "fk_invoice_terms"],
       "sales_table_fields" : ["select_position", "id_sale", "fk_project", "description", "amount", "fk_unit", "unit_price", "fk_currency", "fk_vat", "fk_clearing_type"],
-      "task_table_fields" : ["select_position","id_sale", "fk_project", "description", "amount", "fk_unit", "unit_price", "fk_currency", "fk_vat", "fk_clearing_type"]
+      "task_table_fields" : ["select_position","id_task", "fk_project", "description", "amount", "fk_unit", "unit_price", "fk_currency", "fk_vat", "fk_clearing_type"]
 
 
 

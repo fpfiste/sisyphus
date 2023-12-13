@@ -37,7 +37,7 @@ class BootstrapDataTable{
       };
 
 
-      checkbox_field(checked, disabled) {
+      checkbox_field(checked, disabled, row_pk) {
         if (checked) {
              return  '<td><input type="checkbox" checked '+disabled+'/></td>'
         } else {
@@ -156,7 +156,7 @@ class BootstrapDataTable{
 
       }
 
-      build(){
+      build(callback){
             let url = this.ajax_url + '?LIMIT=' + this.page_size + '&PAGE=' + this.page+ '&'  + this.query_params
         $.when(
 
@@ -169,7 +169,7 @@ class BootstrapDataTable{
             this.populate();
             this.draw_event_handlers();
             }
-        ).catch((error)=> {
+        ).done(callback).catch((error)=> {
             console.log(error)
         })
 
