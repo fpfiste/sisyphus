@@ -93,7 +93,7 @@ class Invoice(Document):
 
 
     def first_page_header(self, c):
-        c.drawString(2 * cm, 9 * cm, f"Datum: {self.invoice_date}")
+        c.drawString(2 * cm, 9 * cm, f"Datum: {self.invoice_date.strftime('%d.%m.%Y')}")
         c.drawString(2 * cm, 9.5 * cm, f"Sachbearbeiter: {self.company['agent']}")
         c.drawString(2 * cm, 10 * cm, f"Email: {self.company['email']}")
         c.drawString(2 * cm, 10.5 * cm, f"Tel.: {self.company['phone']}")
@@ -118,7 +118,7 @@ class Invoice(Document):
 
         c.drawString(18 * cm, ypos * cm, f"Seite: {c.getPageNumber()}/{self.max_pages}")
         ypos += 0.5
-        c.drawString(2 * cm, ypos * cm, f'Datum: {self.invoice_date}')
+        c.drawString(2 * cm, ypos * cm, f'Datum: {self.invoice_date.strftime("%d.%m.%Y")}')
         ypos +=1
         return c, ypos
 
@@ -161,7 +161,7 @@ class Invoice(Document):
         c.setStrokeColor(colors.lightgrey)
         c.setLineWidth(0.2)
 
-        c.line(2 * cm, ypos * cm, 19 * cm, ypos * cm)
+        c.line(1.5 * cm, ypos * cm, 19.5 * cm, ypos * cm)
         ypos = self.addy(ypos, c, 1)
         c.drawString(13 * cm, ypos * cm, f'Sub-Total')
         c.drawString(16 * cm, ypos * cm, f'{self.currency}')
