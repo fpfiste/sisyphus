@@ -1,6 +1,6 @@
 import io
 import os
-from reportlab.lib import pagesizes
+from reportlab.lib import pagesizes, colors
 from reportlab.lib.units import cm, mm
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
@@ -23,6 +23,7 @@ class Document():
         self.positions = []
         self.file_name = os.path.join(self.output_path, f'{self.document_type}-{self.document_id}.pdf')
         self.page_counter = 0
+        self.draw_brake_lines = False
 
 
 
@@ -109,7 +110,9 @@ class Document():
 
         return c
 
-    def addy(self, ypos, canvas, amount, recreate_header=False):
+    def draw_second_page_header(self, c, ypos):
+        return c,ypos
+    def addy(self, ypos, canvas, amount):
         ypos += amount
 
         w, h = canvas._pagesize
@@ -122,9 +125,25 @@ class Document():
             page_num = canvas.getPageNumber()
 
             canvas.drawString(18 * cm, 29* cm, 'Seite: ' + str(page_num))
+
+            if self.draw_brake_lines :
+                canvas.setStrokeColor(colors.lightgrey)
+                canvas.setLineWidth(0.2)
+                canvas.line(1.5 * cm, ypos * cm, 19.5 * cm, ypos * cm)
             canvas.showPage()
-            ypos = 3
+            ypos = 2
+
+            canvas, ypos = self.draw_second_page_header(canvas, ypos)
+
+
+            if self.draw_brake_lines :
+                canvas.setStrokeColor(colors.lightgrey)
+                canvas.setLineWidth(0.2)
+                canvas.line(1.5 * cm, ypos * cm, 19.5 * cm, ypos * cm)
             canvas.setFont("Helvetica", 10)
+            ypos += 2
+
+
 
         return ypos
 

@@ -28,7 +28,7 @@ class Invoice(Document):
         self.net_total = 0
         self.total = 0
         self.positions = []
-        print(self.vat)
+        self.draw_brake_lines = True
 
 
     def add_position(self, position_id: int, date:str,reference_text:str, description:str, unit:str, amount:float, unit_price:float, pos_type = ''):
@@ -109,6 +109,85 @@ class Invoice(Document):
 
         return c
 
+    def draw_second_page_header(self, c, ypos):
+        c.setFont("Helvetica", 8)
+        c.drawString(2 * cm, ypos * cm, f"Datum: {self.invoice_date}")
+        ypos += 0.5
+        c.drawString(2 * cm, ypos * cm, f'Rechnung: {self.document_id}')
+        ypos +=1
+        return c, ypos
+
+
+    def draw_position(self, c, ypos, position):
+        initial_y = ypos
+        c.setFont("Helvetica", 9)
+        c.drawString(2 * cm, ypos * cm, str(position['date']))
+
+        c.setFont("Helvetica-Bold", 9)
+        c.drawString(5 * cm, ypos * cm,
+                     f'Referenz: {position["reference_text"] if position["reference_text"] != "" else "-"}')
+        ypos = self.addy(ypos, c, 0.5)
+        c.setFont("Helvetica", 9)
+
+        wrapper = textwrap.TextWrapper(width=50)
+
+        for line in position["description"].split('\n'):
+            sublines = wrapper.wrap(text=line)
+            for line in sublines:
+                c.drawString(5 * cm, ypos * cm, f'{line}')
+                ypos = self.addy(ypos, c, 0.5)
+
+        c.drawString(5 * cm, ypos * cm, f'Beleg: {position["pos_type"]}-{position["position_id"]}')
+        ypos = self.addy(ypos, c, 0.5)
+
+        ypos = self.addy(ypos, c, -0.5)
+        c.setFont("Helvetica", 9)
+        c.drawString(13 * cm, ypos * cm, position['unit'])
+        c.drawRightString(16 * cm, ypos * cm, f"{position['amount']:,.2f}".replace(',', ''))
+        c.drawRightString(17.5 * cm, ypos * cm, f"{position['unit_price']:,.2f}".replace(',', ''))
+        c.drawRightString(19 * cm, ypos * cm, f"{(position['amount'] * position['unit_price']):,.2f}".replace(',', ''))
+
+        ypos = self.addy(ypos, c, 1)
+
+        return c, ypos
+    def draw_totals(self, c, ypos):
+        c.setFont("Helvetica", 9)
+
+        c.setStrokeColor(colors.lightgrey)
+        c.setLineWidth(0.2)
+
+        c.line(2 * cm, ypos * cm, 19 * cm, ypos * cm)
+        ypos = self.addy(ypos, c, 1)
+        c.drawString(13 * cm, ypos * cm, f'Sub-Total')
+        c.drawString(16 * cm, ypos * cm, f'{self.currency}')
+        c.drawRightString(19 * cm, ypos * cm, f"{self.net_total:,.2f}".replace(',', ''))
+        ypos = self.addy(ypos, c, 0.5)
+        # c.drawString(12.5 * cm, ypos * cm, 'MWST')
+
+        if self.discount > 0 and self.discount != None:
+            c.drawString(13 * cm, ypos * cm, f'Rabatt ({(self.discount * 100):.1f}%)')
+            c.drawString(16 * cm, ypos * cm, f'{self.currency}')
+            c.drawRightString(19 * cm, ypos * cm, f"{(self.net_total * self.discount):,.2f}".replace(',', ''))
+            ypos = self.addy(ypos, c, 0.5)
+
+        c.drawString(13 * cm, ypos * cm, f'MWST ({(self.vat * 100):.1f}%)')
+        c.drawString(16 * cm, ypos * cm, f'{self.currency}')
+        c.drawRightString(19 * cm, ypos * cm, f"{(self.net_minus_discount * self.vat):,.2f}".replace(',', ''))
+
+        ypos = self.addy(ypos, c, 0.5)
+        c.line(13 * cm, ypos * cm, 19 * cm, ypos * cm)
+        ypos = self.addy(ypos, c, 0.5)
+        c.drawString(13 * cm, ypos * cm, f'Total')
+        c.drawString(16 * cm, ypos * cm, f'{self.currency}')
+        c.drawRightString(19 * cm, ypos * cm, "%.2f" % (self.total))
+
+        ypos += 0.5
+        c.line(13 * cm, ypos * cm, 19 * cm, ypos * cm)
+        ypos += 0.1
+        c.line(13 * cm, ypos * cm, 19 * cm, ypos * cm)
+
+        return c, ypos
+
     def draw(self):
         # Creating Canvas
 
@@ -135,69 +214,9 @@ class Invoice(Document):
 
         ypos = 17.5
         for position in self.positions:
-            initial_y = ypos
-            c.setFont("Helvetica", 9)
-            c.drawString(2 * cm, ypos * cm, str(position['date']))
+            c, ypos = self.draw_position(c, ypos, position)
 
-            c.setFont("Helvetica-Bold", 9)
-            c.drawString(5 * cm, ypos * cm, f'Referenz: {position["reference_text"] if position["reference_text"] != "" else "-" }')
-            ypos = self.addy(ypos, c, 0.5)
-            c.setFont("Helvetica", 9)
-
-            wrapper = textwrap.TextWrapper(width=50)
-
-            for line in position["description"].split('\n'):
-                sublines = wrapper.wrap(text=line)
-                for line in sublines:
-                    c.drawString(5 * cm, ypos * cm, f'{line}')
-                    ypos = self.addy(ypos, c, 0.5)
-
-
-
-            c.drawString(5 * cm, ypos * cm, f'Beleg: {position["pos_type"]}-{position["position_id"] }')
-            ypos = self.addy(ypos, c, 0.5)
-
-            ypos = self.addy(ypos, c, -0.5)
-            c.setFont("Helvetica", 9)
-            c.drawString(13 * cm, ypos * cm, position['unit'])
-            c.drawRightString(16 * cm, ypos * cm,   f"{position['amount']:,.2f}".replace(',', ''))
-            c.drawRightString(17.5 * cm, ypos * cm,  f"{position['unit_price']:,.2f}".replace(',', ''))
-            c.drawRightString(19 * cm, ypos * cm, f"{(position['amount'] * position['unit_price']):,.2f}".replace(',', ''))
-
-            ypos = self.addy(ypos, c, 1)
-
-        c.setFont("Helvetica", 9)
-
-        c.line(2 * cm, ypos * cm, 19 * cm, ypos * cm)
-        ypos = self.addy(ypos, c, 1)
-        c.drawString(13 * cm, ypos * cm, f'Sub-Total')
-        c.drawString(16 * cm, ypos * cm, f'{self.currency}')
-        c.drawRightString(19 * cm, ypos * cm, f"{self.net_total:,.2f}".replace(',', ''))
-        ypos = self.addy(ypos, c, 0.5)
-        # c.drawString(12.5 * cm, ypos * cm, 'MWST')
-
-        if self.discount > 0 and self.discount != None:
-            c.drawString(13 * cm, ypos * cm, f'Rabatt ({(self.discount * 100):.1f}%)')
-            c.drawString(16 * cm, ypos * cm, f'{self.currency}')
-            c.drawRightString(19 * cm, ypos * cm, f"{(self.net_total * self.discount):,.2f}".replace(',', ''))
-            ypos = self.addy(ypos, c, 0.5)
-
-
-        c.drawString(13 * cm, ypos * cm, f'MWST ({(self.vat * 100):.1f}%)')
-        c.drawString(16 * cm, ypos * cm, f'{self.currency}')
-        c.drawRightString(19 * cm, ypos * cm,  f"{(self.net_minus_discount * self.vat):,.2f}".replace(',', ''))
-
-        ypos = self.addy(ypos, c, 0.5)
-        c.line(13 * cm, ypos * cm, 19 * cm, ypos * cm)
-        ypos = self.addy(ypos, c, 0.5)
-        c.drawString(13 * cm, ypos * cm, f'Total')
-        c.drawString(16 * cm, ypos * cm, f'{self.currency}')
-        c.drawRightString(19 * cm, ypos * cm, "%.2f" % (self.total))
-
-        ypos += 0.5
-        c.line(13 * cm, ypos * cm, 19 * cm, ypos * cm)
-        ypos += 0.1
-        c.line(13 * cm, ypos * cm, 19 * cm, ypos * cm)
+        c, ypos = self.draw_totals(c, ypos)
 
 
         # Title Section
