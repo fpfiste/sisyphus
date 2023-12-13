@@ -139,10 +139,10 @@ jQuery.fn.setUp = function(page_config, fields) {
         $('#loading_screen_wrapper').show();
         create_form.validate()
 
+        let valid = true
         if (create_form.is_valid == false) {
             $('#loading_screen_wrapper').hide();
-            $('input:checkbox').css('outline', '1px solid red')
-            return
+            valid = false
         }
 
         let form_data = create_form.serialize();
@@ -170,6 +170,12 @@ jQuery.fn.setUp = function(page_config, fields) {
         if ((tasks.length == 0) && (sales.length == 0)){
             $('#loading_screen_wrapper').hide();
             $('input:checkbox').css('outline', '1px solid red')
+            let valid = false
+        } else {
+            $('input:checkbox').css('outline', '1px solid green')
+        }
+
+        if (valid == false) {
             return
         }
 

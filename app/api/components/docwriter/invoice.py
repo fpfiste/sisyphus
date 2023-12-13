@@ -1,3 +1,5 @@
+from reportlab.lib import colors
+
 from .document import Document
 import os
 import tempfile
@@ -86,11 +88,9 @@ class Invoice(Document):
             renderPDF.drawToFile(drawing, qr_code_name)
 
             return qr_code_name
-    def draw(self):
-        # Creating Canvas
 
-        c = self.draw_template()
 
+    def first_page_header(self, c):
         c.drawString(2 * cm, 9 * cm, f"Datum: {self.invoice_date}")
         c.drawString(2 * cm, 9.5 * cm, f"Sachbearbeiter: {self.company['agent']}")
         c.drawString(2 * cm, 10 * cm, f"Email: {self.company['email']}")
@@ -107,6 +107,17 @@ class Invoice(Document):
         c.setFont("Helvetica-Bold", 10)
         c.drawString(2 * cm, 14.5 * cm, f'Rechnung: {self.document_id}')
 
+        return c
+
+    def draw(self):
+        # Creating Canvas
+
+        c = self.draw_template()
+
+        c = self.first_page_header(c)
+
+
+
         c.setFont("Helvetica", 9)
         # c.setLineWidth(0.25)
         c.drawString(2 * cm, 16 * cm, "Datum")
@@ -116,7 +127,9 @@ class Invoice(Document):
         c.drawRightString(17.5 * cm, 16 * cm, "Preis")
         c.drawRightString(19 * cm, 16 * cm, "Total")
 
-        c.line(2 * cm, 16.5 * cm, 19 * cm, 16.5 * cm)
+        c.setStrokeColor(colors.lightgrey)
+        c.setLineWidth(0.2)
+        c.line(1.5 * cm, 16.5 * cm, 19.5 * cm, 16.5 * cm)
 
         c.setFont("Helvetica", 9)
 
