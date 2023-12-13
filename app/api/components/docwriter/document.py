@@ -121,10 +121,10 @@ class Document():
 
 
         if ypos >=last_line:
-            self.page_counter += 1
+            ypos += 0.5
             page_num = canvas.getPageNumber()
 
-            canvas.drawString(18 * cm, 29* cm, 'Seite: ' + str(page_num))
+
 
             if self.draw_brake_lines :
                 canvas.setStrokeColor(colors.lightgrey)
@@ -142,6 +142,7 @@ class Document():
                 canvas.line(1.5 * cm, ypos * cm, 19.5 * cm, ypos * cm)
             canvas.setFont("Helvetica", 10)
             ypos += 2
+
 
 
 

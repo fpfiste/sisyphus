@@ -1,4 +1,5 @@
-from reportlab.lib import colors
+from reportlab.lib import colors, pagesizes
+from reportlab.pdfgen import canvas
 
 from .document import Document
 import os
@@ -29,6 +30,7 @@ class Invoice(Document):
         self.total = 0
         self.positions = []
         self.draw_brake_lines = True
+        self.max_pages = 1
 
 
     def add_position(self, position_id: int, date:str,reference_text:str, description:str, unit:str, amount:float, unit_price:float, pos_type = ''):
@@ -98,6 +100,7 @@ class Invoice(Document):
 
         c.drawString(2 * cm, 11.5 * cm, f"Kunden-Nr.: {self.customer['id']}")
         c.drawString(2 * cm, 12 * cm, f"Zahlungsfrist: {self.due_days} Tage")
+        c.drawString(2 * cm, 12.5 * cm, f"Seite: {c.getPageNumber()}/{self.max_pages}")
 
         c.setFont("Helvetica-Bold", 8)
 
@@ -111,9 +114,11 @@ class Invoice(Document):
 
     def draw_second_page_header(self, c, ypos):
         c.setFont("Helvetica", 8)
-        c.drawString(2 * cm, ypos * cm, f"Datum: {self.invoice_date}")
-        ypos += 0.5
         c.drawString(2 * cm, ypos * cm, f'Rechnung: {self.document_id}')
+
+        c.drawString(18 * cm, ypos * cm, f"Seite: {c.getPageNumber()}/{self.max_pages}")
+        ypos += 0.5
+        c.drawString(2 * cm, ypos * cm, f'Datum: {self.invoice_date}')
         ypos +=1
         return c, ypos
 
@@ -188,8 +193,24 @@ class Invoice(Document):
 
         return c, ypos
 
+    def get_max_page(self):
+        c = self.draw_template()
+
+        ypos = 17.5
+        for position in self.positions:
+            c, ypos = self.draw_position(c, ypos, position)
+
+        c, ypos = self.draw_totals(c, ypos)
+
+
+        # Title Section
+        # Again Inverting Scale For strings insertion
+        self.max_pages = c.getPageNumber()
+
+
     def draw(self):
         # Creating Canvas
+        self.get_max_page()
 
         c = self.draw_template()
 
@@ -221,12 +242,14 @@ class Invoice(Document):
 
         # Title Section
         # Again Inverting Scale For strings insertion
-        page_num = c.getPageNumber()
-        c.drawString(18 * cm, 29 * cm, 'Seite: ' + str(page_num))
+        self.max_pages = c.getPageNumber()
 
+        w, h = c._pagesize
 
+        last_line = ((h / cm ) - 13)
 
-        c.showPage()
+        if ypos >=last_line:
+            c.showPage()
         qrcode = self.qr_bill()
         c.translate(10, 800)
         c.scale(1, -1)
