@@ -811,7 +811,7 @@
       "filter_form_fields" : ["id_invoice", "invoice_date", "fk_project", "fk_invoice_state","fk_invoice_terms","fk_currency","net_total", "discount", "total", "fk_invoice_terms", "fk_vat"],
       "update_form_fields" : ["id_invoice", "invoice_date", "fk_project", "fk_invoice_state","fk_invoice_terms","fk_currency","net_total", "discount", "total", "fk_invoice_terms", "fk_vat"],
       "update_form_fields_disabled" :["id_invoice", "invoice_date", "fk_project", "fk_invoice_state","fk_invoice_terms","fk_currency","net_total", "discount", "total", "fk_invoice_terms", "fk_vat"],
-      "remove_buttons" : ["btn_close_task" , "btn_save"]
+      "remove_buttons" : ["btn_save"]
 
 
 },

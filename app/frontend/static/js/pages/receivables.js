@@ -135,76 +135,36 @@ jQuery.fn.setUp = function(page_config, fields) {
         });
     })
 
+    let callback = function(response) {
+          console.log('callback executed')
+          $('#update_modal').modal('hide');
+          update_form.reset()
+          table.build();
+          $('#loading_screen_wrapper').hide();
+    }
+
+
+    $('#btn_close_task').on('click', function() {
+        $('#loading_screen_wrapper').show();
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = '/api/receivables/' + pk + '/close/'
+        update_form.submit(url, callback);
+    })
+
+
+    $('#update_modal').on('show.bs.modal', function() {
+        let task_status = $('#update_form #fk_invoice_state').val()
+        console.log(task_status)
+        if (
+            (task_status == "4") ||
+            (task_status == "3")
+        ){
+            $('#btn_delete').prop('disabled', true)
+            $('#btn_close_task').prop('disabled', true)
+            $('#btn_save').prop('disabled', true)
+
+        }
+
+    })
+
 }
-
-
-
-/*
-
-$(document).ready(function(){
-    let page_config
-    let url = '/receivables'
-    let lang_cookie = Cookies.get('sisyphus_language');
-
-    $('#btn_close_task, #btn_save, #btn_create' ).remove();
-    $.ajax({
-          url: '/_config',
-          async: false,
-          dataType: 'json',
-          success: function (response) {
-            page_config = response['pages'][url]
-            translations = response['translations']
-          }
-    });
-
-
-
-    // create table instance
-    let table = new BootstrapDataTable({
-                        container:'#overview-table',
-                        id: page_config['table_id'],
-                        fields: page_config['fields'],
-                        ajax_url: page_config['ajax_url'],
-                        pk_field: page_config['pk'],
-                        language: lang_cookie
-
-                    })
-
-
-    // create form insstances
-    let filter_form = new BootstrapForm({
-            container: '#form_filter_container',
-            id: 'filter_form',
-            ajax_url: page_config['ajax_url'],
-            validation:false,
-            fields: page_config['fields'],
-            language: lang_cookie
-
-
-
-    })
-
-
-
-    let update_form = new BootstrapForm({
-            container: '#update_form_container',
-            id: 'update_form',
-            ajax_url: page_config['ajax_url'],
-            validation:true,
-            fields: page_config['fields'],
-            disabled : ['id_invoice', 'fk_invoice_state', 'fk_invoice_terms',  'invoice_date', 'invoice_text'],
-            required : ['id_invoice', 'fk_invoice_state', 'fk_invoice_terms',  'invoice_date'],
-            language: lang_cookie
-
-
-    })
-
-   // build components
-    table.build();
-    filter_form.build();
-    update_form.build();
-
-
-
-});
-*/

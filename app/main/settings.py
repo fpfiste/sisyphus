@@ -29,6 +29,7 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(' ')
 # Application definition
 
 
+
 CSRF_TRUSTED_ORIGINS = os.environ.get("DJANGO_TRUSTED_ORIGINS", "127.0.0.1").split(' ')
 
 INSTALLED_APPS = [
@@ -147,6 +148,7 @@ TMP_FOLDER = os.path.join(STATIC_ROOT, 'tmp')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
 
 

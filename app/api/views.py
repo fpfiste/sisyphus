@@ -863,8 +863,35 @@ class ReceivablesViewSet(CustomModelViewSet):
 
         return Response({'file_url': url}, status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=['PUT'])
+    def close(self, request,pk):
+        try:
+
+            print(request.data)
+            request.data._mutable = True
+
+            request.data['fk_invoice_state'] = 3
 
 
+
+            receivable = Receivables.objects.get(id_invoice=pk)
+
+            if receivable.fk_invoice_state.id_invoice_state == 4:
+                return Response({'message': 'Invoice was already deleted'}, status=status.HTTP_403_FORBIDDEN)
+            serializer = self.get_serializer(receivable, data=request.data)
+
+            serializer.is_valid(raise_exception=True)
+            print(serializer.errors)
+
+
+            self.perform_update(serializer)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+
+        except Exception as e:
+            print(e)
 
 class ProjectViewSet(CustomModelViewSet):
     """
