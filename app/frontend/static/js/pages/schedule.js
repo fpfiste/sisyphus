@@ -72,7 +72,9 @@ jQuery.fn.setUp = function(page_config, fields) {
 
     update_form.build();
 
-    $( "#task_template" ).on( "change", function() {
+
+    waitForEl('#task_template', function() {
+        $( "#task_template" ).on( "change", function() {
             $('#loading_screen_wrapper').show();
 
         let template_id = $(this).val();
@@ -86,7 +88,7 @@ jQuery.fn.setUp = function(page_config, fields) {
            type: 'GET',
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
-
+              console.log(response)
               $('#task_template').val(template_id);
               $.each(response, (key, value)=>{
                 $('#'+ key).val(value)
@@ -102,6 +104,9 @@ jQuery.fn.setUp = function(page_config, fields) {
            }
         });
     });
+    });
+
+
 
     $( "#btn_reset" ).on( "click", function() {
         $('#filter_form').trigger("reset");
