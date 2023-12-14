@@ -81,6 +81,12 @@ jQuery.fn.setUp = function(page_config, fields) {
 
         $('#create_form').trigger("reset");
 
+        if (template_id == '') {
+            $('#loading_screen_wrapper').hide();
+            return
+        }
+
+
         let url = '/api/templates/'+ template_id + '/'
 
         $.ajax({
