@@ -1288,7 +1288,7 @@ class TaskViewSet(CustomModelViewSet):
             Q(fk_employee_1__isnull=True)
         ).order_by('id_task')
 
-        tasks = tasks.exclude(fk_task_state__gt=6)
+        tasks = tasks.exclude(fk_task_state=6)
 
         serializer = self.get_serializer(tasks, many=True)
 
