@@ -97,10 +97,8 @@ class SchedulePDF(Document):
         self.c.line(1 * cm, self.y * cm, 29 * cm, self.y * cm)
 
 
-    def draw_second_page_header(self, c, ypos):
+    def draw_second_page_header(self):
         self.header()
-
-        return c,ypos
 
 
     def draw_task(self,task_id, task_description, asset_1, asset_2, ts_from, ts_to):
