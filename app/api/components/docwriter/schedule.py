@@ -136,7 +136,7 @@ class SchedulePDF(Document):
 
     def draw_vertical_grid(self):
         self.increase_y(-0.5)
-
+        self.x = 5
         for i in range(25):
             self.setLineWidth(0.5)
             self.setStrokeColor(colors.gray)
@@ -166,7 +166,7 @@ class SchedulePDF(Document):
             subset = self.filter_data(employee['id'])
 
             max_y = len(subset)+ self.y -0.5
-            self.x = 5
+
 
 
             for task_index , task in enumerate(subset):
