@@ -134,7 +134,22 @@ class SchedulePDF(Document):
 
 
 
+    def draw_vertical_grid(self):
+        self.increase_y(-0.5)
 
+        for i in range(25):
+            self.setLineWidth(0.5)
+            self.setStrokeColor(colors.gray)
+            self.c.line(self.x * cm, self.y * cm, self.x * cm, (self.y + 1) * cm)
+            self.setLineWidth(0.01)
+            if i < 24:
+                self.setStrokeColor(colors.lightgrey)
+                self.c.line((self.x + 0.25) * cm, self.y * cm, (self.x + 0.25) * cm, (self.y + 1) * cm)
+                self.c.line((self.x + 0.5) * cm, self.y * cm, (self.x + 0.5) * cm, (self.y + 1) * cm)
+                self.c.line((self.x + 0.75) * cm, self.y * cm, (self.x + 0.75) * cm, (self.y + 1) * cm)
+            self.x += 1
+
+        self.increase_y(0.5)
 
     def draw(self):
 
@@ -152,27 +167,15 @@ class SchedulePDF(Document):
 
             max_y = len(subset)+ self.y -0.5
             self.x = 5
-            self.increase_y(-0.5)
 
-            for i in range(25):
-                self.setLineWidth(0.5)
-                self.setStrokeColor(colors.gray)
-                self.c.line(self.x * cm, self.y * cm, self.x * cm, (max_y) * cm)
-                self.setLineWidth(0.01)
-                if i < 24:
-                    self.setStrokeColor(colors.lightgrey)
-                    self.c.line((self.x + 0.25) * cm, self.y * cm, (self.x + 0.25) * cm, (max_y) * cm)
-                    self.c.line((self.x + 0.5) * cm, self.y * cm, (self.x + 0.5) * cm, (max_y) * cm)
-                    self.c.line((self.x + 0.75) * cm, self.y * cm, (self.x + 0.75) * cm, (max_y) * cm)
-                self.x += 1
-
-            self.increase_y(0.5)
 
             for task_index , task in enumerate(subset):
                 if len(task['description'].replace('\n', ' ')) > 25:
                     task_description = task['description'].replace('\n', ' ')[:20] + '...'
                 else:
                     task_description = task['description'].replace('\n', ' ')
+
+                self.draw_vertical_grid()
 
                 self.draw_task(task['id'], task_description, task['asset_1'], task['asset_2'], task['ts_from'], task['ts_to'])
 
