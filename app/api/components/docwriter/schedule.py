@@ -178,7 +178,7 @@ class SchedulePDF(Document):
 
 
                 self.setLineWidth(0.2)
-                #self.increase_y(0.5)
+                self.increase_y(0.5)
                 if len(subset) > 1 and task_index != len(subset)-1:
                     self.c.line(5 * cm, self.y * cm, 29 * cm, self.y * cm)
                 self.increase_y(0.5)
