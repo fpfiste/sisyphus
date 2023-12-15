@@ -183,7 +183,7 @@ class SchedulePDF(Document):
                     self.c.line(5 * cm, self.y * cm, 29 * cm, self.y * cm)
                 self.increase_y(0.5)
 
-            #self.increase_y(0.5)
+            self.increase_y(-0.5)
             self.setLineWidth(0.2)
             self.setStrokeColor(colors.black)
             self.c.line(1 * cm, self.y * cm, 29 * cm, self.y * cm)
