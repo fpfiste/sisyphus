@@ -1,6 +1,7 @@
 import os
 
 from reportlab.lib import pagesizes, colors
+from reportlab.lib.pagesizes import landscape
 from reportlab.lib.units import cm
 from reportlab.pdfgen import canvas
 import datetime as dt
@@ -10,6 +11,7 @@ from api.components import Document
 
 class SchedulePDF(Document):
     def __init__(self, date, language:str, output_path:str):
+        self.page_size = landscape(pagesizes.A4)
         super().__init__(language, 'Schedule', output_path=output_path)
         self.date = dateutil.parser.parse(date)
         self.employees = []
@@ -22,6 +24,7 @@ class SchedulePDF(Document):
             'asset_label': {'en': 'Assets', 'ch': 'Ressourcen'},
 
         }
+
 
     def add_employee(self, id, name):
         ids = [i['id'] for i in self.employees]
@@ -64,46 +67,49 @@ class SchedulePDF(Document):
 
 
 
-    def header(self, c):
+    def header(self):
         '''draw the header of the scheduler document'''
-        c.setFillColor(colors.black)
+        self.setFillColor(colors.black)
 
-        c.setFont("Helvetica-Bold", 12)
-        c.drawString(1 * cm, 1 * cm, f'{self.labels["title"][self.language]}: {self.date}')
+        self.setFont("Helvetica-Bold", 12)
+        self.c.drawString(1 * cm, 1 * cm, f'{self.labels["title"][self.language]}: {self.date}')
 
-        c.setFont("Helvetica", 7)
+        self.setFont("Helvetica", 7)
 
-        c.drawString(1 * cm, 2 * cm, f'{self.labels["employee_label"][self.language]}')
-        c.drawString(3 * cm, 2 * cm, f'{self.labels["asset_label"][self.language]}')
+        self.c.drawString(1 * cm, 2 * cm, f'{self.labels["employee_label"][self.language]}')
+        self.c.drawString(3 * cm, 2 * cm, f'{self.labels["asset_label"][self.language]}')
 
 
-        ypos = 2.1
-        xpos = 5
-
+        self.y = 2.1
+        self.x = 5
 
         for i in range(25):
-            c.setFillColor(colors.black)
-            c.setLineWidth(0.2)
-            c.drawCentredString(xpos * cm, 2 * cm, str(i) + ':00')
-            c.setLineWidth(0.2)
-            c.setStrokeColor(colors.black)
-            xpos += 1
+            self.setFillColor(colors.black)
+            self.setLineWidth(0.2)
+            self.c.drawCentredString(self.x * cm, 2 * cm, str(i) + ':00')
+            self.setLineWidth(0.2)
+            self.setStrokeColor(colors.black)
+            self.x += 1
 
-        ypos = 2.25
-        xpos = 1
+        self.y = 2.25
+        self.x = 1
 
-        c.line(1 * cm, ypos * cm, 29 * cm, ypos * cm)
-
-        return c , xpos, ypos
+        self.c.line(1 * cm, self.y * cm, 29 * cm, self.y * cm)
 
 
-    def draw_task(self, c, ypos, task_id, task_description, asset_1, asset_2, ts_from, ts_to):
+    def draw_second_page_header(self, c, ypos):
+        self.header()
+
+        return c,ypos
+
+
+    def draw_task(self,task_id, task_description, asset_1, asset_2, ts_from, ts_to):
         ''' draw single task into lane of the schedule'''
 
 
         task_resources = asset_1 + ' ' + asset_2
 
-        c.drawCentredString(3.5 * cm, ypos * cm, task_resources)
+        self.c.drawCentredString(3.5 * cm, self.y * cm, task_resources)
 
         seconds_from = (ts_from - self.date).seconds
         seconds_to = (ts_to - self.date).seconds
@@ -120,81 +126,78 @@ class SchedulePDF(Document):
         width = (duration / 86400 * 24)
 
         customColor = colors.Color(red=(88.0 / 255), green=(129.0 / 255), blue=(87.0 / 255))
-        c.setFillColor(customColor)
-        c.rect(offset_left * cm, (ypos - 0.5) * cm, width * cm, 1 * cm, fill=1)
-        c.setFillColor(colors.white)
+        self.setFillColor(customColor)
+        self.c.rect(offset_left * cm, (self.y - 0.4) * cm, width * cm, 0.8 * cm, fill=1)
+        self.setFillColor(colors.white)
 
         string_pos = (width / 2) + offset_left
-        c.drawCentredString(string_pos * cm, ypos * cm, f'{task_id} - {task_description}')
+        self.c.drawCentredString(string_pos * cm, self.y * cm, f'{task_id} - {task_description}')
 
-        return c
 
 
 
 
 
     def draw(self):
-        file_name = os.path.join(self.file_name)
-        c = canvas.Canvas(file_name, pagesize=pagesizes.landscape(pagesizes.A4), bottomup=0)
 
-        c, xpos, ypos = self.header(c)
 
-        ypos = self.addy(ypos, c, 0.5)
+        self.header()
+
+        self.increase_y(0.5)
 
         for index, employee in enumerate(self.employees):
-            c.setFillColor(colors.black)
-            xpos = 1
-            c.drawString(xpos * cm, ypos * cm, employee['name'])
+            self.setFillColor(colors.black)
+            self.x = 1
+            self.c.drawString(self.x * cm, self.y * cm, employee['name'])
 
             subset = self.filter_data(employee['id'])
 
-            max_y = len(subset)+ ypos -0.5
-            xpos = 5
-            ypos = self.addy(ypos, c, -0.5)
+            max_y = len(subset)+ self.y -0.5
+            self.x = 5
+            self.increase_y(-0.5)
 
             for i in range(25):
-                c.setLineWidth(0.5)
-                c.setStrokeColor(colors.gray)
-                c.line(xpos * cm, ypos * cm, xpos * cm, (max_y) * cm)
-                c.setLineWidth(0.01)
+                self.setLineWidth(0.5)
+                self.setStrokeColor(colors.gray)
+                self.c.line(self.x * cm, self.y * cm, self.x * cm, (max_y) * cm)
+                self.setLineWidth(0.01)
                 if i < 24:
-                    c.setStrokeColor(colors.lightgrey)
-                    c.line((xpos + 0.25) * cm, ypos * cm, (xpos + 0.25) * cm, (max_y) * cm)
-                    c.line((xpos + 0.5) * cm, ypos * cm, (xpos + 0.5) * cm, (max_y) * cm)
-                    c.line((xpos + 0.75) * cm, ypos * cm, (xpos + 0.75) * cm, (max_y) * cm)
-                xpos += 1
+                    self.setStrokeColor(colors.lightgrey)
+                    self.c.line((self.x + 0.25) * cm, self.y * cm, (self.x + 0.25) * cm, (max_y) * cm)
+                    self.c.line((self.x + 0.5) * cm, self.y * cm, (self.x + 0.5) * cm, (max_y) * cm)
+                    self.c.line((self.x + 0.75) * cm, self.y * cm, (self.x + 0.75) * cm, (max_y) * cm)
+                self.x += 1
 
-            ypos = self.addy(ypos, c, 0.5)
+            self.increase_y(0.5)
 
             for task_index , task in enumerate(subset):
-                print(task['description'].replace('\n', ' '))
                 if len(task['description'].replace('\n', ' ')) > 25:
                     task_description = task['description'].replace('\n', ' ')[:20] + '...'
                 else:
                     task_description = task['description'].replace('\n', ' ')
 
-                self.draw_task(c, ypos, task['id'], task_description, task['asset_1'], task['asset_2'], task['ts_from'], task['ts_to'])
+                self.draw_task(task['id'], task_description, task['asset_1'], task['asset_2'], task['ts_from'], task['ts_to'])
 
 
-                c.setLineWidth(0.2)
-                ypos = self.addy(ypos, c, 0.5)
+                self.setLineWidth(0.2)
+                #self.increase_y(0.5)
                 if len(subset) > 1 and task_index != len(subset)-1:
-                    c.line(5 * cm, ypos * cm, 29 * cm, ypos * cm)
-                ypos = self.addy(ypos, c, 0.5)
+                    self.c.line(5 * cm, self.y * cm, 29 * cm, self.y * cm)
+                self.increase_y(0.5)
 
-            ypos = self.addy(ypos, c, -0.5)
-            c.setLineWidth(0.2)
-            c.setStrokeColor(colors.black)
-            c.line(1 * cm, ypos * cm, 29 * cm, ypos * cm)
-            ypos = self.addy(ypos, c, 0.5)
-
-
+            #self.increase_y(0.5)
+            self.setLineWidth(0.2)
+            self.setStrokeColor(colors.black)
+            self.c.line(1 * cm, self.y * cm, 29 * cm, self.y * cm)
+            self.increase_y(0.5)
 
 
 
 
 
-        c.save()
+
+
+        self.c.save()
 
 
 

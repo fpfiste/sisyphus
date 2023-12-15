@@ -1167,7 +1167,7 @@ class TaskViewSet(CustomModelViewSet):
         Optionally restricts the returned purchases to a given user,
         by filtering against a `username` query parameter in the URL.
         """
-        print(self.request.query_params)
+
         tasks = Tasks.objects.filter(fk_task_state__id_task_state=2)
 
         for task in tasks:
@@ -1190,6 +1190,7 @@ class TaskViewSet(CustomModelViewSet):
         return data
 
     def create(self, request):
+        print(self.request)
         self.get_serializer_class()
         request.data._mutable = True
 
@@ -1227,6 +1228,7 @@ class TaskViewSet(CustomModelViewSet):
         request.data._mutable = True
         task = Tasks.objects.get(id_task = pk)
 
+        print(request.data.get('description'))
 
         data = request.data.dict()
         date_from = request.data.get('task_date_from')
@@ -1249,6 +1251,7 @@ class TaskViewSet(CustomModelViewSet):
                     request.data['fk_task_state'] = "3"
             else:
                 request.data['fk_task_state'] = "1"
+
 
 
 
@@ -1278,6 +1281,7 @@ class TaskViewSet(CustomModelViewSet):
         instance.save()
 
         serializer = self.get_serializer(instance)
+
 
 
 
@@ -1382,10 +1386,14 @@ class TaskViewSet(CustomModelViewSet):
             task.task_date_to,
             task.task_time_to,
             task.description,
+            task.internal_info,
             task.fk_unit.unit if task.fk_unit else '',
             task.amount ,
-
-            task.customer_reference
+            task.customer_reference,
+            task.fk_employee_1.employee_internal_alias if task.fk_employee_1 else '',
+            task.fk_employee_2.employee_internal_alias if task.fk_employee_2 else '',
+            task.fk_asset_1.asset_internal_alias if task.fk_asset_1 else '',
+            task.fk_asset_2.asset_internal_alias if task.fk_asset_2 else ''
 
         )
 
@@ -1408,11 +1416,10 @@ class TaskViewSet(CustomModelViewSet):
             Q(task_date_from=date) |
             Q(task_date_to=date) |
             Q(task_date_from__lt=date, task_date_to__gt=date)
-
         )
 
         tasks = tasks.filter(fk_employee_1__isnull=False, task_time_from__isnull=False,
-                             task_time_to__isnull=False).order_by('task_date_from', 'task_time_from')
+                             task_time_to__isnull=False).exclude(fk_task_state=6).order_by('task_date_from', 'task_time_from')
 
         doc = SchedulePDF(date, 'ch', output_path=settings.TMP_FOLDER)
 

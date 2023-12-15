@@ -4,6 +4,13 @@
 # pull official base image
 FROM python:3.11-bullseye
 
+# install psycopg2 dependencies
+RUN apt-get update
+RUN apt-get install -y postgresql gcc musl netcat git
+
+WORKDIR /home
+
+RUN git clone https://github.com/fpfiste/sisyphus.git
 
 # set work directory
 WORKDIR /home/sisyphus/app
@@ -11,12 +18,7 @@ RUN mkdir /home/sisyphus/app/static
 
 
 
-# install psycopg2 dependencies
-RUN apt-get update
-RUN apt-get install -y postgresql gcc musl netcat
 
-
-COPY . .
 # install dependencies
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt

@@ -16,16 +16,52 @@ class Document():
         self.document_id = doc_id
         self.document_type = doc_type
         self.language = language
-        self.output_path = output_path
         self.logo = None
+        self.output_path = output_path
         self.customer = None
         self.company = None
         self.positions = []
-        self.file_name = os.path.join(self.output_path, f'{self.document_type}-{self.document_id}.pdf')
-        self.page_counter = 0
-        self.draw_brake_lines = False
+        self.file_name = os.path.join(output_path, f'{self.document_type}-{self.document_id}.pdf')
+        self.c = canvas.Canvas(self.file_name, pagesize=self.page_size, bottomup=0)
+        self.page_width , self.page_height = self.c._pagesize
+        self.y = 4
+        self.x = 4
+        self.footer_size = 3
+        self.max_pages = 1
+        self.settings = {
+            'font' : 'Helvetica',
+            'font-size': 10,
+            'stroke-color':colors.black,
+            'line-width' : 0.25,
+            'fill-color': colors.black
+        }
 
 
+
+    def setFont(self, font:str, size:int):
+        self.settings['font'] = font
+        self.settings['font-size'] = size
+        self.apply_settings()
+
+    def setStrokeColor(self, color):
+        self.settings['stroke-color'] = color
+        self.apply_settings()
+
+    def setLineWidth(self, width:float):
+        self.settings['line-width'] = width
+        self.apply_settings()
+
+
+    def setFillColor(self, color):
+        self.settings['fill-color'] = color
+        self.apply_settings()
+
+
+    def apply_settings(self):
+        self.c.setFont(self.settings['font'], self.settings['font-size'])
+        self.c.setStrokeColor(self.settings['stroke-color'])
+        self.c.setLineWidth(self.settings['line-width'])
+        self.c.setFillColor(self.settings['fill-color'])
 
 
     def set_logo(self, logo:str='',  logo_width=550, logo_height=120, logo_x=0, logo_y=0):
@@ -60,93 +96,104 @@ class Document():
             'vat_number' : vat_number
         }
 
-    def draw_template(self):
-
-        assert self.logo != None, 'Logo is missing'
-        assert self.customer != None, 'Customer is missing'
-        assert self.company != None ,'company is missing'
-
-        file_name = os.path.join(self.file_name)
-        c = canvas.Canvas(file_name, pagesize=pagesizes.A4, bottomup=0)
-
-        #c.translate(10, 100)
-
-        ## Logo
-
-
+    def draw_logo(self):
         if self.logo['logo'] not in (None, ''):
-            c.scale(1, -1)
-            c.setLineWidth(0.2)
+            self.c.scale(1, -1)
             x_margin = self.logo['logo_x'] * cm
             y_margin = self.logo['logo_y'] * cm
             w = self.logo['logo_width'] * cm
             h = self.logo['logo_height'] * cm
             image = ImageReader(io.BytesIO(self.logo['logo']))
-            c.drawImage(image, x_margin, -( y_margin+h), width=w, height=h)
-            # Title Section
-            # Again Inverting Scale For strings insertion
-            c.scale(1, -1)
-        # Again Setting the origin back to (0,0) of top-left
-        #·c.translate(-10, -40)
+            self.c.drawImage(image, x_margin, -( y_margin+h), width=w, height=h)
+            self.c.scale(1, -1)
 
 
+    def draw_address_block(self):
+        self.setFont("Helvetica", 6)
+        self.c.drawString(self.x * cm, self.y * cm, f'{self.company["name"]}, {self.company["address"]}, {self.company["pcode"]}-{self.company["city"]}')
+        self.setFont("Helvetica", 11)
 
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm, self.customer['name'])
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm, self.customer['address'])
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm, f'{self.customer["pcode"]} {self.customer["city"]}')
 
-
-        c.setFont("Helvetica", 6)
-
-        c.drawString(13 * cm, 6 * cm, f'{self.company["name"]}, {self.company["address"]}, {self.company["pcode"]}-{self.company["city"]}')
-        c.setFont("Helvetica", 11)
-        c.drawString(13 * cm, 6.5 * cm, self.customer['name'])
-        c.drawString(13 * cm, 7 * cm, self.customer['address'])
-        c.drawString(13 * cm, 7.5 * cm, f'{self.customer["pcode"]} {self.customer["city"]}')
-
-        c.setFont("Helvetica", 8)
-        c.drawString(2 * cm, 6 * cm,  self.company['name'])
-        c.drawString(2 * cm, 6.5 * cm, self.company['address'])
-        c.drawString(2 * cm, 7 * cm, f'{self.company["country"]}-{self.company["pcode"]} {self.company["city"]}')
+    def draw_company_info(self):
+        self.setFont("Helvetica", 8)
+        self.c.drawString(self.x * cm, self.y * cm,  self.company['name'])
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm, self.company['address'])
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm, f'{self.company["country"]}-{self.company["pcode"]} {self.company["city"]}')
         if self.company['vat_number'] not in (None, ''):
-            c.drawString(2 * cm, 7.5 * cm, f"MWST-NR: { self.company['vat_number']}")
+            self.y += 0.5
+            self.c.drawString(self.x * cm, self.y * cm, f"MWST-NR: { self.company['vat_number']}")
+        self.y += 1
 
-        return c
+    def draw_user_info(self):
+        self.setFont("Helvetica", 8)
+        self.c.drawString(self.x * cm, self.y * cm, f"Sachbearbeiter: {self.company['agent']}")
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm, f"Email: {self.company['email']}")
+        self.y += 0.5
 
-    def draw_second_page_header(self, c, ypos):
-        return c,ypos
-    def addy(self, ypos, canvas, amount):
-        ypos += amount
-
-        w, h = canvas._pagesize
-
-        last_line = ((h / cm ) - 3)
-
-
-        if ypos >=last_line:
-            ypos += 0.5
-            page_num = canvas.getPageNumber()
+        self.c.drawString(self.x * cm, self.y * cm, f"Tel.: {self.company['phone']}")
+        self.y += 1.5
+        self.c.drawString(self.x * cm, self.y * cm, f"Kunden-Nr.: {self.customer['id']}")
 
 
+    def draw_doc_info(self):
+        self.c.drawString(self.x * cm, self.y * cm, f"Datum: {self.doc_date.strftime('%d.%m.%Y')}")
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm, f"Seite: {self.c.getPageNumber()}/{self.max_pages}")
+    def draw_header(self):
+        pass
 
-            if self.draw_brake_lines :
-                canvas.setStrokeColor(colors.lightgrey)
-                canvas.setLineWidth(0.2)
-                canvas.line(1.5 * cm, ypos * cm, 19.5 * cm, ypos * cm)
-            canvas.showPage()
-            ypos = 2
+    def draw_second_page_header(self):
+        pass
+    def draw_body(self):
+        pass
 
-            canvas, ypos = self.draw_second_page_header(canvas, ypos)
+    def draw_footer(self):
+        pass
 
+    def increase_y(self, amount):
+        self.y += amount
 
-            if self.draw_brake_lines :
-                canvas.setStrokeColor(colors.lightgrey)
-                canvas.setLineWidth(0.2)
-                canvas.line(1.5 * cm, ypos * cm, 19.5 * cm, ypos * cm)
-            canvas.setFont("Helvetica", 10)
-            ypos += 2
+        last_line = ((self.page_height / cm ) - self.footer_size)
 
 
+        if self.y >=last_line:
+            self.y += 0.5
+
+            self.draw_footer()
+
+            self.c.showPage()
+            self.y = 2
+            self.apply_settings()
+
+            self.draw_second_page_header()
 
 
-        return ypos
+
+
+
+
+
+
+
+
+
+
+        #
+
+        #
+        # return c
+    #
+    # def draw_second_page_header(self, c, ypos):
+    #     return c,ypos
 
 
 

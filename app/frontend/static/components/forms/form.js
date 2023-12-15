@@ -82,7 +82,7 @@ class BootstrapForm{
       text_input({id, title, max_length, pattern, disabled, required}) {
         let html = '<div class="form-group">'
         html += '<label for="'+id+'">'+title+'</label>'
-        html += '<input type="text" name="'+id+'" class="form-control" id="'+id+'"' + disabled+' ' + required +'></div>'
+        html += '<input type="text" name="'+id+'" class="form-control" id="'+id+'"' + disabled+' ' + required +' maxlength="'+max_length+'"></div>'
         return html
       }
 
@@ -143,10 +143,10 @@ class BootstrapForm{
             return html
           }
 
-      textarea({id, title, placeholder, required, disabled}) {
+      textarea({id, title, placeholder, required, disabled, max_length}) {
             let html = '<div class="form-group">'
             html += '<label for="'+id+'">'+title+'</label>'
-            html += '<textarea id="'+id+'" name="'+id+'" style="width:100%; display:block;" ' + placeholder + ' '  + required+' ' + disabled +'></textarea>'
+            html += '<textarea id="'+id+'" name="'+id+'" style="width:100%; display:block;" ' + placeholder + ' '  + required+' ' + disabled +'  maxlength="'+max_length+'"></textarea>'
             html += '</div>'
            return html
       }
@@ -198,7 +198,7 @@ class BootstrapForm{
 
             switch (input_type) {
                 case 'text_input':
-                    field = this.text_input({id: key, title: title, required:required, disabled:disabled});
+                    field = this.text_input({id: key, title: title, required:required, disabled:disabled, max_length:value.max_length});
                     break;
 
                 case 'number_input':
@@ -223,7 +223,7 @@ class BootstrapForm{
                     field = this.select({id: key, title: title, options: value.options, value_field:value.pk_field, description_field: value.display_field, required:required, disabled:disabled})
                     break;
                 case 'textarea':
-                    field = this.textarea({id: key, title:title, required:required, disabled:disabled})
+                    field = this.textarea({id: key, title:title, required:required, disabled:disabled, max_length:value.max_length})
                     break;
                 case 'jsonfield':
                     field = this.jsonfield({id:key, title:title, required:required, disabled:disabled})
@@ -339,6 +339,7 @@ class BootstrapForm{
            success: callback,
            error: function(error){
             console.log(error);
+            alert(error)
             location.reload();
            }
         });

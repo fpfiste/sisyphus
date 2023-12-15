@@ -117,7 +117,8 @@
         "description": {
           "title": {"en": "Description", "ch": "Beschreibung"},
           "display_type": "text",
-          "input_type": "textarea"
+          "input_type": "textarea",
+          "max_length": 200
         },
         "fk_task_state": {
           "title": {"en": "Task status", "ch": "Auftragsstatus"},
@@ -147,12 +148,14 @@
         "internal_info": {
           "title": {"en": "Internal info", "ch": "Interne Information"},
           "display_type": "text",
-          "input_type": "textarea"
+          "input_type": "textarea",
+          "max_length": 200
         },
         "customer_reference": {
           "title": {"en": "Reference", "ch": "Referenz"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 100
         },
         "fk_employee_1": {
           "title": {"en": "Employee 1", "ch": "Mitarbeiter 1"},
@@ -201,27 +204,37 @@
         "company_name": {
           "title": {"en": "Company", "ch": "Firma"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 50
+
         },
         "company_internal_alias": {
           "title": {"en": "Alias", "ch": "Alias"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 50
+
         },
         "company_street": {
           "title": {"en": "Street", "ch": "Strasse"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 50
+
         },
         "company_zipcode": {
           "title": {"en": "Zipcode", "ch": "PLZ"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 50
+
         },
         "company_city": {
           "title": {"en": "City", "ch": "Stadt"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 50
+
         },
         "fk_country": {
           "title": {"en": "Country", "ch": "Land"},
@@ -248,7 +261,9 @@
         "phone_number": {
           "title": {"en": "Phone", "ch": "Telefon"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 20
+
 
         },
         "is_customer": {
@@ -281,7 +296,9 @@
         "vat_number" : {
           "title": {"en": "VAT Number", "ch": "MWST-Nummer"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 100
+
         },
         "id_project": {
           "title": {"en": "Project ID", "ch": "Projekt Nr."},
@@ -293,7 +310,9 @@
         "project_name": {
           "title": {"en": "Project", "ch": "Projekt"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 200
+
         },
         "fk_customer": {
           "title": {"en": "Customer", "ch": "Kunde"},
@@ -325,27 +344,36 @@
         "employee_first_name": {
           "title": {"en": "Firstname", "ch": "Vorname"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 50
+
         },
         "employee_last_name": {
           "title": {"en": "Lastname", "ch": "Nachname"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 50
         },
         "employee_street": {
           "title": {"en": "Street", "ch": "Strasse"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 50
+
         },
         "employee_zipcode": {
           "title": {"en": "Zipcode", "ch": "PLZ"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 20
+
         },
         "employee_city": {
           "title": {"en": "City", "ch": "Stadt"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 50
+
         },
         "employee_email": {
           "title": {"en": "Email", "ch": "Email"},
@@ -365,7 +393,9 @@
         "employee_cell_phone": {
           "title": {"en": "Mobile", "ch": "Telefon"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 50
+
         },
         "employee_birthday": {
           "title": {"en": "Date of Birth", "ch": "Geburtsdatum"},
@@ -375,7 +405,9 @@
         "employee_internal_alias": {
           "title": {"en": "Alias", "ch": "Alias"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 10
+
         },
         "fk_employee_type": {
           "title": {"en": "Employee Type", "ch": "Mitarbeiter Typ"},
@@ -404,12 +436,16 @@
         "asset_description": {
           "title": {"en": "Description", "ch": "Beschreibung"},
           "display_type": "text",
-          "input_type": "textarea"
+          "input_type": "textarea",
+          "max_length": 50
+
         },
         "asset_internal_alias": {
           "title": {"en": "Alias", "ch": "Alias"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 20
+
         },
         "sales_template": {
           "title": {"en": "Template", "ch": "Vorlage"},
@@ -494,7 +530,9 @@
         "template_title": {
           "title": {"en": "Title", "ch": "Titel"},
           "display_type": "text",
-          "input_type": "text_input"
+          "input_type": "text_input",
+          "max_length": 50
+
         },
         "id_invoice": {
           "title": {"en": "Invoice ID", "ch": "Rechnungs Nr."},
@@ -527,7 +565,9 @@
         "invoice_text": {
           "title": {"en": "Invoice Text", "ch": "Rechnungstext"},
           "display_type": "text",
-          "input_type": "textarea"
+          "input_type": "textarea",
+          "max_length": 200
+
         },
         "select_position": {
           "title": {"en": "Choose", "ch": "Wählen"},

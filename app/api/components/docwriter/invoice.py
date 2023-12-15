@@ -18,6 +18,8 @@ import textwrap
 
 class Invoice(Document):
     def __init__(self,invoice_id:int, invoice_date:str, invoice_text:str, vat:float, currency:str, account:str, due_days:int, output_path:str, discount=0, language='de'):
+        self.page_size = pagesizes.A4
+
         super().__init__(invoice_id, 'invoice', language=language, output_path=output_path)
         self.invoice_date = invoice_date
         self.vat = vat
@@ -31,6 +33,7 @@ class Invoice(Document):
         self.positions = []
         self.draw_brake_lines = True
         self.max_pages = 1
+        self.footer_size = 4
 
 
     def add_position(self, position_id: int, date:str,reference_text:str, description:str, unit:str, amount:float, unit_price:float, pos_type = ''):
@@ -92,174 +95,187 @@ class Invoice(Document):
             return qr_code_name
 
 
-    def first_page_header(self, c):
-        c.drawString(2 * cm, 9 * cm, f"Datum: {self.invoice_date.strftime('%d.%m.%Y')}")
-        c.drawString(2 * cm, 9.5 * cm, f"Sachbearbeiter: {self.company['agent']}")
-        c.drawString(2 * cm, 10 * cm, f"Email: {self.company['email']}")
-        c.drawString(2 * cm, 10.5 * cm, f"Tel.: {self.company['phone']}")
+    def draw_doc_info(self):
+        self.c.drawString(self.x * cm, self.y * cm, f"Datum: {self.invoice_date.strftime('%d.%m.%Y')}")
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm,  f"Kunden-Nr.: {self.customer['id']}")
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm,  f"Zahlungsfrist: {self.due_days} Tage")
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm, f"Seite: {self.c.getPageNumber()}/{self.max_pages}")
 
-        c.drawString(2 * cm, 11.5 * cm, f"Kunden-Nr.: {self.customer['id']}")
-        c.drawString(2 * cm, 12 * cm, f"Zahlungsfrist: {self.due_days} Tage")
-        c.drawString(2 * cm, 12.5 * cm, f"Seite: {c.getPageNumber()}/{self.max_pages}")
+    def header(self):
 
-        c.setFont("Helvetica-Bold", 8)
+        self.draw_logo()
 
-        if self.invoice_text not in ('', None):
-            c.drawString(2 * cm, 13 * cm, f"Rechnungs-Text: {self.invoice_text}")
+        self.x = 2
+        self.y = 6
+        self.draw_company_info()
 
-        c.setFont("Helvetica-Bold", 10)
-        c.drawString(2 * cm, 14.5 * cm, f'Rechnung: {self.document_id}')
+        self.x = 13
+        self.y = 6
+        self.draw_address_block()
 
-        return c
+        self.x = 2
+        self.y = 9
+        self.draw_user_info()
 
-    def draw_second_page_header(self, c, ypos):
-        c.setFont("Helvetica", 8)
-        c.drawString(2 * cm, ypos * cm, f'Rechnung: {self.document_id}')
-
-        c.drawString(18 * cm, ypos * cm, f"Seite: {c.getPageNumber()}/{self.max_pages}")
-        ypos += 0.5
-        c.drawString(2 * cm, ypos * cm, f'Datum: {self.invoice_date.strftime("%d.%m.%Y")}')
-        ypos +=1
-        return c, ypos
+        self.y = 12
+        self.draw_doc_info()
 
 
-    def draw_position(self, c, ypos, position):
-        initial_y = ypos
-        c.setFont("Helvetica", 9)
-        c.drawString(2 * cm, ypos * cm, str(position['date']))
 
-        c.setFont("Helvetica-Bold", 9)
-        c.drawString(5 * cm, ypos * cm,
-                     f'Referenz: {position["reference_text"] if position["reference_text"] != "" else "-"}')
-        ypos = self.addy(ypos, c, 0.5)
-        c.setFont("Helvetica", 9)
+
+
+    def draw_second_page_header(self):
+        self.setFont("Helvetica", 8)
+        self.c.drawString(2 * cm, self.y * cm, f'Rechnung: {self.document_id}')
+
+        self.c.drawString(18 * cm, self.y * cm, f"Seite: {self.c.getPageNumber()}/{self.max_pages}")
+        self.increase_y(0.5)
+        self.c.drawString(2 * cm, self.y * cm, f'Datum: {self.invoice_date.strftime("%d.%m.%Y")}')
+        self.increase_y(1)
+        self.setStrokeColor(colors.lightgrey)
+        self.setLineWidth(0.2)
+        self.c.line(1.5 * cm, self.y * cm, 19.5 * cm, self.y * cm)
+        self.increase_y(0.5)
+
+    def draw_footer(self):
+        self.setFont("Helvetica", 8)
+        self.c.line(1.5 * cm, self.y * cm, 19.5 * cm, self.y * cm)
+        self.y += 1
+        self.c.drawString(self.x * cm, self.y * cm, f"IBAN: {self.account}")
+
+
+
+    def draw_position(self, position):
+        self.setFont("Helvetica", 9)
+        self.c.drawString(2 * cm, self.y * cm, str(position['date']))
+
+        self.setFont("Helvetica-Bold", 9)
+        self.c.drawString(5 * cm, self.y * cm, f'Referenz: {position["reference_text"] if position["reference_text"] != "" else "-"}')
+        self.increase_y(0.5)
+        self.setFont("Helvetica", 9)
 
         wrapper = textwrap.TextWrapper(width=50)
 
         for line in position["description"].split('\n'):
             sublines = wrapper.wrap(text=line)
             for line in sublines:
-                c.drawString(5 * cm, ypos * cm, f'{line}')
-                ypos = self.addy(ypos, c, 0.5)
+                self.c.drawString(5 * cm, self.y * cm, f'{line}')
+                self.increase_y(0.5)
 
-        c.drawString(5 * cm, ypos * cm, f'Beleg: {position["pos_type"]}-{position["position_id"]}')
-        ypos = self.addy(ypos, c, 0.5)
+        self.c.drawString(5 * cm, self.y * cm, f'Beleg: {position["pos_type"]}-{position["position_id"]}')
 
-        ypos = self.addy(ypos, c, -0.5)
-        c.setFont("Helvetica", 9)
-        c.drawString(13 * cm, ypos * cm, position['unit'])
-        c.drawRightString(16 * cm, ypos * cm, f"{position['amount']:,.2f}".replace(',', ''))
-        c.drawRightString(17.5 * cm, ypos * cm, f"{position['unit_price']:,.2f}".replace(',', ''))
-        c.drawRightString(19 * cm, ypos * cm, f"{(position['amount'] * position['unit_price']):,.2f}".replace(',', ''))
+        self.setFont("Helvetica", 9)
+        self.c.drawString(13 * cm, self.y * cm, position['unit'])
+        self.c.drawRightString(16 * cm, self.y * cm, f"{position['amount']:,.2f}".replace(',', ''))
+        self.c.drawRightString(17.5 * cm, self.y * cm, f"{position['unit_price']:,.2f}".replace(',', ''))
+        self.c.drawRightString(19 * cm, self.y * cm, f"{(position['amount'] * position['unit_price']):,.2f}".replace(',', ''))
 
-        ypos = self.addy(ypos, c, 1)
+        self.increase_y(0.5)
 
-        return c, ypos
-    def draw_totals(self, c, ypos):
-        c.setFont("Helvetica", 9)
 
-        c.setStrokeColor(colors.lightgrey)
-        c.setLineWidth(0.2)
+    def draw_totals(self):
+        self.setFont("Helvetica", 9)
 
-        c.line(1.5 * cm, ypos * cm, 19.5 * cm, ypos * cm)
-        ypos = self.addy(ypos, c, 1)
-        c.drawString(13 * cm, ypos * cm, f'Sub-Total')
-        c.drawString(16 * cm, ypos * cm, f'{self.currency}')
-        c.drawRightString(19 * cm, ypos * cm, f"{self.net_total:,.2f}".replace(',', ''))
-        ypos = self.addy(ypos, c, 0.5)
+        self.setStrokeColor(colors.lightgrey)
+        self.setLineWidth(0.2)
+
+        self.c.line(1.5 * cm, self.y * cm, 19.5 * cm, self.y * cm)
+        self.increase_y(1)
+        self.c.drawString(13 * cm, self.y * cm, f'Sub-Total')
+        self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
+        self.c.drawRightString(19 * cm, self.y * cm, f"{self.net_total:,.2f}".replace(',', ''))
+        self.increase_y(0.5)
         # c.drawString(12.5 * cm, ypos * cm, 'MWST')
 
         if self.discount > 0 and self.discount != None:
-            c.drawString(13 * cm, ypos * cm, f'Rabatt ({(self.discount * 100):.1f}%)')
-            c.drawString(16 * cm, ypos * cm, f'{self.currency}')
-            c.drawRightString(19 * cm, ypos * cm, f"{(self.net_total * self.discount):,.2f}".replace(',', ''))
-            ypos = self.addy(ypos, c, 0.5)
+            self.c.drawString(13 * cm, self.y * cm, f'Rabatt ({(self.discount * 100):.1f}%)')
+            self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
+            self.c.drawRightString(19 * cm, self.y * cm, f"{(self.net_total * self.discount):,.2f}".replace(',', ''))
+            self.increase_y(0.5)
 
-        c.drawString(13 * cm, ypos * cm, f'MWST ({(self.vat * 100):.1f}%)')
-        c.drawString(16 * cm, ypos * cm, f'{self.currency}')
-        c.drawRightString(19 * cm, ypos * cm, f"{(self.net_minus_discount * self.vat):,.2f}".replace(',', ''))
+        self.c.drawString(13 * cm, self.y * cm, f'MWST ({(self.vat * 100):.1f}%)')
+        self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
+        self.c.drawRightString(19 * cm, self.y * cm, f"{(self.net_minus_discount * self.vat):,.2f}".replace(',', ''))
 
-        ypos = self.addy(ypos, c, 0.5)
-        c.line(13 * cm, ypos * cm, 19 * cm, ypos * cm)
-        ypos = self.addy(ypos, c, 0.5)
-        c.drawString(13 * cm, ypos * cm, f'Total')
-        c.drawString(16 * cm, ypos * cm, f'{self.currency}')
-        c.drawRightString(19 * cm, ypos * cm, "%.2f" % (self.total))
+        self.increase_y(0.5)
+        self.c.line(13 * cm, self.y * cm, 19 * cm, self.y * cm)
+        self.increase_y(0.5)
+        self.c.drawString(13 * cm, self.y * cm, f'Total')
+        self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
+        self.c.drawRightString(19 * cm, self.y * cm, "%.2f" % (self.total))
 
-        ypos += 0.5
-        c.line(13 * cm, ypos * cm, 19 * cm, ypos * cm)
-        ypos += 0.1
-        c.line(13 * cm, ypos * cm, 19 * cm, ypos * cm)
+        self.increase_y(0.5)
+        self.c.line(13 * cm, self.y * cm, 19 * cm, self.y * cm)
+        self.increase_y(0.5)
+        self.c.line(13 * cm, self.y * cm, 19 * cm, self.y * cm)
 
-        return c, ypos
 
     def get_max_page(self):
-        c = self.draw_template()
 
-        ypos = 17.5
+        self.y = 17.5
         for position in self.positions:
-            c, ypos = self.draw_position(c, ypos, position)
+           self.draw_position(position)
 
-        c, ypos = self.draw_totals(c, ypos)
+        self.draw_totals()
 
 
         # Title Section
         # Again Inverting Scale For strings insertion
-        self.max_pages = c.getPageNumber()
+        self.max_pages = self.c.getPageNumber()
+
+        self.c = canvas.Canvas(self.file_name, pagesize=self.page_size, bottomup=0)
 
 
     def draw(self):
         # Creating Canvas
         self.get_max_page()
 
-        c = self.draw_template()
-
-        c = self.first_page_header(c)
+        self.header()
 
 
 
-        c.setFont("Helvetica", 9)
+
+
+        self.setFont("Helvetica", 9)
         # c.setLineWidth(0.25)
-        c.drawString(2 * cm, 16 * cm, "Datum")
-        c.drawString(5 * cm, 16 * cm, "Beschreibung")
-        c.drawString(13 * cm, 16 * cm, "Einheit")
-        c.drawRightString(16 * cm, 16 * cm, "Menge")
-        c.drawRightString(17.5 * cm, 16 * cm, "Preis")
-        c.drawRightString(19 * cm, 16 * cm, "Total")
+        self.c.drawString(2 * cm, 16 * cm, "Datum")
+        self.c.drawString(5 * cm, 16 * cm, "Beschreibung")
+        self.c.drawString(13 * cm, 16 * cm, "Einheit")
+        self.c.drawRightString(16 * cm, 16 * cm, "Menge")
+        self.c.drawRightString(17.5 * cm, 16 * cm, "Preis")
+        self.c.drawRightString(19 * cm, 16 * cm, "Total")
 
-        c.setStrokeColor(colors.lightgrey)
-        c.setLineWidth(0.2)
-        c.line(1.5 * cm, 16.5 * cm, 19.5 * cm, 16.5 * cm)
+        self.setStrokeColor(colors.lightgrey)
+        self.setLineWidth(0.2)
+        self.c.line(1.5 * cm, 16.5 * cm, 19.5 * cm, 16.5 * cm)
 
-        c.setFont("Helvetica", 9)
+        self.setFont("Helvetica", 9)
 
-        ypos = 17.5
+        self.y = 17.5
         for position in self.positions:
-            c, ypos = self.draw_position(c, ypos, position)
+            self.draw_position(position)
 
-        c, ypos = self.draw_totals(c, ypos)
+        self.draw_totals()
 
 
-        # Title Section
-        # Again Inverting Scale For strings insertion
-        self.max_pages = c.getPageNumber()
 
-        w, h = c._pagesize
+        last_line = ((self.page_height / cm ) - 13)
 
-        last_line = ((h / cm ) - 13)
-
-        if ypos >=last_line:
-            c.showPage()
+        if self.y >=last_line:
+            self.c.showPage()
         qrcode = self.qr_bill()
-        c.translate(10, 800)
-        c.scale(1, -1)
+        self.c.translate(10, 800)
+        self.c.scale(1, -1)
         page = PdfReader(qrcode, decompress=False).pages[0]
 
         p = pagexobj(PageMerge().add(page).render())
 
-        c.doForm(makerl(c, p))
+        self.c.doForm(makerl(self.c, p))
 
-        c.save()
+        self.c.save()
 
         return self.net_total, self.total
 
