@@ -153,7 +153,6 @@ class SchedulePDF(Document):
 
     def draw(self):
 
-
         self.header()
 
         self.increase_y(0.5)
@@ -165,9 +164,6 @@ class SchedulePDF(Document):
 
             subset = self.filter_data(employee['id'])
 
-            max_y = len(subset)+ self.y -0.5
-
-
 
             for task_index , task in enumerate(subset):
 
@@ -175,8 +171,6 @@ class SchedulePDF(Document):
                 if len(task_description) > 25:
                     task_description = task_description[:20] + '...'
 
-
-                print(repr(task_description))
 
 
                 self.draw_vertical_grid()
