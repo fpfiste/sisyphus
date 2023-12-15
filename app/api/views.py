@@ -38,9 +38,7 @@ class CustomModelViewSet(viewsets.ModelViewSet):
         if self.action == "list":
             self.serializer_class.Meta.depth = 1
         else:
-            #print(self.action)
             self.serializer_class.Meta.depth = 0
-        #print(self.serializer_class.Meta.depth)
         return self.serializer_class
 
 
@@ -75,7 +73,7 @@ class CustomModelViewSet(viewsets.ModelViewSet):
                 param[1] = param[1].replace('*', '')
 
         params = dict(params)
-        print(params)
+
 
 
 
@@ -230,7 +228,6 @@ class ConfigViewSet(CustomModelViewSet):
         content_type, binaries = request.data['file'].split(',')
         data = base64.b64decode(binaries)
 
-        print(binaries)
 
         logo = ('doc_logo', content_type, data)
         logo_width = ('doc_logo_width', request.data['doc_logo_width'], None)
@@ -242,7 +239,6 @@ class ConfigViewSet(CustomModelViewSet):
 
 
         for i in params:
-            print(len(Config.objects.filter(config_key=i[0])))
             if len(Config.objects.filter(config_key=i[0])) == 0:
                 cnf = Config(config_key=i[0], value_string=i[1], value_bytes=i[2])
                 cnf.save()
@@ -324,7 +320,6 @@ class CompanyViewSet(CustomModelViewSet):
 
         serializer.is_valid()
 
-        print(serializer.errors)
 
 
 
@@ -335,8 +330,6 @@ class CompanyViewSet(CustomModelViewSet):
         try:
             with transaction.atomic():
                 self.perform_create(serializer)
-                print('here')
-                print(serializer.instance.pk)
 
 
                 if serializer.data['is_customer'] == True:
@@ -349,7 +342,6 @@ class CompanyViewSet(CustomModelViewSet):
                     }
 
 
-                    print(project_data)
 
 
 
@@ -378,6 +370,7 @@ class CompanyViewSet(CustomModelViewSet):
             print(e)
 
             return Response({'message': 'Something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
@@ -867,7 +860,6 @@ class ReceivablesViewSet(CustomModelViewSet):
     def close(self, request,pk):
         try:
 
-            print(request.data)
             request.data._mutable = True
 
             request.data['fk_invoice_state'] = 3
@@ -881,7 +873,6 @@ class ReceivablesViewSet(CustomModelViewSet):
             serializer = self.get_serializer(receivable, data=request.data)
 
             serializer.is_valid(raise_exception=True)
-            print(serializer.errors)
 
 
             self.perform_update(serializer)
@@ -1035,7 +1026,6 @@ class SalesViewSet(CustomModelViewSet):
                         city=company.company_city, country=company.fk_country.country_code, email=company.company_email,
                         vat_number=company.vat_number, agent=request.user, phone=company.phone_number)
 
-        print(sale.amount)
         doc.add_position(
             sale.id_sale,
             sale.sale_date,
@@ -1190,7 +1180,6 @@ class TaskViewSet(CustomModelViewSet):
         return data
 
     def create(self, request):
-        print(self.request)
         self.get_serializer_class()
         request.data._mutable = True
 
@@ -1228,7 +1217,6 @@ class TaskViewSet(CustomModelViewSet):
         request.data._mutable = True
         task = Tasks.objects.get(id_task = pk)
 
-        print(request.data.get('description'))
 
         data = request.data.dict()
         date_from = request.data.get('task_date_from')
@@ -1380,7 +1368,6 @@ class TaskViewSet(CustomModelViewSet):
         company = Companies.objects.get(id_company=0)
         doc.set_company(name= company.company_name, address= company.company_street, pcode=company.company_zipcode,city=company.company_city,country=company.fk_country.country_code,email=company.company_email, vat_number=company.vat_number, agent=request.user, phone=company.phone_number)
 
-        print(task.amount)
         doc.add_position(
             task.id_task,
             task.task_date_to,
@@ -1520,7 +1507,6 @@ class PayablesViewSet(CustomModelViewSet):
     def create(self, request):
         request.data._mutable = True
 
-        print(request.data)
         request.data['fk_invoice_status'] = 1
 
         srl = PayableSerializer(data=request.data)
@@ -1529,7 +1515,6 @@ class PayablesViewSet(CustomModelViewSet):
             srl.save()
             return Response({'data': srl.data}, status=status.HTTP_200_OK)
         else:
-            print(srl.errors)
             return Response({'message': 'Something is wrong'}, status=status.HTTP_404_NOT_FOUND)
 
 
@@ -1539,7 +1524,6 @@ class PayablesViewSet(CustomModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def extract_data(self, request):
-        print(request.data)
 
         endpoint = Config.objects.get(config_key='ms_form_recoginizer_endpoint')
         key = Config.objects.get(config_key='ms_form_recognizer_key')
@@ -1557,7 +1541,6 @@ class PayablesViewSet(CustomModelViewSet):
 
         pdf = request.FILES['file'].open()
         data = rec.analyse_invoice(pdf)
-        print(data)
 
         vendor = re.sub(r'\W+', '', data['vendor_name'])
         comp = Companies.objects.annotate(lev_dist=Levenshtein(F('company_name'), vendor)).order_by('lev_dist')

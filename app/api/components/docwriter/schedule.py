@@ -170,10 +170,14 @@ class SchedulePDF(Document):
 
 
             for task_index , task in enumerate(subset):
-                if len(task['description'].replace('\n', ' ')) > 25:
-                    task_description = task['description'].replace('\n', ' ')[:20] + '...'
-                else:
-                    task_description = task['description'].replace('\n', ' ')
+
+                task_description = task['description'].replace('\n', ' ').replace('\r', ' ')
+                if len(task_description) > 25:
+                    task_description = task_description[:20] + '...'
+
+
+                print(repr(task_description))
+
 
                 self.draw_vertical_grid()
 
