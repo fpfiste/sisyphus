@@ -32,6 +32,9 @@ class BootstrapDataTable{
       text_field(element) {
         let value = (element == null) ? '' : element
 
+        if (value.length > 30) {
+            value = value.slice(0, 30) + '...';
+        }
          let html =  '<td>'+value+'</td>'
          return html;
       };

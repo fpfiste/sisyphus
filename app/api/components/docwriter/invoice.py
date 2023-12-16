@@ -169,9 +169,9 @@ class Invoice(Document):
 
         self.setFont("Helvetica", 9)
         self.c.drawString(13 * cm, self.y * cm, position['unit'])
-        self.c.drawRightString(16 * cm, self.y * cm, f"{position['amount']:,.2f}".replace(',', ''))
-        self.c.drawRightString(17.5 * cm, self.y * cm, f"{position['unit_price']:,.2f}".replace(',', ''))
-        self.c.drawRightString(19 * cm, self.y * cm, f"{(position['amount'] * position['unit_price']):,.2f}".replace(',', ''))
+        self.c.drawRightString(16 * cm, self.y * cm, f"{position['amount']:,.2f}".replace(",", "'"))
+        self.c.drawRightString(17.5 * cm, self.y * cm, f"{position['unit_price']:,.2f}".replace(",", "'"))
+        self.c.drawRightString(19 * cm, self.y * cm, f"{(position['amount'] * position['unit_price']):,.2f}".replace(",", "'"))
 
         self.increase_y(0.5)
 
@@ -186,26 +186,26 @@ class Invoice(Document):
         self.increase_y(1)
         self.c.drawString(13 * cm, self.y * cm, f'Sub-Total')
         self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
-        self.c.drawRightString(19 * cm, self.y * cm, f"{self.net_total:,.2f}".replace(',', ''))
+        self.c.drawRightString(19 * cm, self.y * cm, f"{self.net_total:,.2f}".replace(",", "'"))
         self.increase_y(0.5)
         # c.drawString(12.5 * cm, ypos * cm, 'MWST')
 
         if self.discount > 0 and self.discount != None:
             self.c.drawString(13 * cm, self.y * cm, f'Rabatt ({(self.discount * 100):.1f}%)')
             self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
-            self.c.drawRightString(19 * cm, self.y * cm, f"{(self.net_total * self.discount):,.2f}".replace(',', ''))
+            self.c.drawRightString(19 * cm, self.y * cm, f"{(self.net_total * self.discount):,.2f}".replace(",", "'"))
             self.increase_y(0.5)
 
         self.c.drawString(13 * cm, self.y * cm, f'MWST ({(self.vat * 100):.1f}%)')
         self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
-        self.c.drawRightString(19 * cm, self.y * cm, f"{(self.net_minus_discount * self.vat):,.2f}".replace(',', ''))
+        self.c.drawRightString(19 * cm, self.y * cm, f"{(self.net_minus_discount * self.vat):,.2f}".replace(",", "'"))
 
         self.increase_y(0.5)
         self.c.line(13 * cm, self.y * cm, 19 * cm, self.y * cm)
         self.increase_y(0.5)
         self.c.drawString(13 * cm, self.y * cm, f'Total')
         self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
-        self.c.drawRightString(19 * cm, self.y * cm, "%.2f" % (self.total))
+        self.c.drawRightString(19 * cm, self.y * cm, f"{self.total:,.2f}".replace(",", "'"))
 
         self.increase_y(0.5)
         self.c.line(13 * cm, self.y * cm, 19 * cm, self.y * cm)
@@ -235,26 +235,28 @@ class Invoice(Document):
 
         self.header()
 
-
+        self.setFont("Helvetica-Bold", 12)
+        self.c.drawString(2 * cm, 15 * cm, f'Rechnung: {self.document_id}')
+        self.setFont("Helvetica", 10)
 
 
 
         self.setFont("Helvetica", 9)
         # c.setLineWidth(0.25)
-        self.c.drawString(2 * cm, 16 * cm, "Datum")
-        self.c.drawString(5 * cm, 16 * cm, "Beschreibung")
-        self.c.drawString(13 * cm, 16 * cm, "Einheit")
-        self.c.drawRightString(16 * cm, 16 * cm, "Menge")
-        self.c.drawRightString(17.5 * cm, 16 * cm, "Preis")
-        self.c.drawRightString(19 * cm, 16 * cm, "Total")
+        self.c.drawString(2 * cm, 16.5 * cm, "Datum")
+        self.c.drawString(5 * cm, 16.5 * cm, "Beschreibung")
+        self.c.drawString(13 * cm, 16.5 * cm, "Einheit")
+        self.c.drawRightString(16 * cm, 16.5 * cm, "Menge")
+        self.c.drawRightString(17.5 * cm, 16.5 * cm, "Preis")
+        self.c.drawRightString(19 * cm, 16.5 * cm, "Total")
 
         self.setStrokeColor(colors.lightgrey)
         self.setLineWidth(0.2)
-        self.c.line(1.5 * cm, 16.5 * cm, 19.5 * cm, 16.5 * cm)
+        self.c.line(1.5 * cm, 17 * cm, 19.5 * cm, 17 * cm)
 
         self.setFont("Helvetica", 9)
 
-        self.y = 17.5
+        self.y = 18
         for position in self.positions:
             self.draw_position(position)
 

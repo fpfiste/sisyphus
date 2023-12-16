@@ -141,13 +141,15 @@ class Document():
 
         self.c.drawString(self.x * cm, self.y * cm, f"Tel.: {self.company['phone']}")
         self.y += 1.5
-        self.c.drawString(self.x * cm, self.y * cm, f"Kunden-Nr.: {self.customer['id']}")
+
 
 
     def draw_doc_info(self):
         self.c.drawString(self.x * cm, self.y * cm, f"Datum: {self.doc_date.strftime('%d.%m.%Y')}")
         self.y += 0.5
         self.c.drawString(self.x * cm, self.y * cm, f"Seite: {self.c.getPageNumber()}/{self.max_pages}")
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm, f"Kunden-Nr.: {self.customer['id']}")
     def draw_header(self):
         pass
 
