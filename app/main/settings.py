@@ -164,21 +164,3 @@ SESSION_EXPIRE_SECONDS = (60 * 60)
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "file": {
-            "level": "ERROR",
-            "class": "logging.FileHandler",
-            "filename": "./logs/error.log",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["file"],
-            "level": "ERROR",
-            "propagate": True,
-        },
-    },
-}
