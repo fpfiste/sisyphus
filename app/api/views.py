@@ -335,7 +335,7 @@ class CompanyViewSet(CustomModelViewSet):
                 if serializer.data['is_customer'] == True:
                     project_data = {
                             'fk_customer' : serializer.instance.pk,
-                            'project_name' : request.data['company_name'] + ' - Default',
+                            'project_name' : request.data['company_internal_alias'] + ' - Default',
                             'start_date' : dt.datetime.now().strftime('%Y-%m-%d'),
                             'end_date' : '9999-12-31',
                             'fk_sys_rec_status' : 1

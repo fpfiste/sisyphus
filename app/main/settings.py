@@ -141,9 +141,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'frontend', 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-
 TMP_FOLDER = os.path.join(STATIC_ROOT, 'tmp')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -163,3 +162,23 @@ REST_FRAMEWORK = {
 
 SESSION_EXPIRE_SECONDS = (60 * 60)
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "filename": "./logs/error.log",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["file"],
+            "level": "ERROR",
+            "propagate": True,
+        },
+    },
+}
