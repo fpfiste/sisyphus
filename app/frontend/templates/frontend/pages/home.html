@@ -7,30 +7,16 @@
 <div class="row" style="height: 10vh;">
     <h1 id="home_greeting"></h1>
 </div>
-<div class="row" style="height: 50vh;">
-    <div class="col-6" style="height:100%;">
-        <div id="home_ongoing_tasks_card" class="card" style="height:100%;">
-            <div class="card-header home_ongoing_tasks">
-                <span id="home_ongoing_tasks"></span>
-            </div>
-            <div class="card-body">
 
-
-            </div>
-        </div>
-    </div>
-    <div class="col-6" style="height:100%;">
-        <div class="card" style="height:100%;">
-            <div class="card-header home_ongoing_tasks">
-                <span id="home_news"></span>
-            </div>
-            <div class="card-body">
-            </div>
-        </div>
-    </div>
-</div>
 <div class="row" style="height: 15vh; margin-top: 3vh;">
-    <div class="col-3" style="height:100%;">
+    <div class="col-2" style="height:100%;">
+
+            <div class="card-header home_open" style="height:100%; display:table; width:100%;background:#588157; border-radius">
+                <h6 id="home_task_lane_title" style="display:table-cell; vertical-align:middle;">Aufträge</h6>
+            </div>
+
+    </div>
+    <div class="col-2" style="height:100%;">
         <div class="card" style="height:100%;">
             <div class="card-header home_open" style="height:95%;">
                 <span id="home_open"></span>
@@ -40,7 +26,7 @@
             </div>
         </div>
     </div>
-    <div class="col-3" style="height:100%;">
+    <div class="col-2" style="height:100%;">
         <div class="card" style="height:100%;">
             <div class="card-header" style="height:95%;">
                 <span id="home_scheduled"></span>
@@ -50,7 +36,7 @@
             </div>
         </div>
     </div>
-    <div class="col-3" style="height:100%;">
+    <div class="col-2" style="height:100%;">
         <div class="card" style="height:100%;">
             <div class="card-header" style="height:95%;">
                 <span id="home_executed"></span>
@@ -60,7 +46,7 @@
             </div>
         </div>
     </div>
-    <div class="col-3" style="height:100%;">
+    <div class="col-2" style="height:100%;">
         <div class="card" style="height:100%;">
             <div class="card-header" style="height:95%;">
                 <span id="home_to_bill"></span>
@@ -71,8 +57,55 @@
         </div>
     </div>
 </div>
+<div class="row" style="height: 15vh; margin-top: 3vh;">
+    <div class="col-2" style="height:100%;">
 
+            <div class="card-header home_open" style="height:100%; display:table; width: 100%; background:#90a955">
+                <span id="home_sales_lane_title" style="display:table-cell; vertical-align:middle;">Sales</span>
+            </div>
 
+    </div>
+    <div class="col-2" style="height:100%;">
+        <div class="card" style="height:100%;">
+            <div class="card-header home_open" style="height:95%;">
+                <span id="home_sales_to_bill">Zu Verrechnen</span>
+            </div>
+            <div class="card-body" style="height:95%;">
+                <h1 id="sales_to_bill">0</h1>
+            </div>
+        </div>
+    </div>
 
+</div>
+<div class="row" style="height: 15vh; margin-top: 3vh;">
+    <div class="col-2" style="height:100%;">
+
+            <div class="card-header home_open" style="height:100%; display:table; width:100%; background:#ecf39e;">
+                <span id="home_receivables_lane_title" style="display:table-cell; vertical-align:middle;">Debitoren</span>
+            </div>
+
+    </div>
+    <div class="col-2" style="height:100%;">
+        <div class="card" style="height:100%;">
+            <div class="card-header home_open" style="height:95%;">
+                <span id="home_receivables_open"></span>
+            </div>
+            <div class="card-body" style="height:95%;">
+                <h1 id="home_receivables_open_value">0</h1>
+            </div>
+        </div>
+    </div>
+    <div class="col-2" style="height:100%;">
+        <div class="card" style="height:100%;">
+            <div class="card-header" style="height:95%;">
+                <span id="home_receivables_exported"></span>
+            </div>
+            <div class="card-body" style="height:95%;">
+                <h1 id="home_receivables_exported_value">0</h1>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 {% endblock %}

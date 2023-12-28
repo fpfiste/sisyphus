@@ -228,6 +228,7 @@ jQuery.fn.setUp = function(page_config, fields) {
             $('#update_form').find('input, select, textarea').prop('disabled', false)
             $('#update_form #id_sale').prop('disabled', true);
             $('#update_form #fk_sales_status').prop('disabled', true);
+            $('#update_form #fk_invoice').prop('disabled', true);
             $('#btn_delete').prop('disabled', false)
             $('#btn_close_task').prop('disabled', false)
             $('#btn_save').prop('disabled', false)

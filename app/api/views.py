@@ -164,10 +164,6 @@ class AssetAbsenceViewSet(CustomModelViewSet):
     permission_classes = (DjangoModelPermissions,)
 
 
-
-
-
-
 class AssetTypesViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -176,6 +172,8 @@ class AssetTypesViewSet(CustomModelViewSet):
     serializer_class = AssetTypeSerializer
     authentication_classes = (TokenAuthentication, SessionAuthentication)
     permission_classes = (DjangoModelPermissions,)
+
+
 
 
 
@@ -885,6 +883,19 @@ class ReceivablesViewSet(CustomModelViewSet):
         except Exception as e:
             print(e)
 
+    @action(detail=False, methods=['GET'])
+    def getoverview(self, request):
+        recs = Receivables.objects.filter(fk_invoice_state__lt=3)
+
+
+        data = {
+            'created': len(recs.filter(fk_invoice_state=1)),
+            'exported': len(recs.filter(fk_invoice_state=2)),
+
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
+
 class ProjectViewSet(CustomModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -1038,6 +1049,7 @@ class SalesViewSet(CustomModelViewSet):
             sale.customer_reference
 
         )
+
 
 
         doc.draw()
