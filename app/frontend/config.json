@@ -132,9 +132,10 @@
           "title": {"en": "Invoice", "ch": "Rechnung"},
           "display_type": "fk_field",
           "input_type": "fk_field",
-          "api_endpoint": "/api/invoices",
+          "api_endpoint": "/api/receivables",
+          "api_filter": "SORT=id_invoice",
           "pk_field": "id_invoice",
-          "display_field": "invoice_date"
+          "display_field": "id_invoice"
         },
         "fk_unit": {
           "title": {"en": "Unit","ch": "Einheit"},
@@ -798,9 +799,9 @@
       "filter_form_fields" : ["id_sale", "sale_date", "amount", "unit_price", "customer_reference", "fk_currency",  "fk_project", "fk_sales_status", "fk_unit","fk_clearing_type"],
       "create_form_fields" : ["sales_template","sale_date", "amount", "unit_price", "customer_reference", "description", "sale_time", "fk_currency", "fk_project", "fk_unit", "fk_vat", "fk_clearing_type"],
       "create_form_fields_required" : ["sale_date", "amount", "unit_price", "description", "sale_time", "fk_currency", "fk_project", "fk_unit", "fk_vat", "fk_clearing_type"],
-      "update_form_fields" : ["id_sale", "sale_date", "amount", "unit_price", "customer_reference", "description", "sale_time", "fk_sales_status","fk_currency",  "fk_project", "fk_unit", "fk_vat", "custom_fields", "fk_clearing_type"],
+      "update_form_fields" : ["id_sale", "sale_date", "amount", "unit_price", "customer_reference", "description", "sale_time", "fk_sales_status","fk_currency",  "fk_project", "fk_unit", "fk_vat", "fk_invoice","custom_fields", "fk_clearing_type"],
       "update_form_fields_required" :  ["id_sale","sale_date", "amount", "unit_price", "description", "sale_time", "fk_sales_status","fk_currency", "fk_project", "fk_unit", "fk_vat", "fk_clearing_type"],
-      "update_form_fields_disabled" : ["id_sale", "fk_sales_status"],
+      "update_form_fields_disabled" : ["id_sale", "fk_sales_status", "fk_invoice"],
       "remove_buttons": ["btn_close_task"]
     },
     "/tasks": {
@@ -814,10 +815,10 @@
       "filter_form_fields" : ["id_task", "task_date_from", "task_date_to", "fk_task_state", "fk_unit", "customer_reference", "fk_project", "fk_vat"],
       "create_form_fields" : ["task_template", "task_date_from", "task_time_from", "task_date_to", "task_time_to", "amount", "fk_unit", "description", "internal_info","customer_reference", "fk_project", "fk_employee_1", "fk_employee_2", "fk_asset_1", "fk_asset_2", "unit_price", "fk_currency", "fk_vat", "custom_fields", "fk_clearing_type"],
       "create_form_fields_required" : ["fk_project", "description"],
-      "update_form_fields" : ["id_task", "task_date_from", "task_time_from", "task_date_to", "task_time_to", "fk_task_state","amount", "fk_unit", "description", "internal_info","customer_reference", "fk_project", "fk_employee_1", "fk_employee_2", "fk_asset_1", "fk_asset_2", "unit_price", "fk_currency", "fk_vat","fk_clearing_type", "custom_fields"],
+      "update_form_fields" : ["id_task", "task_date_from", "task_time_from", "task_date_to", "task_time_to", "fk_task_state","amount", "fk_unit", "description", "internal_info","customer_reference", "fk_project", "fk_employee_1", "fk_employee_2", "fk_asset_1", "fk_asset_2", "unit_price", "fk_currency", "fk_vat","fk_clearing_type", "fk_invoice","custom_fields"],
       "update_form_fields_required" :  ["id_task","fk_project", "description"],
       "close_form_fields_required" :  ["id_task","fk_project", "description", "amount", "unit_price", "fk_currency", "fk_employee_1", "fk_unit", "fk_vat", "fk_clearing_type", "task_date_from", "task_date_to", "task_time_from", "task_time_to"],
-      "update_form_fields_disabled" : ["id_task", "fk_task_state"]
+      "update_form_fields_disabled" : ["id_task", "fk_task_state", "fk_invoice"]
 
 
 

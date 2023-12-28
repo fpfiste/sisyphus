@@ -92,6 +92,7 @@ class CustomModelViewSet(viewsets.ModelViewSet):
 
 
 
+
     def list(self, request):
         try:
             self.queryset = self.get_queryset()
