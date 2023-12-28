@@ -19,7 +19,7 @@ services:
     build: ./background_jobs
     container_name: sisyphus_jobs
     volumes:
-      - ./background_jobs/backup/:/backup/
+      - ./background_jobs/shared/:/shared/
     env_file:
       - ./.env.prod
     restart: always
@@ -30,6 +30,7 @@ services:
       dockerfile: Dockerfile.prod
     container_name: sisyphus_api
     volumes:
+      - - ./app/:/home/sisyphus/app
       - static_volume:/home/sisyphus/app/frontend/static
     expose:
       - 8001
