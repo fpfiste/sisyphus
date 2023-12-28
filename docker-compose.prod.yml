@@ -30,7 +30,7 @@ services:
       dockerfile: Dockerfile.prod
     container_name: sisyphus_api
     volumes:
-      - - ./app/:/home/sisyphus/app
+      - ./app/:/home/sisyphus/app
       - static_volume:/home/sisyphus/app/frontend/static
     expose:
       - 8001

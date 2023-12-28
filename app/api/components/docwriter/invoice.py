@@ -77,6 +77,7 @@ class Invoice(Document):
         bill = QRBill(
             account= self.account,
             creditor=creditor,
+            currency=self.currency,
             amount= str(self.total),
             language= self.language,
             debtor= debtor
