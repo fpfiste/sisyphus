@@ -128,7 +128,7 @@ class Scheduler{
                                 '<ul style="list-style:None; padding: 0px; margin-bottom: 0px;"></ul>'+
                             '</td>'+
                             '<td id="task_lane_e'+value.id_employee+'" class="task_lane" colspan="100" >' +
-                                '<ul style="list-style:None; padding: 0px; margin-bottom: 0px;"></ul>'+
+                                '<ul class="task-lane-ul" data-employee='+value.id_employee+' style="list-style:None; padding: 0px; margin-bottom: 0px; height:100%;"></ul>'+
                             '</td>'+
                         '</tr>'
             body += row;
@@ -178,7 +178,7 @@ class Scheduler{
 
 
 
-      add_row(row_id, task_id, task_title, startDate, endDate, asset_1, asset_2) {
+      add_row(row_id, task_id, task_title, startDate, endDate, asset_1, asset_2, employee, field, task_data) {
 
         let width_of_time_table = $('#task_lane_'+row_id).width()
         let event_duration = (endDate - startDate) / 1000 / 60 / 60
@@ -191,8 +191,15 @@ class Scheduler{
         let left_offset_h = (startDate - this.scheduleDateStart) / 1000 / 60 / 60;
         let lane_height = $('#task_lane_'+row_id).height()
         let left_offset_px = width_of_time_table / 24 * left_offset_h;
-        let task_span = '<li><span class="task scheduled_task badge badge-primary" style = "box-sizing: border-box; margin-left:' + left_offset_px + 'px; width:' + event_box_width + 'px;" data-row-pk="'+task_id+'">'+ task_title +'</span></li>'
-        let task_lane = $('#task_lane_'+row_id + ' ul').append(task_span);
+
+        let right_offset = width_of_time_table - event_box_width - left_offset_px
+
+
+        let lane = '<li id="task-lane-li-'+task_id+'" data-employee-row='+employee+' data-employee-update-field="'+field+'" class="scheduler-lane" draggable="true">'
+        let task_lane = $('#task_lane_'+row_id + ' ul').append(lane);
+
+        let task_object = '<div class="task scheduled_task badge badge-primary" style = "position:relative; box-sizing: border-box; margin-left:' + left_offset_px + 'px;  margin-right:' + right_offset + 'px;" data-row-pk="'+task_id+'" data-task-data='+encodeURIComponent(JSON.stringify(task_data))+'><div class="spacer-left" style="position:absolute; left: 0; top: 0; bottom: 0; width: 5px;cursor: e-resize;"></div>'+ task_title +'<div class="spacer-right" style="position:absolute; right: 0; top: 0; bottom: 0; width: 5px;cursor: e-resize;"></div></div></li>'
+        $('#task_lane_'+row_id + ' ul #task-lane-li-'+task_id).append(task_object);
 
         asset_1 = this.get_asset(asset_1);
         asset_2 = this.get_asset(asset_2);
@@ -231,9 +238,9 @@ class Scheduler{
 
 
 
-                this.add_row('e'+value.fk_employee_1, value.id_task, value.id_task + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
-                this.add_row('e'+value.fk_employee_2, value.id_task, value.id_task + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
-                this.add_row('s'+value.fk_subcontractor, value.id_task, value.id_task + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2)
+                this.add_row('e'+value.fk_employee_1, value.id_task, value.id_task + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2, value.fk_employee_1, 'fk_employee_1', value)
+                this.add_row('e'+value.fk_employee_2, value.id_task, value.id_task + '-' + value.description, startDate, endDate, value.fk_asset_1, value.fk_asset_2, value.fk_employee_2, 'fk_employee_2', value)
+
             })
 
           $.each(this.open_tasks, (key,value) => {
@@ -245,6 +252,13 @@ class Scheduler{
 
 
 
+      }
+
+      round_time_to_quarter(time) {
+            time.setMilliseconds(Math.round(time.getMilliseconds() / 1000) * 1000);
+            time.setSeconds(Math.round(time.getSeconds() / 60) * 60);
+            time.setMinutes(Math.round(time.getMinutes() / 15) * 15);
+            return time;
       }
 
       create_event_handlers() {
@@ -322,6 +336,387 @@ class Scheduler{
             $('employee_type_filter_dropdown').on('focusout', function () {
                  $('#employee_type_filter_dropdown').hide();
             });
+
+
+            $('.scheduler-lane').on('dragstart', (event)=> {
+                //event.preventDefault();
+                console.log($(event.target))
+
+
+
+                event.originalEvent.dataTransfer.setData('row_id', event.target.id);
+                event.originalEvent.dataTransfer.setData('old-employee', event.target.getAttribute('data-employee-row'));
+
+            });
+
+            /*
+            $('.task-lane-ul').on('dragenter', (event)=>{
+
+
+                //$(event.currentTarget).css('border', '1px solid green')
+
+            })
+
+            */
+            $('.task-lane-ul').on('dragover',(event)=> {
+                //event.preventDefault();
+                //$(event.currentTarget).css('border', '1px solid green')
+                event.preventDefault();
+
+                if (event.currentTarget.className == 'task-lane-ul') {
+                     $(event.currentTarget).css('border', '5px solid green')
+                }
+
+            })
+
+
+            $('.task-lane-ul').on('dragleave', (event) => {
+                 event.preventDefault();
+                 $(event.currentTarget).css('border', '')
+
+            })
+
+
+            $('.task-lane-ul').on('drop', (event)=> {
+                event.preventDefault();
+                event.stopPropagation();
+
+                let row_id = event.originalEvent.dataTransfer.getData("row_id");
+                //let employee_old =event.originalEvent.dataTransfer.getData("old-data");
+
+                let new_employee = $(event.currentTarget).attr('data-employee')
+                let old_employee = event.originalEvent.dataTransfer.getData("old-employee");
+
+                //console.log(employee_old)
+
+                let lane = $('#'+row_id)
+
+                let taskdata = $('#'+row_id).find('.task').attr('data-task-data')
+
+                taskdata = JSON.parse(decodeURIComponent(taskdata))
+
+                if (event.currentTarget.className == 'task-lane-ul') {
+
+                    $(event.currentTarget).css('border', '')
+
+
+
+
+                    if ((new_employee == taskdata.fk_employee_1) | (new_employee == taskdata.fk_employee_2)) {
+                        return
+
+                    }
+
+                    if (taskdata.fk_employee_1 == old_employee) {
+                        taskdata['fk_employee_1'] = new_employee
+                    } else {
+                        taskdata['fk_employee_2'] = new_employee
+                    }
+
+
+                    let proxy_this = this
+
+                    $.ajax({
+                    url: window.location.origin +'/api/tasks/' + taskdata.id_task + '/',
+                    method: 'PUT',
+                    headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+                    data: taskdata,
+                    success: function (result) {
+                        $(lane).attr('data-employee-row', new_employee)
+                        $(lane).find('.task').attr('data-task-data', encodeURIComponent(JSON.stringify(result)))
+                        $(event.currentTarget).append(lane);
+
+                        var items = $(event.currentTarget).find('li').get();
+
+
+                        items.sort(function(a,b){
+                          var keyA = $(a).find('.task').attr('data-task-data');
+
+                          keyA = JSON.parse(decodeURIComponent(keyA))
+                          keyA = keyA.task_date_from + ' ' + keyA.task_time_from
+                          var keyB = $(b).find('.task').attr('data-task-data');
+                          keyB = JSON.parse(decodeURIComponent(keyB))
+                          keyB = keyB.task_date_from + ' ' + keyB.task_time_from
+
+                          console.log(keyA)
+                          console.log(keyB)
+                          if (keyA < keyB) return -1;
+                          if (keyA > keyB) return 1;
+                          return 0;
+                        });
+                        var ul = $(event.currentTarget);
+                        $.each(items, function(i, li){
+                          ul.append(li); /* This removes li from the old spot and moves it */
+                        });;
+                    }
+                    })
+                    console.log(taskdata)
+
+
+                }
+
+
+
+
+            });
+
+
+            $('.spacer-left').on('mousedown', (e)=>{
+              e.preventDefault()
+              let element = $(event.target).parent()
+
+              let data = $(element).attr('data-task-data')
+              data = JSON.parse(decodeURIComponent(data))
+
+
+              console.log(data.task_date_from)
+              console.log(this.schedule_date)
+              if (data.task_date_from == this.schedule_date) {
+                          let offset_l = $(element).css('margin-left')
+                          offset_l =   Number(offset_l.substring(0, offset_l.length - 2));
+
+                          let task_start_date = $(element)
+
+                          let offset_r = $(element).css('margin-right')
+                          offset_r =   Number(offset_r.substring(0, offset_r.length - 2));
+
+                          let lane_width = $(element).parent().parent().width()
+                          let min_width = $(element).parent().parent().width() / 24 / 4 //15 minutes
+
+
+                          let initX = e.originalEvent.clientX
+
+
+
+                          $(document).on('mousemove', (e)=> {
+
+                            let current_position = e.originalEvent.clientX
+                            let distance = initX - current_position
+
+                            let new_offset = offset_l - distance
+                            let new_width = lane_width - offset_r - new_offset
+                            let parent_width =  $(element).parent().parent().width()
+
+                            if ((new_width > min_width) & (new_offset > 0) ) {
+                                new_offset  = Math.round(new_offset/min_width)*min_width
+
+
+                                $("div")
+                                    .find('[data-row-pk='+$(element).attr('data-row-pk')+']')
+                                    .css('margin-left', new_offset +'px')
+                            }
+
+
+
+                            //element.style.width = e.pageX - element.getBoundingClientRect().left + 'px'
+                          })
+                          $(document).on('mouseup', (e)=> {
+                            console.log('up')
+                            let task_width = $(element).css('width')
+                            task_width =   Number(task_width.substring(0, task_width.length - 2));
+
+                            let task_offset_L = $(element).css('margin-left')
+                            task_offset_L =   Number(task_offset_L.substring(0, task_offset_L.length - 2));
+
+                            let total_width = $(element).parent().parent().width()
+
+                            let offset_seconds = task_offset_L / total_width * 86000
+                            let duration_seconds = task_width / total_width * 86000
+
+                            let start_ts = this.round_time_to_quarter(new Date(0,0,0,0,0,offset_seconds))
+                            let end_ts = this.round_time_to_quarter(new Date(0,0,0,0,0,offset_seconds + duration_seconds))
+
+                            let data = $(element).attr('data-task-data')
+                            data = JSON.parse(decodeURIComponent(data))
+
+                            if (data.task_date_from == this.schedule_date) {
+                                data['task_time_from'] = start_ts.toTimeString().split(' ')[0];
+                            }
+
+                            if (data.task_date_to == this.schedule_date) {
+                                data['task_time_to'] = end_ts.toTimeString().split(' ')[0];
+                            }
+
+                            console.log(data)
+
+                            $.ajax({
+                                url: window.location.origin +'/api/tasks/' + data.id_task + '/',
+                                method: 'PUT',
+                                headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+                                data: data,
+                                success: function (result) {
+
+                                    $(element).attr('data-task-data', encodeURIComponent(JSON.stringify(result)))
+
+
+                                    var items = $(element).parent().parent().find('li').get();
+
+
+                                    items.sort(function(a,b){
+                                      var keyA = $(a).find('.task').attr('data-task-data');
+
+                                      keyA = JSON.parse(decodeURIComponent(keyA))
+                                      keyA = keyA.task_date_from + ' ' + keyA.task_time_from
+                                      var keyB = $(b).find('.task').attr('data-task-data');
+                                      keyB = JSON.parse(decodeURIComponent(keyB))
+                                      keyB = keyB.task_date_from + ' ' + keyB.task_time_from
+
+                                      console.log(keyA)
+                                      console.log(keyB)
+                                      if (keyA < keyB) return -1;
+                                      if (keyA > keyB) return 1;
+                                      return 0;
+                                    });
+                                    var ul = $(element).parent().parent();
+                                    $.each(items, function(i, li){
+                                      ul.append(li); /* This removes li from the old spot and moves it */
+                                    });;
+                                }
+                                })
+                            console.log(start_ts)
+                            console.log(end_ts)
+                            $(document).off('mousemove');
+
+                          })
+
+
+
+              }
+
+            })
+
+
+            $('.spacer-right').on('mousedown', (e)=>{
+              e.preventDefault()
+              let element = $(event.target).parent()
+
+              let data = $(element).attr('data-task-data')
+              data = JSON.parse(decodeURIComponent(data))
+
+              if (data.task_date_to == this.schedule_date) {
+
+                      let offset_l = $(element).css('margin-left')
+                      offset_l =   Number(offset_l.substring(0, offset_l.length - 2));
+
+                      let offset_r = $(element).css('margin-right')
+                      offset_r =   Number(offset_r.substring(0, offset_r.length - 2));
+
+                      let lane_width = $(element).parent().parent().width()
+                      let min_width = $(element).parent().parent().width() / 24 / 4 //15 minutes
+
+
+
+                      let initX = e.originalEvent.clientX
+
+
+                      $(document).on('mousemove', (e)=> {
+
+                        let current_position = e.originalEvent.clientX
+                        let distance = current_position - initX
+
+
+                        //let new_offset = offset_l - distance
+                        let new_offset = offset_r - distance
+                        let new_width = lane_width - offset_l - new_offset
+
+                        new_offset  = Math.round(new_offset/min_width)*min_width
+                        console.log(new_width)
+                        if ((new_width > min_width) & (new_offset > 0)  ) {
+
+                            let task_lane_id = $(element).parent().attr('data-employee')
+
+                            $("div")
+                            .find('[data-row-pk='+$(element).attr('data-row-pk')+']')
+                            .css('margin-right', new_offset +'px')
+                            //$(element).css('margin-right', new_offset +'px')
+
+
+                        }
+
+
+
+                        //element.style.width = e.pageX - element.getBoundingClientRect().left + 'px'
+                      })
+                      $(document).on('mouseup', (e)=> {
+                        console.log('up')
+                        let task_width = $(element).css('width')
+                        task_width =   Number(task_width.substring(0, task_width.length - 2));
+
+                        let task_offset_L = $(element).css('margin-left')
+                        task_offset_L =   Number(task_offset_L.substring(0, task_offset_L.length - 2));
+
+                        let total_width = $(element).parent().parent().width()
+
+                        let offset_seconds = task_offset_L / total_width * 86000
+                        let duration_seconds = task_width / total_width * 86000
+
+                        let start_ts = this.round_time_to_quarter(new Date(0,0,0,0,0,offset_seconds))
+                        let end_ts = this.round_time_to_quarter(new Date(0,0,0,0,0,offset_seconds + duration_seconds))
+
+                        let data = $(element).attr('data-task-data')
+                        data = JSON.parse(decodeURIComponent(data))
+
+                        if (data.task_date_from == this.schedule_date) {
+                            data['task_time_from'] = start_ts.toTimeString().split(' ')[0];
+                        }
+
+                        if (data.task_date_to == this.schedule_date) {
+                            data['task_time_to'] = end_ts.toTimeString().split(' ')[0];
+                        }
+
+
+                        console.log(data)
+
+                        $.ajax({
+                            url: window.location.origin +'/api/tasks/' + data.id_task + '/',
+                            method: 'PUT',
+                            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+                            data: data,
+                            success: function (result) {
+
+
+
+                                $("div")
+                                    .find('[data-row-pk='+$(element).attr('data-row-pk')+']')
+                                    .attr('data-task-data', encodeURIComponent(JSON.stringify(result)))
+
+                                var items = $(element).parent().parent().find('li').get();
+
+
+                                items.sort(function(a,b){
+                                  var keyA = $(a).find('.task').attr('data-task-data');
+
+                                  keyA = JSON.parse(decodeURIComponent(keyA))
+                                  keyA = keyA.task_date_from + ' ' + keyA.task_time_from
+                                  var keyB = $(b).find('.task').attr('data-task-data');
+                                  keyB = JSON.parse(decodeURIComponent(keyB))
+                                  keyB = keyB.task_date_from + ' ' + keyB.task_time_from
+
+                                  console.log(keyA)
+                                  console.log(keyB)
+                                  if (keyA < keyB) return -1;
+                                  if (keyA > keyB) return 1;
+                                  return 0;
+                                });
+                                var ul = $(element).parent().parent();
+                                $.each(items, function(i, li){
+                                  ul.append(li); /* This removes li from the old spot and moves it */
+                                });;
+                            }
+                            })
+
+                        $(document).off('mousemove');
+
+                      })
+
+
+
+              }
+
+
+            })
+
+
 
 
       }
