@@ -1230,7 +1230,7 @@ class TaskViewSet(CustomModelViewSet):
         request.data._mutable = True
         task = Tasks.objects.get(id_task = pk)
 
-
+        print(pk)
         data = request.data.dict()
         date_from = request.data.get('task_date_from')
         date_to = request.data.get('task_date_to')
@@ -1238,6 +1238,7 @@ class TaskViewSet(CustomModelViewSet):
         time_to = request.data.get('task_time_to')
         employee = request.data.get('fk_employee_1')
         state = request.data.get('fk_task_state')
+
 
 
         if task.fk_task_state.id_task_state < 4:
@@ -1261,6 +1262,7 @@ class TaskViewSet(CustomModelViewSet):
             serializer.is_valid(raise_exception=True)
 
             self.perform_update(serializer)
+
 
             return Response(serializer.data, status=status.HTTP_200_OK)
 

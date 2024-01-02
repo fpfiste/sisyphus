@@ -110,7 +110,7 @@ thead th{
 #schedule_table tr td:first-child {
   position: sticky;
   left: 0;
-  z-index: 0;
+  z-index: 1;
   min-width: 10vw;
   max-width: 10vw;
   background-color:#efefef;
@@ -121,7 +121,7 @@ thead th{
 }
 #schedule_table thead tr th:nth-child(2) {
   position: sticky;
-  z-index: 0;
+  z-index: 1;
   min-width: 10vw;
   max-width: 20vw;
   left: 10vw;
@@ -133,7 +133,7 @@ thead th{
 }
 #schedule_table tbody tr td:nth-child(2) {
   position: sticky;
-  z-index: 0;
+  z-index: 1;
   left: 10vw;
   min-width: 10vw;
   max-width: 20vw;
