@@ -99,8 +99,8 @@ class Scheduler{
 
 
           for (let i = 1; i < (25); i++){
-              title_row += '<th class="scheduler_time_titles">'+i+':00</th>'
-              spacer_row += '<th class="scheduler_time_ticks"></th>'
+              title_row += '<th class="scheduler_time_titles" style="width:96px;">'+i+':00</th>'
+              spacer_row += '<th class="scheduler_time_ticks" style="width:96px;"></th>'
           }
 
           title_row += '</tr>'
