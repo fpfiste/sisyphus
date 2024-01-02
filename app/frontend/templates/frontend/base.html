@@ -13,10 +13,10 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link rel="shortcut icon" href="/static/img/favicon.ico" />
 
-	<link href="/static/css/app.css?{% break_cache %} " rel="stylesheet">
+	<link href="{% break_cache '/static/css/app.css' %}" rel="stylesheet">
 
 
-	<link href="/static/css/loading_screen.css?{% break_cache %}" rel="stylesheet">
+	<link href="{% break_cache '/static/css/loading_screen.css' %}" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 	<script src="https://kit.fontawesome.com/398fba641d.js" crossorigin="anonymous"></script>
 
@@ -29,13 +29,13 @@
 	<script src="/static/bootstrap/bootstrap.bundle.min.js"></script>
 
 
-	<link href="/static/components/table/table.css?{% break_cache %}" rel="stylesheet">
-	<link href="/static/components/forms/forms.css?{% break_cache %}" rel="stylesheet">
-	<script type="application/javascript" src="/static/components/table/table.js?{% break_cache %}"></script>
-	<script type="application/javascript" src="/static/components/forms/form.js?{% break_cache %}"></script>
-	<link href="/static/components/scheduler/scheduler.css?{% break_cache %}" rel="stylesheet">
-	<script type="application/javascript" src="/static/components/scheduler/scheduler.js?{% break_cache %}"></script>
-	<script type="application/javascript" src="/static/js/helpers.js?{% break_cache %}"></script>
+	<link href="{% break_cache '/static/components/table/table.css' %}" rel="stylesheet">
+	<link href="{% break_cache '/static/components/forms/forms.css' %}" rel="stylesheet">
+	<script type="application/javascript" src="{% break_cache '/static/components/table/table.js' %}"></script>
+	<script type="application/javascript" src="{% break_cache '/static/components/forms/form.js' %}"></script>
+	<link href="{% break_cache '/static/components/scheduler/scheduler.css' %}" rel="stylesheet">
+	<script type="application/javascript" src="{% break_cache '/static/components/scheduler/scheduler.js' %}"></script>
+	<script type="application/javascript" src="{% break_cache '/static/js/helpers.js' %}"></script>
     {% load static %}
 
 
