@@ -127,7 +127,7 @@ class Scheduler{
                             '<td id="resource_lane_e'+value.id_employee+'">'+
                                 '<ul style="list-style:None; padding: 0px; margin-bottom: 0px;"></ul>'+
                             '</td>'+
-                            '<td id="task_lane_e'+value.id_employee+'" class="task_lane" colspan="100" >' +
+                            '<td id="task_lane_e'+value.id_employee+'" class="task_lane" colspan="100" style="max-width:2304px;" >' +
                                 '<ul class="task-lane-ul" data-employee='+value.id_employee+' style="list-style:None; padding: 0px; margin-bottom: 0px; height:100%;"></ul>'+
                             '</td>'+
                         '</tr>'
