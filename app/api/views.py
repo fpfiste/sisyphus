@@ -1241,6 +1241,7 @@ class TaskViewSet(CustomModelViewSet):
 
 
 
+
         if task.fk_task_state.id_task_state < 4:
             if (date_from != '') and (date_to != '') and (time_from != '') and (time_to != '') and (employee != ''):
                 request.data['fk_task_state'] = "2"

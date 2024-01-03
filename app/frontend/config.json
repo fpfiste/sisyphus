@@ -713,9 +713,9 @@
       "js": "/static/js/pages/schedule.js",
       "template" : "frontend/pages/schedule.html",
       "pk" : "id_task",
-      "create_form_fields" : ["task_template", "task_date_from", "task_time_from", "task_date_to", "task_time_to", "amount", "fk_unit", "description", "internal_info","customer_reference", "fk_project", "fk_employee_1", "fk_employee_2", "fk_asset_1", "fk_asset_2", "unit_price", "fk_currency", "fk_vat", "custom_fields", "fk_clearing_type"],
+      "create_form_fields" : ["task_template", "fk_project", "description", "task_date_from", "task_time_from", "task_date_to", "task_time_to", "fk_employee_1", "fk_employee_2", "fk_asset_1", "fk_asset_2", "amount", "fk_unit",  "internal_info","customer_reference", "unit_price", "fk_currency", "fk_vat","fk_clearing_type", "custom_fields"],
       "create_form_fields_required" : ["fk_project", "description"],
-      "update_form_fields" : ["id_task", "task_date_from", "task_time_from", "task_date_to", "task_time_to", "fk_task_state","amount", "fk_unit", "description", "internal_info","customer_reference", "fk_project", "fk_employee_1", "fk_employee_2", "fk_asset_1", "fk_asset_2", "unit_price", "fk_currency", "fk_vat","fk_clearing_type", "custom_fields"],
+      "update_form_fields" : ["id_task", "fk_project", "fk_task_state","description","task_date_from", "task_time_from", "task_date_to", "task_time_to", "fk_employee_1", "fk_employee_2", "fk_asset_1", "fk_asset_2","amount", "fk_unit",  "internal_info","customer_reference",  "unit_price", "fk_currency", "fk_vat","fk_clearing_type", "custom_fields"],
       "update_form_fields_required" :  ["id_task","fk_project", "description"],
       "update_form_fields_disabled" : ["id_task", "fk_task_state"]
 
