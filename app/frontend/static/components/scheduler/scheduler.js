@@ -69,7 +69,6 @@ class Scheduler{
         html += '<span class="asset badge badge-primary" style="width: 45%; height:40px; margin-top: 5px;">'
         html += '<select class="form-select asset-select" aria-label="asset_selector" style="border:none; background:none; color:white; cursor:pointer; font-size: 1em;">'
         html += '<option value="">-----------</option>'
-        console.log(this.asset_data)
         $.each(this.asset_data, (key,value) => {
             if (value.id_asset == selected) {
                 html += '<option value='+value.id_asset+' selected>'+value.asset_internal_alias+'</option>'
@@ -154,11 +153,15 @@ class Scheduler{
       _draw_footer() {
         let footer = '<tfoot>'
 
-        footer += '<tr id="open_task_row">' +
-                   '<th colspan="2" id="scheduler_open_task_label">'+this.open_task_label+'</th>'+
-                   '<td id="task_lane_o" colspan="100"></td>' +
-                   '</tr>'
-
+        footer += '<tr id="open_task_row">'
+        footer += '<th colspan="1" id="scheduler_open_task_label">'+this.open_task_label+'</th>'
+        footer +=  '<td id="resource_lane_o">'
+        footer += '<ul style="list-style:None; padding: 0px; margin-bottom: 0px; height:100%;"></ul>'
+        footer += '</td>'
+        footer += '<td id="task_lane_o" colspan="100">'
+        footer += '<ul class="open-task-ul" data-employee="" style="list-style:None; padding: 0px; margin-bottom: 0px; height:100%;"></ul>'
+        footer += '</td>'
+        footer += '</tr>'
         footer += '</tfoot>'
         return footer
       }
@@ -182,10 +185,15 @@ class Scheduler{
          return asset[0]
       }
 
-      _draw_task(task_id, employee, field, left_offset, right_offset, task_data, task_title) {
+      _draw_task(task_id, employee, field, left_offset, right_offset, task_data, task_title, row_id, event_box_width) {
+
+          var margin_left = (row_id == 'o') ? '10' : left_offset
+          var margin_right = (row_id == 'o') ? ((left_offset + event_box_width + right_offset) - 200) : right_offset
+
+
           let task = ''
           task += '<li id="task-lane-li-'+task_id+'" data-task-id='+task_id+' data-employee-row='+employee+' data-employee-update-field="'+field+'" class="scheduler-lane" draggable="true">'
-          task += '<div class="task scheduled_task badge badge-primary" style = "position:relative; box-sizing: border-box; margin-left:' + left_offset + 'px;  margin-right:' + right_offset + 'px;" data-row-pk="'+task_id+'" data-task-data='+encodeURIComponent(JSON.stringify(task_data))+'>'
+          task += '<div class="task '+((row_id == 'o') ? 'open_task' : 'scheduled_task')+' badge badge-primary" style = "position:relative; box-sizing: border-box; margin-left:' + margin_left + 'px;  margin-right:' + margin_right + 'px;" data-row-pk="'+task_id+'" data-left-offset='+left_offset+' data-right-offset='+right_offset+' data-task-data='+encodeURIComponent(JSON.stringify(task_data))+'>'
           task += '<div class="spacer-left" style="position:absolute; left: 0; top: 0; bottom: 0; width: 5px;cursor: e-resize;"></div>'
           task += task_title
           task += '<div class="spacer-right" style="position:absolute; right: 0; top: 0; bottom: 0; width: 5px;cursor: e-resize;"></div>'
@@ -195,9 +203,10 @@ class Scheduler{
       }
 
 
-      _draw_asset(task_id, asset_1, asset_2){
+      _draw_asset(task_id, asset_1, asset_2, row_id){
+        var visibility = (row_id == 'o') ? 'hidden' : 'visible'
         let html = ''
-        html += '<li data-task-id='+task_id+'>';
+        html += '<li style="visibility:' + visibility +'" data-task-id='+task_id+'>';
         html += this._draw_asset_selector(asset_1)
         html+= this._draw_asset_selector(asset_2)
 
@@ -223,7 +232,9 @@ class Scheduler{
         }
 
         let event_duration_seconds = (endDate - startDate) / 1000
+        event_duration_seconds = (event_duration_seconds < 3600) ? 3600 : event_duration_seconds
         let event_box_width = width_of_time_table / 86400 * event_duration_seconds
+
 
 
         let left_offset_seconds = (startDate - this.scheduleDateStart) / 1000;
@@ -231,21 +242,21 @@ class Scheduler{
 
         let right_offset_px = width_of_time_table - event_box_width - left_offset_px
 
-        return [left_offset_px, right_offset_px]
+        return [left_offset_px, right_offset_px, event_box_width]
 
 
       }
 
       _add_row(row_id, task_id, task_title, startDate, endDate, asset_1, asset_2, employee, field, task_data) {
 
-        let [left_offset, right_offset] = this._calc_event_box_offsets(startDate, endDate)
+        let [left_offset, right_offset, event_box_width] = this._calc_event_box_offsets(startDate, endDate)
 
 
-        let lane = this._draw_task(task_id, employee, field, left_offset, right_offset, task_data, task_title)
+        let lane = this._draw_task(task_id, employee, field, left_offset, right_offset, task_data, task_title, row_id, event_box_width)
         $('#task_lane_'+row_id + ' ul').append(lane);
 
 
-        let asset_lane = this._draw_asset( task_id, asset_1, asset_2)
+        let asset_lane = this._draw_asset( task_id, asset_1, asset_2, row_id)
         $('#resource_lane_'+row_id + ' ul').append(asset_lane)
 
 
@@ -253,17 +264,18 @@ class Scheduler{
 
 
       _populate() {
-            let employee_1 =  this.task_data.filter(a => a.fk_employee_1 != null);
-            let employee_2 =  this.task_data.filter(a => a.fk_employee_2 != null);
-            let open_tasks = this.task_data.filter(a => (a.fk_employee_1 == null) & (a.fk_employee_2 == null));
+
 
 
 
             $.each(this.task_data, (key,value) => {
                 console.log(value)
-                let startDate = new Date(value.task_date_from +' '+value.task_time_from);
-                let endDate = new Date(value.task_date_to +' '+ value.task_time_to);
 
+                var start_ts = Date.parse(value.task_date_from +' '+value.task_time_from) || Date.parse(this.schedule_date +' 08:00')
+                var end_ts = Date.parse(value.task_date_to +' '+ value.task_time_to) || Date.parse(this.schedule_date +' 08:00')
+                let startDate = new Date(start_ts);
+                let endDate = new Date(end_ts);
+                console.log(start_ts)
                 let asset_1 = this._asset_lookup();
                 let asset_2 = this._asset_lookup();
 
@@ -280,15 +292,6 @@ class Scheduler{
                 }
 
             })
-
-          $.each(this.open_tasks, (key,value) => {
-                 let task_span = '<span class="task open_task badge badge-primary" style = "box-sizing: border-box; margin-left: 1vw; width: 200px" data-row-pk="'+value.id_task+'">'+ value.id_task +'-' + value.description +'</span>'
-                 $('#task_lane_o').append(task_span)
-
-          })
-
-
-
 
       }
 
@@ -312,8 +315,6 @@ class Scheduler{
               keyB = JSON.parse(decodeURIComponent(keyB))
               keyB = keyB.task_date_from + ' ' + keyB.task_time_from
 
-              console.log(keyA)
-              console.log(keyB)
               if (keyA < keyB) return -1;
               if (keyA > keyB) return 1;
               return 0;
@@ -337,8 +338,6 @@ class Scheduler{
 
               var index_B = lane_ul.find('[data-task-id="'+idB+'"]').index();
 
-              console.log('ID A: '+ idA+ '; Index: ' + index_A)
-                console.log('ID B: '+ idB + '; Index: ' + index_B)
               if (index_A < index_B) return -1;
               if (index_A > index_B) return 1;
               return 0;
@@ -352,12 +351,6 @@ class Scheduler{
             });;
 
             return 0
-
-
-
-
-
-
 
       }
 
@@ -391,7 +384,6 @@ class Scheduler{
             $('#scheduler_prev_date,#scheduler_next_date').on('click', (event)=> {
                 let d = new Date(this.schedule_date)
 
-                console.log(event)
                 if (event.currentTarget.id == 'scheduler_prev_date') {
                     d.setDate(d.getDate() - 1)
                 } else if (event.currentTarget.id == 'scheduler_next_date') {
@@ -399,7 +391,6 @@ class Scheduler{
                 }
 
                 let date = d.toISOString().split('T')[0];
-                console.log(date)
                 this.schedule_date = date;
                 Cookies.set('scheduler_date', date);
                 this.build();
@@ -420,7 +411,6 @@ class Scheduler{
 
                 Cookies.set('excluded_employee_types', exclude);
                 this.excluded_employee_types = exclude
-                console.log(this.excluded_employee_types)
                 this.build();
 
 
@@ -474,12 +464,14 @@ class Scheduler{
 
                     $(event.currentTarget).css('border', '')
 
-                    if ((new_employee == taskdata.fk_employee_1) | (new_employee == taskdata.fk_employee_2)) {
+                    if ((new_employee == taskdata.fk_employee_1) | (new_employee == taskdata.fk_employee_2) | (taskdata.task_date_from != this.schedule_date)) {
                         return
 
                     }
 
-                    if (taskdata.fk_employee_1 == old_employee) {
+                    if ((taskdata.fk_employee_1 == null) & (taskdata.fk_employee_2 == null)) {
+                        taskdata['fk_employee_1'] = new_employee
+                    } else if (taskdata.fk_employee_1 == old_employee) {
                         taskdata['fk_employee_1'] = new_employee
                     } else {
                         taskdata['fk_employee_2'] = new_employee
@@ -495,11 +487,31 @@ class Scheduler{
                         success: function (result) {
                             $(lane)
                             .attr('data-employee-row', new_employee)
-                            .find('.task').attr('data-task-data', encodeURIComponent(JSON.stringify(result)))
+
+                            var task = $(lane).find('.task')
+                            task.attr('data-task-data', encodeURIComponent(JSON.stringify(result)))
+
+                            var left_offset = task.attr('data-left-offset')
+                            var right_offset = task.attr('data-right-offset')
+
+
+                            task.removeClass('open_task')
+                            task.addClass('scheduled_task')
+                            task.css('margin-left', left_offset+ 'px')
+                            task.css('margin-right', right_offset + 'px')
+
 
 
                             $(event.currentTarget).append(lane);
-                            let old_asset_selectors = $('#resource_lane_e' + old_employee).find('li').eq(old_index).detach()
+                            console.log(row_id)
+                            let old_asset_selectors
+                            if (row_id == 'task_lane_o') {
+                                old_asset_selectors = $('#resource_lane_o').find('li').eq(old_index).detach()
+                            } else {
+                                old_asset_selectors = $('#resource_lane_e' + old_employee).find('li').eq(old_index).detach()
+                            }
+
+                            old_asset_selectors.css('visibility', 'visible')
                             $('#resource_lane_e' + new_employee).find('ul').append(old_asset_selectors)
 
                             let lane_ul = $(event.currentTarget)
@@ -516,16 +528,116 @@ class Scheduler{
 
             });
 
+            $('.open-task-ul').on('dragover',(event)=> {
+                event.preventDefault();
+
+                if (event.currentTarget.className == 'open-task-ul') {
+                     $(event.currentTarget).css('border', '5px solid green')
+                }
+
+            })
+
+            $('.open-task-ul').on('dragleave', (event) => {
+                 event.preventDefault();
+                 $(event.currentTarget).css('border', '')
+            })
+            $('.open-task-ul').on('drop', (event)=> {
+                event.preventDefault();
+                event.stopPropagation();
+
+                let lane_id = event.originalEvent.dataTransfer.getData("lane_id");
+                let row_id = event.originalEvent.dataTransfer.getData("row_id");
+                let new_employee = ''
+                let old_employee = event.originalEvent.dataTransfer.getData("old-employee");
+                let old_index = event.originalEvent.dataTransfer.getData("old-ul-index");
+
+                let lane = $('#'+lane_id)
+
+                let taskdata = $('#'+lane_id).find('.task').attr('data-task-data')
+
+                taskdata = JSON.parse(decodeURIComponent(taskdata))
+
+                if (event.currentTarget.className == 'open-task-ul') {
+
+                    $(event.currentTarget).css('border', '')
+
+                    if ((new_employee == taskdata.fk_employee_1) | (new_employee == taskdata.fk_employee_2) | (taskdata.task_date_from != this.schedule_date)) {
+                        return
+
+                    }
+
+
+                    taskdata['fk_employee_1'] = new_employee
+
+                    taskdata['fk_employee_2'] = new_employee
+
+
+                    let proxy_this = this
+
+                    $.ajax({
+                        url: window.location.origin +'/api/tasks/' + taskdata.id_task + '/',
+                        method: 'PUT',
+                        headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+                        data: taskdata,
+                        success: function (result) {
+                            $(lane)
+                            .attr('data-employee-row', new_employee)
+                            .find('.task').attr('data-task-data', encodeURIComponent(JSON.stringify(result)))
+
+                            $(lane)
+                            .find('.task')
+                            .removeClass('scheduled_task')
+                            .addClass('open_task')
+
+                            var lane_width = $(lane).width()
+                            $(lane)
+                            .find('.task')
+                            .css('margin-left', '10px')
+                            .css('margin-right', (lane_width - 200) + 'px')
+
+                            $(event.currentTarget).append(lane);
+
+
+                            let old_asset_selectors
+                            if (row_id == 'task_lane_o') {
+                                old_asset_selectors = $('#resource_lane_o').find('li').eq(old_index).detach()
+                            } else {
+                                old_asset_selectors = $('#resource_lane_e' + old_employee).find('li').eq(old_index).detach()
+                            }
+
+                            old_asset_selectors.css('visibility', 'hidden')
+                            $('#resource_lane_o').find('ul').append(old_asset_selectors)
+
+                            let lane_ul = $(event.currentTarget)
+                            let asset_ul = $('#resource_lane_o').find('ul')
+                            proxy_this._sort_uls(lane_ul, asset_ul)
+
+
+
+                        }
+                    })
+
+                }
+
+
+
+
+            });
+
 
             $('.spacer-left, .spacer-right').on('mousedown', (e)=>{
               e.preventDefault()
 
+              console.log(e)
               let direction = $(e.currentTarget).attr('class')
-              console.log(direction)
 
 
 
               let element = $(event.target).parent()
+
+              if (element.hasClass( "open_task" )) {
+                return
+              }
 
               let data = $(element).attr('data-task-data')
               data = JSON.parse(decodeURIComponent(data))
@@ -541,6 +653,8 @@ class Scheduler{
 
               let initX = e.originalEvent.clientX
 
+              data.task_date_from = data.task_date_from || this.schedule_date
+              data.task_date_to = data.task_date_to || this.schedule_date
 
 
               $(document).on('mousemove', (e)=> {
@@ -570,6 +684,9 @@ class Scheduler{
                         .find('[data-row-pk='+$(element).attr('data-row-pk')+']')
                         .css('margin-left', new_offset_l +'px')
                         .css('margin-right', new_offset_r +'px')
+                        .attr('data-left-offset', new_offset_l)
+                        .attr('data-right-offset', new_offset_r)
+
                 }
               })
               $(document).on('mouseup', (e)=> {
@@ -589,6 +706,8 @@ class Scheduler{
 
                 let data = $(element).attr('data-task-data')
                 data = JSON.parse(decodeURIComponent(data))
+                data.task_date_from = data.task_date_from || this.schedule_date
+                data.task_date_to = data.task_date_to || this.schedule_date
 
                 if (data.task_date_from == this.schedule_date) {
                     data['task_time_from'] = start_ts.toTimeString().split(' ')[0];
@@ -607,7 +726,6 @@ class Scheduler{
                     success: function (result) {
                         $(element).attr('data-task-data', encodeURIComponent(JSON.stringify(result)))
                         let employee_row = $(element).parent().attr('data-employee-row')
-                        console.log(employee_row)
                         let lane_ul = $('#task_lane_e' + employee_row).find('ul')
                         let asset_ul = $('#resource_lane_e' + employee_row).find('ul')
 
@@ -658,7 +776,6 @@ class Scheduler{
                         headers: {'X-CSRFToken': Cookies.get('csrftoken')},
                         data: task_data,
                         success: function (result) {
-                           console.log(result)
                            $(task)
                             .attr('data-task-data', encodeURIComponent(JSON.stringify(result)))
                         }
@@ -687,7 +804,6 @@ class Scheduler{
 
         ).done((empl, empl_type, asset, tasks, open_tasks)=> {
             this.employee_data = empl[0]['data']
-            console.log(this.employee_data)
             this.employee_types = empl_type[0]['data']
             this.asset_data = asset[0]['data']
             this.task_data = tasks[0]
