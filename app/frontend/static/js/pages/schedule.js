@@ -6,7 +6,7 @@ jQuery.fn.setUp = function(page_config, fields) {
 
     let employee_label = (lang_cookie == 'en') ? 'Employees' : 'Mitarbeiter'
     let resource_label = (lang_cookie == 'en') ? 'Resources' : 'Hilfsmittel'
-    let open_task_label = (lang_cookie == 'en') ? 'Open Tasks' : 'Offene Aufträge'
+    let open_task_label = (lang_cookie == 'en') ? 'Open' : 'Offen'
     let employee_type_label = (lang_cookie == 'en') ? 'Emplyoee Types' : 'Mitarbeiter Typen'
 
     // create scheduler

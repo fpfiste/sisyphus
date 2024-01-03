@@ -50,7 +50,7 @@
         "scheduler_employee_label": {"en": "Employees" ,"ch":  "Mitarbeiter"},
         "scheduler_asset_label": {"en": "Assets" ,"ch":  "Ressourcen"},
         "scheduler_subcontractor_label": {"en": "Subcontractor" ,"ch":  "Subunternehmer"},
-        "scheduler_open_task_label": {"en": "Open Tasks" ,"ch":  "Offene Aufträge"},
+        "scheduler_open_task_label": {"en": "Open" ,"ch":  "Offene"},
         "scheduler_employee_type_label": {"en": "Employee Types" ,"ch":  "Mitarbeiter Typ"}
   },
 
