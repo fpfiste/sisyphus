@@ -100,8 +100,8 @@ thead th{
   position: sticky;
   left: 0;
   z-index: 20;
-  min-width: 10vw;
-  max-width: 10vw;
+  min-width: 5vw;
+  max-width: 5vw;
   background-color:#efefef;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -111,8 +111,8 @@ thead th{
   position: sticky;
   left: 0;
   z-index: 1;
-  min-width: 10vw;
-  max-width: 10vw;
+  min-width: 5vw;
+  max-width: 5vw;
   background-color:#efefef;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -124,7 +124,7 @@ thead th{
   z-index: 1;
   min-width: 10vw;
   max-width: 20vw;
-  left: 10vw;
+  left: 5vw;
   background-color:#efefef;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -134,7 +134,7 @@ thead th{
 #schedule_table tbody tr td:nth-child(2) {
   position: sticky;
   z-index: 1;
-  left: 10vw;
+  left: 5vw;
   min-width: 10vw;
   max-width: 20vw;
   text-overflow: ellipsis;

@@ -66,8 +66,8 @@ class Scheduler{
 
       _draw_asset_selector(selected) {
         let html = ''
-        html += '<span class="asset badge badge-primary" style="width: 45%;">'
-        html += '<select class="form-select asset-select" aria-label="asset_selector">'
+        html += '<span class="asset badge badge-primary" style="width: 45%; height:40px; margin-top: 5px;">'
+        html += '<select class="form-select asset-select" aria-label="asset_selector" style="border:none; background:none; color:white; cursor:pointer; font-size: 1em;">'
         html += '<option value="">-----------</option>'
         console.log(this.asset_data)
         $.each(this.asset_data, (key,value) => {
