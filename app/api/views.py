@@ -21,6 +21,7 @@ from rest_framework.views import APIView
 from django.db.models import F
 from main import settings
 from .components import Invoice, DeliveryNote
+from .components.docwriter.receipt import Receipt
 from .components.docwriter.schedule import SchedulePDF
 from .components.docwriter.storno import InvoiceCancellationDoc
 from .components.levensteindistance import Levenshtein
@@ -1018,7 +1019,8 @@ class SalesViewSet(CustomModelViewSet):
     @action(detail=True, methods=['GET'])
     def pdf(self, request, pk):
 
-        doc = DeliveryNote('de', output_path=settings.TMP_FOLDER)
+        sale = Sales.objects.get(pk=pk)
+        doc = Receipt(sale.id_sale, sale.sale_date, sale.sale_time, sale.description,sale.fk_unit.unit, sale.amount, sale.unit_price, sale.fk_currency.currency_abbreviation, sale.fk_clearing_type.clearing_type, sale.customer_reference, output_path=settings.TMP_FOLDER, language='de')
 
         doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
                      logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
@@ -1027,7 +1029,7 @@ class SalesViewSet(CustomModelViewSet):
                      logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
                      )
 
-        sale = Sales.objects.get(pk=pk)
+
         customer = sale.fk_project.fk_customer
 
         doc.set_customer(10, customer.company_name, customer.company_street, customer.company_zipcode, customer.company_city, customer.fk_country.country_code)
@@ -1038,17 +1040,6 @@ class SalesViewSet(CustomModelViewSet):
                         city=company.company_city, country=company.fk_country.country_code, email=company.company_email,
                         vat_number=company.vat_number, agent=request.user, phone=company.phone_number)
 
-        doc.add_position(
-            sale.id_sale,
-            sale.sale_date,
-            sale.sale_time,
-            sale.description,
-            sale.fk_unit.unit,
-            sale.amount,
-
-            sale.customer_reference
-
-        )
 
 
 
