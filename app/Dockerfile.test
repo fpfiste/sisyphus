@@ -1,0 +1,30 @@
+
+
+
+# pull official base image
+FROM python:3.11-bullseye
+
+# install psycopg2 dependencies
+RUN apt-get update
+RUN apt-get install -y postgresql gcc musl netcat git
+
+
+# set work directory
+WORKDIR /home/sisyphus/app
+
+COPY . .
+
+RUN mkdir /home/sisyphus/app/static
+
+
+
+
+# install dependencies
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+COPY ./entrypoint.prod.sh /entrypoint.prod.sh
+RUN chmod +x /entrypoint.prod.sh
+
+
+CMD ["sh", "./entrypoint.prod.sh"]

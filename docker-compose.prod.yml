@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  db:
+  db_prod:
     build: ./database
     container_name: sisyphus_db_prod
     volumes:
@@ -16,7 +16,7 @@ services:
       - '5433:5433'
     command: -p 5433
 
-  jobs:
+  jobs_prod:
     build: ./background_jobs
     container_name: sisyphus_jobs_prod
     volumes:
@@ -25,7 +25,7 @@ services:
       - ./.env.prod
     restart: always
 
-  api:
+  api_prod:
     build:
       context: ./app
       dockerfile: Dockerfile.prod
@@ -39,16 +39,18 @@ services:
     env_file:
       - ./.env.prod
     depends_on:
-      - db
+      - db_prod
 
-  nginx:
-    build: ./nginx
+  nginx_prod:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.prod
     container_name: sisyhus_server_prod
     ports:
       - 1337:80
     restart: always
     depends_on:
-      - api
+      - api_prod
     volumes:
       - sisyphus_static_prod:/home/sisyphus/app/static
 

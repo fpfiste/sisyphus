@@ -1,11 +1,10 @@
 version: '3.8'
 
 services:
-  db:
+  db_test:
     build: ./database
     container_name: sisyphus_db_test
     volumes:
-      - ./database/shared:/shared/
       - sisyphus_test_data:/var/lib/postgresql/data/
     env_file:
       - ./.env.test
@@ -16,22 +15,12 @@ services:
       - '5434:5434'
     command: -p 5434
 
-  jobs:
-    build: ./background_jobs
-    container_name: sisyphus_jobs_test
-    volumes:
-      - ./background_jobs/shared/:/shared/
-    env_file:
-      - ./.env.test
-    restart: always
-
-  api:
+  api_test:
     build:
       context: ./app
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.test
     container_name: sisyphus_api_test
     volumes:
-      - ./app/:/home/sisyphus/app
       - sisyphus_static_test:/home/sisyphus/app/frontend/static
     expose:
       - 8001
@@ -39,16 +28,18 @@ services:
     env_file:
       - ./.env.test
     depends_on:
-      - db
+      - db_test
 
-  nginx:
+  nginx_test:
     container_name: sisyphus_server_test
-    build: ./nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.test
     ports:
       - 1338:80
     restart: always
     depends_on:
-      - api
+      - api_test
     volumes:
       - sisyphus_static_test:/home/sisyphus/app/static
 
