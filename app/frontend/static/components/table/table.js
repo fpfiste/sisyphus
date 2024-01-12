@@ -107,7 +107,7 @@ class BootstrapDataTable{
 
             //let page_size_select = '<select class="form-select"><option selected value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option></select>'
             let pagination = this.draw_pagination()
-            let table_grid = '<div id="table_container" style="overflow:scroll; white-space:nowrap; height:95git %;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'" style="height:100%;">'+header+'<tbody></tbody></table></div><div id=table_pagination style=height:100%;>'+pagination+'</div>';
+            let table_grid = '<div id="table_container" style="overflow:scroll; white-space:nowrap; height:95%;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'" style="height:100%;">'+header+'<tbody></tbody></table></div><div id=table_pagination style=height:100%;>'+pagination+'</div>';
             $(this.container).append(table_grid);
 
       }
