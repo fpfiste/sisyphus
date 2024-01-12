@@ -147,6 +147,7 @@ thead th{
     /*min-height: 100%;*/
 }
 
+/*
 #schedule_table tfoot {
   position: sticky;
   z-index: 999;
@@ -156,7 +157,7 @@ thead th{
 
 }
 
-
+*/
 
 #schedule_table tbody tr {
     height: 50px;

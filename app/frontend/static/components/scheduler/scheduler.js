@@ -14,11 +14,13 @@ class Scheduler{
           this.get_date_url = '/api/tasks/getDate/'
           this.set_date_url = '/api/tasks/setDate/'
           this.schedule_date = Cookies.get('scheduler_date')  || new Date().toISOString().split('T')[0];
+          this.hidden_employees = JSON.parse(Cookies.get('hidden_employees') || '[]');
           this.excluded_employee_types = (Cookies.get('excluded_employee_types')  || '').split(',');
           this.employee_label= employee_label
           this.employee_type_label = employee_type_label
           this.asset_label= asset_label
           this.open_task_label = open_task_label
+          console.log(this.hidden_employees)
       }
 
 
@@ -93,6 +95,7 @@ class Scheduler{
                                             '<input type="date"  id="scheduler_date_input" class="scheduler-first-column" value="'+this.schedule_date+'"/>'+
                                             '<button  id="scheduler_prev_date"><i class="fa-solid fa-chevron-left"></i></button>'+
                                             '<button  id="scheduler_next_date"><i class="fa-solid fa-chevron-right"></i></button>' +
+                                            '<button  id="unhide-employees"><i class="fa-regular fa-eye"></i></button>' +
                                     '</div></div>'
             return input;
       }
@@ -131,19 +134,22 @@ class Scheduler{
         let body = '<tbody>'
 
         $.each(this.employee_data, (key,value) => {
-
-            if (!this.excluded_employee_types.includes(value['fk_employee_type']['id_employee_type'].toString())){
-                let row =   '<tr id="e'+value.id_employee+'">' +
-                            '<td class="scheduler-first-column">'+value.employee_internal_alias+'</td> '+
-                            '<td id="resource_lane_e'+value.id_employee+'">'+
-                            '<ul style="list-style:None; padding: 0px; margin-bottom: 0px; height:100%;"></ul>'+
-                            '</td>'+
-                            '<td id="task_lane_e'+value.id_employee+'" class="task_lane" colspan="100" style="max-width:2304px;" >' +
-                            '<ul class="task-lane-ul" data-employee='+value.id_employee+' style="list-style:None; padding: 0px; margin-bottom: 0px; height:100%;"></ul>'+
-                            '</td>'+
-                            '</tr>'
-            body += row;
+            let styles = ''
+            if ((this.excluded_employee_types.includes(value['fk_employee_type']['id_employee_type'].toString())) || (this.hidden_employees.includes(value['id_employee'].toString()))) {
+                console.log(value['id_employee'].toString())
+                styles ='display:none;'
             }
+
+        let row =   '<tr id="e'+value.id_employee+'" data-employee-id='+value.id_employee+' style="'+styles+'">' +
+            '<td class="scheduler-first-column"><i class="fa-regular fa-eye-slash row-toggler" style="cursor:pointer;"></i>&emsp;'+value.employee_internal_alias+'</td> '+
+            '<td id="resource_lane_e'+value.id_employee+'">'+
+            '<ul style="list-style:None; padding: 0px; margin-bottom: 0px; height:100%;"></ul>'+
+            '</td>'+
+            '<td id="task_lane_e'+value.id_employee+'" class="task_lane" colspan="100" style="max-width:2304px;" >' +
+            '<ul class="task-lane-ul" data-employee='+value.id_employee+' style="list-style:None; padding: 0px; margin-bottom: 0px; height:100%;"></ul>'+
+            '</td>'+
+            '</tr>'
+        body += row;
         })
 
         body += '</tbody>'
@@ -158,7 +164,7 @@ class Scheduler{
         footer +=  '<td id="resource_lane_o">'
         footer += '<ul style="list-style:None; padding: 0px; margin-bottom: 0px; height:100%;"></ul>'
         footer += '</td>'
-        footer += '<td id="task_lane_o" colspan="100">'
+        footer += '<td id="task_lane_o" colspan="100" style="max-width:2304px;">'
         footer += '<ul class="open-task-ul" data-employee="" style="list-style:None; padding: 0px; margin-bottom: 0px; height:100%;"></ul>'
         footer += '</td>'
         footer += '</tr>'
@@ -187,13 +193,13 @@ class Scheduler{
 
       _draw_task(task_id, employee, field, left_offset, right_offset, task_data, task_title, row_id, event_box_width) {
 
-          var margin_left = (row_id == 'o') ? '10' : left_offset
+          var margin_left = (row_id == 'o') ? '0' : left_offset
           var margin_right = (row_id == 'o') ? ((left_offset + event_box_width + right_offset) - 200) : right_offset
 
 
           let task = ''
           task += '<li id="task-lane-li-'+task_id+'" data-task-id='+task_id+' data-employee-row='+employee+' data-employee-update-field="'+field+'" class="scheduler-lane" draggable="true">'
-          task += '<div class="task '+((row_id == 'o') ? 'open_task' : 'scheduled_task')+' badge badge-primary" style = "position:relative; box-sizing: border-box; margin-left:' + margin_left + 'px;  margin-right:' + margin_right + 'px;" data-row-pk="'+task_id+'" data-left-offset='+left_offset+' data-right-offset='+right_offset+' data-task-data='+encodeURIComponent(JSON.stringify(task_data))+'>'
+          task += '<div class="task '+((row_id == 'o') ? 'open_task' : 'scheduled_task')+' badge badge-primary" style = "position:relative; box-sizing: border-box; margin-left:' + margin_left + 'px;  margin-right:' + margin_right + 'px; '+((row_id == 'o') ? 'width:200px; overflow:hidden;' : '')+' " data-row-pk="'+task_id+'" data-left-offset='+left_offset+' data-right-offset='+right_offset+' data-task-data='+encodeURIComponent(JSON.stringify(task_data))+'>'
           task += '<div class="spacer-left" style="position:absolute; left: 0; top: 0; bottom: 0; width: 5px;cursor: e-resize;"></div>'
           task += task_title
           task += '<div class="spacer-right" style="position:absolute; right: 0; top: 0; bottom: 0; width: 5px;cursor: e-resize;"></div>'
@@ -787,6 +793,22 @@ class Scheduler{
 
             })
 
+            $('.row-toggler').on('click', (e)=>{
+                $(event.target).parent().parent().hide()
+
+                let empl_id = $(event.target).parent().parent().attr('data-employee-id')
+                this.hidden_employees.push(empl_id)
+                console.log(empl_id)
+                Cookies.set('hidden_employees', JSON.stringify(this.hidden_employees));
+            })
+
+            $('#unhide-employees').on('click', (e)=>{
+                $('tr').show()
+
+                this.hidden_employees = []
+                Cookies.set('hidden_employees', JSON.stringify(this.hidden_employees));
+
+            })
 
 
 
