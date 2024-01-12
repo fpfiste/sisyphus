@@ -40,7 +40,7 @@
 #schedule_table thead {
     background: white;
     border-color: lightgray;
-    height:10%;
+    height:2.5rem;
       position: -webkit-sticky;
         position: sticky;
         top: 0;
@@ -117,6 +117,7 @@ thead th{
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  font-size: 0.8rem;
 
 }
 #schedule_table thead tr th:nth-child(2) {
@@ -180,22 +181,28 @@ thead th{
 }
 .scheduled_task {
     display: block;
-    background: #588157;
+    background: #588157ab;
     margin-top: 2px;
     margin-bottom: 2px;
     line-height: 40px;
+}
 
-
+.scheduled_task:hover {
+    background: #588157;
 }
 .open_task {
     display: block;
-    background: #6c757d;
+    background: #6c757d7d;
     margin-top: 2px;
     margin-bottom: 2px;
     line-height: 40px;
 
 
 }
+.open_task:hover {
+    background:#6c757d;
+}
+
 .asset {
     background:#17a2b8;
     line-height: 40px;

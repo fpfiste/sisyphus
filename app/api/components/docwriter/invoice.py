@@ -150,6 +150,7 @@ class Invoice(Document):
 
 
     def draw_position(self, position):
+        self.increase_y(0.5)
         self.setFont("Helvetica", 9)
         self.c.drawString(2 * cm, self.y * cm, str(position['date']))
 
@@ -257,7 +258,7 @@ class Invoice(Document):
 
         self.setFont("Helvetica", 9)
 
-        self.y = 18
+        self.y = 17.5
         for position in self.positions:
             self.draw_position(position)
 

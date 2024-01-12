@@ -89,7 +89,7 @@ class Scheduler{
       }
 
       _draw_input_section(id='') {
-               let input = '<div class="row" style="min-height:10%; height:10%;">' +
+               let input = '<div class="row" style="min-height:2.5rem; height:2.5rem;">' +
                                         this._employee_class_selector() +
                                      '<div id="date_input_section">'+
                                             '<input type="date"  id="scheduler_date_input" class="scheduler-first-column" value="'+this.schedule_date+'"/>'+
@@ -141,7 +141,7 @@ class Scheduler{
             }
 
         let row =   '<tr id="e'+value.id_employee+'" data-employee-id='+value.id_employee+' style="'+styles+'">' +
-            '<td class="scheduler-first-column"><i class="fa-regular fa-eye-slash row-toggler" style="cursor:pointer;"></i>&emsp;'+value.employee_internal_alias+'</td> '+
+            '<td class="scheduler-first-column" title="'+value.employee_internal_alias+'"><i class="fa-regular fa-eye-slash row-toggler" style="cursor:pointer;"></i>&emsp;'+value.employee_internal_alias+'</td> '+
             '<td id="resource_lane_e'+value.id_employee+'">'+
             '<ul style="list-style:None; padding: 0px; margin-bottom: 0px; height:100%;"></ul>'+
             '</td>'+
@@ -181,7 +181,7 @@ class Scheduler{
           let footer = this._draw_footer();
 
             //* draw the grid of the new table object
-          let table_grid = input_section+'<div id="scheduler_container" style="overflow:scroll; min-height:90%; height:90%;"><table id="schedule_table" class="table" style="height:100%">'+header+body+footer+'</table></div>';
+          let table_grid = input_section+'<div id="scheduler_container" style="overflow:scroll; min-height:95%; height:95%;"><table id="schedule_table" class="table" style="height:100%">'+header+body+footer+'</table></div>';
           $(this.container).append(table_grid);
       }
 
@@ -422,7 +422,8 @@ class Scheduler{
 
             })
 
-            $('employee_type_filter_dropdown').on('focusout', function () {
+            $('#employee_type_filter').on('focusout', function () {
+                console.log('focus out')
                  $('#employee_type_filter_dropdown').hide();
             });
 
@@ -470,7 +471,24 @@ class Scheduler{
 
                     $(event.currentTarget).css('border', '')
 
+                    if (taskdata.task_date_from == null ) {
+                        taskdata.task_date_from = this.schedule_date
+                    }
+
+                    if (taskdata.task_date_to == null ) {
+                        taskdata.task_date_to = this.schedule_date
+                    }
+
+                    if (taskdata.task_time_from == null ) {
+                        taskdata.task_time_from = '08:00:00'
+                    }
+
+                    if (taskdata.task_time_to == null ) {
+                        taskdata.task_time_to = '09:00:00'
+                    }
+
                     if ((new_employee == taskdata.fk_employee_1) | (new_employee == taskdata.fk_employee_2) | (taskdata.task_date_from != this.schedule_date)) {
+                        console.log('holla')
                         return
 
                     }
@@ -598,7 +616,7 @@ class Scheduler{
                             var lane_width = $(lane).width()
                             $(lane)
                             .find('.task')
-                            .css('margin-left', '10px')
+                            .css('margin-left', '0px')
                             .css('margin-right', (lane_width - 200) + 'px')
 
                             $(event.currentTarget).append(lane);
