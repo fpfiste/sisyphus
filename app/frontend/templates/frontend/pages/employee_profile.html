@@ -1,0 +1,39 @@
+{% extends 'frontend/base.html' %}
+
+{% block title%}Profile{% endblock %}
+
+{% block content %}
+
+<a href="/employees"><i class="fa-solid fa-arrow-left"></i></a>
+
+<div class="row" style="height: 80vh; margin-top: 3vh;">
+    <div class="col-3" style="height:100%;">
+          <div class="card" style="height: 100%; width: 100%; margin-bottom:0px">
+            <img class="card-img-top" src="/static/img/empty_avatar.png" style="width: 50%;">
+              <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+              </div>
+          </div>
+    </div>
+    <div class="col-9" style="height:100%;">
+        <div class="row" style="height: 45%;">
+            <div class="card" style="height: 100%; width: 100%; margin-bottom:0px">
+              <div class="card-body">
+              </div>
+          </div>
+        </div>
+        <div style="height:5%"></div>
+        <div class="row" style="height: 45%;">
+            <div class="card" style="height: 100%; width: 100%; margin-bottom:0px">
+              <div class="card-body">
+              </div>
+          </div>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock %}
