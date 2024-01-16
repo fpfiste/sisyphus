@@ -134,13 +134,9 @@ class Scheduler{
         let body = '<tbody>'
 
         $.each(this.employee_data, (key,value) => {
-            let styles = ''
-            if ((this.excluded_employee_types.includes(value['fk_employee_type']['id_employee_type'].toString())) || (this.hidden_employees.includes(value['id_employee'].toString()))) {
-                console.log(value['id_employee'].toString())
-                styles ='display:none;'
-            }
 
-        let row =   '<tr id="e'+value.id_employee+'" data-employee-id='+value.id_employee+' style="'+styles+'">' +
+
+        let row =   '<tr id="e'+value.id_employee+'" class="scheduler-body-tr" data-employee-id='+value.id_employee+' data-employee-type="'+value.fk_employee_type.id_employee_type+'">' +
             '<td class="scheduler-first-column" title="'+value.employee_internal_alias+'"><i class="fa-regular fa-eye-slash row-toggler" style="cursor:pointer;"></i>&emsp;'+value.employee_internal_alias+'</td> '+
             '<td id="resource_lane_e'+value.id_employee+'">'+
             '<ul style="list-style:None; padding: 0px; margin-bottom: 0px; height:100%;"></ul>'+
@@ -183,6 +179,9 @@ class Scheduler{
             //* draw the grid of the new table object
           let table_grid = input_section+'<div id="scheduler_container" style="overflow:scroll; min-height:95%; height:95%;"><table id="schedule_table" class="table" style="height:100%">'+header+body+footer+'</table></div>';
           $(this.container).append(table_grid);
+
+
+
       }
 
 
@@ -298,6 +297,21 @@ class Scheduler{
                 }
 
             })
+
+            $('.scheduler-body-tr').each((key,value)=>{
+                console.log(value)
+                let styles = ''
+
+                let id = $(value).attr('data-employee-id').toString()
+                let type = $(value).attr('data-employee-type').toString()
+
+
+            if ((this.excluded_employee_types.includes(type.toString())) || (this.hidden_employees.includes(id.toString()))) {
+                console.log(id)
+                $(value).hide()
+            }
+            })
+
 
       }
 
