@@ -59,7 +59,7 @@ class BootstrapDataTable{
 
       draw_header() {
 
-        let header = '<thead style="position:sticky; top:0; background:white;height:1vh;">'
+        let header = '<thead style="position:sticky; top:0; background:white; height: 5%">'
 
         $.each(this.fields,(key,value) => {
                 header += '<th>'+value.title[this.language]+'</th>'
@@ -70,14 +70,12 @@ class BootstrapDataTable{
 
       }
 
+
       draw_pagination(){
-        let html = '<div class="form-group row" >'
-         html  += '<div class="col" style="display:flex; justify-content:flex-end;"><select id="id_page_size" class="form-select" style="min-width: 100px;width:10%;"><option value="10">10</option><option value="20">20</option><option value="50" selected>50</option><option value="100">100</option></select>'
-         html += '<nav aria-label="Page navigation example">'
-         html += '<ul class="pagination" style="margin-bottom:0px;">'
-         html +=  '<li class="page-item" id="prev-page" data-page-nr='+ (Number(this.page) - 1) +'><a class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>'
-
-
+        let html = ''
+        html += '<nav aria-label="Page navigation example">'
+        html += '<ul class="pagination" style="margin-bottom:0px;">'
+        html +=  '<li class="page-item" id="prev-page" data-page-nr='+ (Number(this.page) - 1) +'><a class="page-link" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>'
          html += '<li class="page-item page-number" data-page-nr='+this.page+'><a class="page-link"> '+this.page+'</a></li>'
 
          if (this.page + 1 <= this.max_pages){
@@ -92,7 +90,17 @@ class BootstrapDataTable{
          html += '<li class="page-item" id="next-page" data-page-nr='+ (Number(this.page) + 1) +'><a class="page-link"  aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>'
          html += '</ul>'
          html += '</nav>'
-         html +='</div>'
+
+         return html
+      }
+
+      draw_footer(){
+        let html = ''
+
+        html += '<tfoot>'
+        html += '<td><select id="id_page_size" class="form-select" style="min-width: 100px;width:10%;"><option value="10">10</option><option value="20">20</option><option value="50" selected>50</option><option value="100">100</option></select></td>'
+        html += '<td>'+ this.draw_pagination()+ '</td>'
+
 
 
          return html
@@ -103,11 +111,12 @@ class BootstrapDataTable{
       build_grid() {
             $(this.container).empty();
             let header = this.draw_header()
+            let footer = this.draw_footer()
             //* draw the grid of the new table object
 
             //let page_size_select = '<select class="form-select"><option selected value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option></select>'
             let pagination = this.draw_pagination()
-            let table_grid = '<div id="table_container" style="overflow:scroll; white-space:nowrap; height:95%;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'" style="height:100%;">'+header+'<tbody></tbody></table></div><div id=table_pagination style=height:100%;>'+pagination+'</div>';
+            let table_grid = '<div id="table_container" style="overflow:scroll; white-space:nowrap; height:95%;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'" style="height:100%;">'+header+'<tbody></tbody>'+footer+'</table>';
             $(this.container).append(table_grid);
 
       }
