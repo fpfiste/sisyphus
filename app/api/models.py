@@ -519,9 +519,9 @@ class Units(models.Model):
 
 class Vat(models.Model):
     id_vat = models.AutoField(primary_key=True)
-    vat = models.DecimalField(unique=True, max_digits=3, decimal_places=3)
+    vat = models.DecimalField(max_digits=3, decimal_places=3)
     vat_title = models.CharField(max_length=50)
-
+    netto = models.BooleanField()
     class Meta:
         managed = False
         db_table = 'vat'

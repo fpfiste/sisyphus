@@ -585,7 +585,8 @@ class ReceivablesViewSet(CustomModelViewSet):
                 project = Projects.objects.get(id_project=request.data['fk_project'])
 
 
-                doc = Invoice(invoice.pk,  invoice.invoice_date, invoice.invoice_text, vat.vat, currency.currency_abbreviation, currency.currency_account_nr, terms.due_days, language='de',output_path=settings.TMP_FOLDER, discount=invoice.discount)
+
+                doc = Invoice(invoice.pk,  invoice.invoice_date, invoice.invoice_text, vat.vat, vat.netto, currency.currency_abbreviation, currency.currency_account_nr, terms.due_days, language='de',output_path=settings.TMP_FOLDER, discount=invoice.discount)
 
                 doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
                              logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
@@ -634,6 +635,10 @@ class ReceivablesViewSet(CustomModelViewSet):
                         unit_price=sale.unit_price,
                         pos_type='S'
                     )
+
+
+
+
                 net_total, total = doc.draw()
 
                 invoice.net_total = net_total
@@ -647,6 +652,8 @@ class ReceivablesViewSet(CustomModelViewSet):
                 return Response({'file_url': url}, status=status.HTTP_200_OK)
         except ValueError as v:
             print(v)
+            print(traceback.format_exc())
+
             return Response({'message': str(v)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             print(e)
@@ -801,6 +808,7 @@ class ReceivablesViewSet(CustomModelViewSet):
                           invoice.invoice_date,
                           invoice.invoice_text,
                           vat.vat,
+                          vat.netto,
                           currency.currency_abbreviation,
                           currency.currency_account_nr,
                           terms.due_days,

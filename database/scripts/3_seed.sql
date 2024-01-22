@@ -68,7 +68,7 @@ FROM '/docker-entrypoint-initdb.d/units.csv'
 DELIMITER ','
 CSV HEADER;
 
-COPY public.vat(vat,vat_title)
+COPY public.vat(vat,vat_title, netto)
 FROM '/docker-entrypoint-initdb.d/vat.csv'
 DELIMITER ','
 CSV HEADER;

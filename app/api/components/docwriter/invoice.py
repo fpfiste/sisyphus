@@ -17,12 +17,13 @@ import textwrap
 
 
 class Invoice(Document):
-    def __init__(self,invoice_id:int, invoice_date:str, invoice_text:str, vat:float, currency:str, account:str, due_days:int, output_path:str, discount=0, language='de'):
+    def __init__(self,invoice_id:int, invoice_date:str, invoice_text:str, vat:float, vat_netto:bool, currency:str, account:str, due_days:int, output_path:str, discount=0, language='de'):
         self.page_size = pagesizes.A4
 
         super().__init__(invoice_id, 'invoice', language=language, output_path=output_path)
         self.invoice_date = invoice_date
         self.vat = vat
+        self.vat_netto = vat_netto
         self.invoice_text = invoice_text
         self.currency = currency
         self.account = account
@@ -50,10 +51,20 @@ class Invoice(Document):
         }
 
         self.positions.append(position)
-        self.net_total += amount * unit_price
-        self.net_minus_discount = self.net_total * (1-self.discount)
-        self.total = round(2*(self.net_minus_discount * (1 + self.vat)), 1)
-        self.total = self.total / 2
+
+        if self.vat_netto:
+            self.sub_total_1 = round(2*(amount * unit_price), 1) / 2
+            self.discount_absolute = round(2*(self.sub_total_1 * self.discount), 1) / 2
+            self.sub_total_2 = self.sub_total_1 - self.discount_absolute
+            self.vat_absoulte = self.sub_total_2 * self.vat
+            self.sub_total_3 = self.sub_total_2 + self.vat_absoulte
+
+        else:
+            self.sub_total_1 = round(2*(amount * unit_price), 1) / 2
+            self.discount_absolute = round(2*(self.sub_total_1 * self.discount), 1) / 2
+            self.sub_total_2 = self.sub_total_1 - self.discount_absolute
+            self.vat_absoulte = self.sub_total_2 / (1 + self.vat) * self.vat
+
 
 
     def qr_bill(self):
@@ -72,6 +83,7 @@ class Invoice(Document):
                 'country': self.company['country']
 
         }
+
 
         print(self.total)
         bill = QRBill(
@@ -186,30 +198,43 @@ class Invoice(Document):
 
         self.c.line(1.5 * cm, self.y * cm, 19.5 * cm, self.y * cm)
         self.increase_y(1)
+
         self.c.drawString(13 * cm, self.y * cm, f'Sub-Total')
         self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
-        self.c.drawRightString(19 * cm, self.y * cm, f"{self.net_total:,.2f}".replace(",", "'"))
+        self.c.drawRightString(19 * cm, self.y * cm, f"{self.sub_total_1:,.2f}".replace(",", "'"))
+
         self.increase_y(0.5)
         # c.drawString(12.5 * cm, ypos * cm, 'MWST')
 
         if self.discount > 0 and self.discount != None:
             self.c.drawString(13 * cm, self.y * cm, f'Rabatt ({(self.discount * 100):.1f}%)')
             self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
-            self.c.drawRightString(19 * cm, self.y * cm, f"{(self.net_total * self.discount):,.2f}".replace(",", "'"))
+            self.c.drawRightString(19 * cm, self.y * cm, f"{(self.discount_absolute):,.2f}".replace(",", "'"))
             self.increase_y(0.5)
 
-        self.c.drawString(13 * cm, self.y * cm, f'MWST ({(self.vat * 100):.1f}%)')
+        self.setFont("Helvetica-Bold", 9)
+        title = 'Total (exkl. MWST)' if self.vat_netto else 'Total (inkl. MWST)'
+        self.c.drawString(13 * cm, self.y * cm, title)
         self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
-        self.c.drawRightString(19 * cm, self.y * cm, f"{(self.net_minus_discount * self.vat):,.2f}".replace(",", "'"))
+        self.c.drawRightString(19 * cm, self.y * cm, f"{self.sub_total_2:,.2f}".replace(",", "'"))
+        self.increase_y(0.5)
 
-        self.increase_y(0.5)
-        self.c.line(13 * cm, self.y * cm, 19 * cm, self.y * cm)
-        self.increase_y(0.5)
-        self.c.drawString(13 * cm, self.y * cm, f'Total')
+        self.setFont("Helvetica", 9)
+        title = f'MWST ({(self.vat * 100):.1f}%)' if self.vat_netto else 'Davon MWST'
+        self.c.drawString(13 * cm, self.y * cm, title)
         self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
-        self.c.drawRightString(19 * cm, self.y * cm, f"{self.total:,.2f}".replace(",", "'"))
-
+        self.c.drawRightString(19 * cm, self.y * cm, f"{(self.vat_absoulte):,.2f}".replace(",", "'"))
         self.increase_y(0.5)
+
+        if self.vat_netto:
+            self.setFont("Helvetica-Bold", 9)
+            self.c.drawString(13 * cm, self.y * cm, f'Total')
+            self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
+            self.c.drawRightString(19 * cm, self.y * cm, f"{self.sub_total_3:,.2f}".replace(",", "'"))
+
+
+
+            self.increase_y(0.5)
         self.c.line(13 * cm, self.y * cm, 19 * cm, self.y * cm)
         self.increase_y(0.5)
         self.c.line(13 * cm, self.y * cm, 19 * cm, self.y * cm)
