@@ -218,7 +218,7 @@ class Invoice(Document):
 
         self.setFont("Helvetica-Bold", 9)
         title = 'Total (exkl. MWST)' if self.vat_netto else f'Total (inkl. {(self.vat * 100):.1f}% MWST)'
-        self.c.drawString(13 * cm, self.y * cm, title)
+        self.c.drawString(12.5 * cm, self.y * cm, title)
         self.c.drawString(16 * cm, self.y * cm, f'{self.currency}')
         self.c.drawRightString(19 * cm, self.y * cm, f"{self.sub_total_2:,.2f}".replace(",", "'"))
         self.increase_y(0.5)
