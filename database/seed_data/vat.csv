@@ -1,5 +1,8 @@
-"vat","vat_title"
-0.077,"7.7% - Normalsatz"
-0.038,"3.8% Sondersatz"
-0.025,"2.5% Reduzierter Satz"
-0.000, "0.0% MWST befreit"
+"vat","vat_title", "netto"
+0.081,"8.1% - Normalsatz Netto",1
+0.081,"8.1% - Normalsatz Brutto",0
+0.038,"3.8% Sondersatz Netto",1
+0.038,"3.8% Sondersatz Brutto",0
+0.026,"2.6% Reduzierter Satz Netto",1
+0.026,"2.6% Reduzierter Satz Brutto",0
+0.000, "0.0% MWST befreit",1
