@@ -55,15 +55,19 @@ class Invoice(Document):
         if self.vat_netto:
             self.sub_total_1 = round(2*(amount * unit_price), 1) / 2
             self.discount_absolute = round(2*(self.sub_total_1 * self.discount), 1) / 2
-            self.sub_total_2 = self.sub_total_1 - self.discount_absolute
-            self.vat_absoulte = self.sub_total_2 * self.vat
+            self.sub_total_2 = round(2*(self.sub_total_1 - self.discount_absolute), 1) / 2
+            self.vat_absoulte = round(2*(self.sub_total_2 * self.vat), 1) / 2
             self.sub_total_3 = self.sub_total_2 + self.vat_absoulte
+            self.total = self.sub_total_3
+            self.net_total = self.sub_total_2
 
         else:
             self.sub_total_1 = round(2*(amount * unit_price), 1) / 2
             self.discount_absolute = round(2*(self.sub_total_1 * self.discount), 1) / 2
             self.sub_total_2 = self.sub_total_1 - self.discount_absolute
-            self.vat_absoulte = self.sub_total_2 / (1 + self.vat) * self.vat
+            self.total = self.sub_total_2
+            self.vat_absoulte = round(2*(self.sub_total_2 / (1 + self.vat) * self.vat), 1) / 2
+            self.net_total = self.sub_total_2 - self.vat_absoulte
 
 
 
