@@ -545,9 +545,9 @@ class ReceivablesViewSet(CustomModelViewSet):
 
 
             if 'sales[]' in request.data and len(request.data['sales[]']) > 0:
-                sales = Sales.objects.filter(id_sale__in=request.data.pop('sales[]'))
+                sales = Sales.objects.filter(id_sale__in=request.data.pop('sales[]')).order_by('sale_date')
             if 'tasks[]' in request.data and len(request.data['tasks[]']) > 0:
-                tasks = Tasks.objects.filter(id_task__in=request.data.pop('tasks[]'))
+                tasks = Tasks.objects.filter(id_task__in=request.data.pop('tasks[]')).order_by('task_date_from')
 
             if len(sales) == 0 and len(tasks) == 0:
                 return Response({'message':'Can not create an invoice without tasks or sales to bill.'}, status=status.HTTP_400_BAD_REQUEST)
@@ -798,8 +798,8 @@ class ReceivablesViewSet(CustomModelViewSet):
 
             doc.draw()
         else:
-            tasks = Tasks.objects.filter(fk_invoice=invoice)
-            sales = Sales.objects.filter(fk_invoice=invoice)
+            tasks = Tasks.objects.filter(fk_invoice=invoice).order_by('task_date_from')
+            sales = Sales.objects.filter(fk_invoice=invoice).order_by('sale_date')
 
             positions = list(chain(tasks, sales))
 
