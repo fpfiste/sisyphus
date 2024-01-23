@@ -35,6 +35,7 @@ class Invoice(Document):
         self.draw_brake_lines = True
         self.max_pages = 1
         self.footer_size = 4
+        self.sub_total_1 = 0
 
 
     def add_position(self, position_id: int, date:str,reference_text:str, description:str, unit:str, amount:float, unit_price:float, pos_type = ''):
@@ -53,7 +54,7 @@ class Invoice(Document):
         self.positions.append(position)
 
         if self.vat_netto:
-            self.sub_total_1 = round(2*(amount * unit_price), 1) / 2
+            self.sub_total_1 += round(2*(amount * unit_price), 1) / 2
             self.discount_absolute = round(2*(self.sub_total_1 * self.discount), 1) / 2
             self.sub_total_2 = round(2*(self.sub_total_1 - self.discount_absolute), 1) / 2
             self.vat_absoulte = round(2*(self.sub_total_2 * self.vat), 1) / 2
@@ -62,7 +63,7 @@ class Invoice(Document):
             self.net_total = self.sub_total_2
 
         else:
-            self.sub_total_1 = round(2*(amount * unit_price), 1) / 2
+            self.sub_total_1 += round(2*(amount * unit_price), 1) / 2
             self.discount_absolute = round(2*(self.sub_total_1 * self.discount), 1) / 2
             self.sub_total_2 = self.sub_total_1 - self.discount_absolute
             self.total = self.sub_total_2
