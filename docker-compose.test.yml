@@ -22,6 +22,7 @@ services:
     container_name: sisyphus_api_test
     volumes:
       - sisyphus_static_test:/home/sisyphus/app/frontend/static
+      - sisyphus_media_test:/home/sisyphus/app/media
     expose:
       - 8001
     restart: always
@@ -29,6 +30,16 @@ services:
       - ./.env.test
     depends_on:
       - db_test
+
+  jobs_test:
+    build: ./background_jobs
+    container_name: sisyphus_jobs_test
+    volumes:
+      - ./background_jobs/shared/:/shared/
+      - sisyphus_media_test:/export
+    env_file:
+      - ./.env.prod
+    restart: always
 
   nginx_test:
     container_name: sisyphus_server_test
@@ -42,8 +53,10 @@ services:
       - api_test
     volumes:
       - sisyphus_static_test:/home/sisyphus/app/static
+      - sisyphus_media_test:/home/sisyphus/app/media
 
 
 volumes:
   sisyphus_test_data:
   sisyphus_static_test:
+  sisyphus_media_test:

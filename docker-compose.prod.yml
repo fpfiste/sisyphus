@@ -21,6 +21,7 @@ services:
     container_name: sisyphus_jobs_prod
     volumes:
       - ./background_jobs/shared/:/shared/
+      - sisyphus_media_prod:/export
     env_file:
       - ./.env.prod
     restart: always
@@ -33,6 +34,7 @@ services:
     volumes:
       - ./app/:/home/sisyphus/app
       - sisyphus_static_prod:/home/sisyphus/app/frontend/static
+      - sisyphus_media_prod:/home/sisyphus/app/media
     expose:
       - 8001
     restart: always
@@ -53,8 +55,10 @@ services:
       - api_prod
     volumes:
       - sisyphus_static_prod:/home/sisyphus/app/static
+      - sisyphus_media_prod:/home/sisyphus/app/media
 
 
 volumes:
   sisyphus_prod_data:
   sisyphus_static_prod:
+  sisyphus_media_prod:

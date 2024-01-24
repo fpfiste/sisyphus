@@ -1,0 +1,35 @@
+{% extends 'frontend/base.html' %}
+
+{% block title%}Home{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-3">Export Center</h1>
+
+<div class="row" style="height: 80vh;">
+    <div class="col-12" style="height:100%;">
+            <div class="card" style="height:100%;">
+                <div class="card-body" style="height:90%;">
+                    <div id="file_container" style="width: 100%; height: 100%; display:flex; flex-direction:row; flew-wrap:wrap;"></div>
+
+                </div>
+                <div class="card-footer" style="height:7%;">
+
+                    <button type="button" id="btn_delete" class="btn btn-secondary"></button>
+                    <a  href="#"><button type="button" id="btn_download" class="btn btn-danger"></button></a>
+
+                </div>
+
+            </div>
+            </div>
+    </div>
+
+
+
+
+
+
+
+
+
+</div>
+{% endblock %}
