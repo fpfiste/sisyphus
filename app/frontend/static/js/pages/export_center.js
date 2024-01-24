@@ -21,18 +21,29 @@ jQuery.fn.setUp = function(page_config, fields) {
            image_url = '/static/img/xls.png'
            }
 
-
-
-
            let card = ''
-           card += '<div class="" style="width: 7%; margin-left: 50px;">'
-           card += '<a  href="'+value+'"><img class="card-img-top" src="'+image_url+'" alt="Card image cap"></a>'
+           card += '<div class="file-wrapper card" style="width: 10%; height: 200px; margin: 5px;" data-file-path="'+value+'">'
+
            card += '<div class="card-body">'
-           card += '<h5 class="card-title" style="text-align:center;">'+file_name+'</h5>'
+           card += '<img class="card-img-top" src="'+image_url+'">'
            card += '<p class="card-text"></p>'
+           card += '<h5 class="card-title" style="text-align:center;">'+file_name+'</h5>'
+
            card += '</div></div>'
 
            $('#file_container').append(card)
+
+
+        })
+
+        $('.file-wrapper').on('click', (e)=>{
+            console.log(e.currentTarget)
+            let file = $(e.currentTarget).attr('data-file-path')
+            $('.file-wrapper').css('border', '')
+            $(e.currentTarget).css('border', '1px solid red')
+
+            $('#btn_download').parent().attr('href', file)
+
 
         })
 

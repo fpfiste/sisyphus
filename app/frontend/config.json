@@ -37,6 +37,7 @@
         "btn_add" : {"en": "Add", "ch": "Hinzufügen"},
         "btn_reset" : {"en": "Reset", "ch": "Zurücksetzen"},
         "btn_print" : {"en": "Print", "ch": "Drucken"},
+        "btn_download" : {"en": "Download", "ch": "Herunterladen"},
         "btn_filter" : {"en": "Fitler", "ch": "Filtern"},
         "btn_print_schedule" : {"en": "Export Schedule", "ch": "Kalender drucken"},
         "btn_print_deliverynotes" : {"en": "Export Delivery Notes", "ch": "Lieferscheine drucken"},
