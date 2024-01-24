@@ -81,13 +81,15 @@ jQuery.fn.setUp = function(page_config, fields) {
         })
 
           let query_params = $('#create_form').serialize();
-          console.log(query_params)
+
           let project = '&fk_project=' + $('#fk_project').val();
           let vat = '&fk_vat=' + $('#fk_vat').val();
           let currency = '&fk_currency='+ $('#fk_currency').val();
+          let revenue_type = '&fk_revenue_type='+ $('#fk_revenue_type').val();
 
-          sales_table.query_params = project+ vat+currency+ '&fk_sales_status=1&fk_clearing_type=2'
-          task_table.query_params = project+ vat+currency+'&fk_task_state=4&fk_clearing_type=2'
+          sales_table.query_params = project+ vat+currency+ revenue_type+ '&fk_sales_status=1&fk_clearing_type=2'
+          console.log(sales_table.query_params)
+          task_table.query_params = project+ vat+currency+revenue_type+ '&fk_task_state=4&fk_clearing_type=2'
           sales_table.build(function(){
             $('#sales_billing_table tbody tr').each(function(){
             current_pk = $(this).attr('data-row-pk')
@@ -122,6 +124,10 @@ jQuery.fn.setUp = function(page_config, fields) {
 
     waitForEl('#fk_currency', function() {
         $('#fk_currency').on('change', change);
+     });
+
+     waitForEl('#fk_revenue_type', function() {
+        $('#fk_revenue_type').on('change', change);
      });
 
 

@@ -19,6 +19,8 @@ from django.core.paginator import Paginator
 import re
 from rest_framework.views import APIView
 from django.db.models import F
+from rest_framework.viewsets import ModelViewSet
+
 from main import settings
 from .components import Invoice, DeliveryNote
 from .components.docwriter.receipt import Receipt
@@ -970,7 +972,8 @@ class SalesViewSet(CustomModelViewSet):
 
             serializer = self.get_serializer(sale, data=request.data)
 
-            serializer.is_valid(raise_exception=True)
+            serializer.is_valid(raise_exception=False)
+            print(serializer.errors)
 
             self.perform_update(serializer)
 
@@ -978,6 +981,10 @@ class SalesViewSet(CustomModelViewSet):
 
         else:
             return Response({'message' : 'Sale was already closed or billed and cannot be updated anymore'}, status=status.HTTP_403_FORBIDDEN)
+
+
+
+
 
 
 
@@ -1134,7 +1141,14 @@ class TemplateTypeViewSet(CustomModelViewSet):
     permission_classes = (DjangoModelPermissions,)
 
 
-
+class RevenueTypeViewSet(CustomModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = RevenueType.objects.all()
+    serializer_class = RevenueTypeSeriealizer
+    authentication_classes = (TokenAuthentication, SessionAuthentication)
+    permission_classes = (DjangoModelPermissions,)
 
 
 

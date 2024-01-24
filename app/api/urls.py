@@ -37,6 +37,7 @@ router.register(r'units',  UnitViewSet)
 router.register(r'vat',  VATViewSet)
 router.register(r'clearingtype',  ClearingTypeViewSet)
 router.register(r'config',  ConfigViewSet)
+router.register(r'revenue-type',  RevenueTypeViewSet)
 # Wire up our API using automatic URL routing.
 
 

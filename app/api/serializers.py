@@ -187,7 +187,6 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 
 
-
 class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -200,6 +199,11 @@ class TemplateSerializer(serializers.ModelSerializer):
         model = Templates
         fields = '__all__'
 
+
+class RevenueTypeSeriealizer(serializers.ModelSerializer):
+    class Meta:
+        model = RevenueType
+        fields = '__all__'
 
 
 

@@ -399,6 +399,16 @@ class Receivables(models.Model):
         db_table = 'receivables'
 
 
+class RevenueType(models.Model):
+    id_revenue_type = models.AutoField(primary_key=True)
+    revenue_type = models.CharField(max_length=30)
+    pl_account_number = models.CharField(max_length=20, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'revenue_type'
+
+
 class Sales(models.Model):
     id_sale = models.AutoField(primary_key=True)
     sale_date = models.DateField()
@@ -415,6 +425,11 @@ class Sales(models.Model):
     fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat')
     custom_fields = models.JSONField(blank=True, null=True)
     fk_clearing_type = models.ForeignKey(ClearingType, models.DO_NOTHING, db_column='fk_clearing_type')
+    fk_revenue_type = models.ForeignKey(RevenueType, models.DO_NOTHING, db_column='fk_revenue_type', blank=True, null=True)
+    invoice_position_nr = models.IntegerField(blank=True, null=True)
+    changed_on = models.DateTimeField(blank=True, null=True)
+    changed_by = models.CharField(max_length=200, blank=True, null=True)
+    history = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -428,8 +443,6 @@ class SalesState(models.Model):
     class Meta:
         managed = False
         db_table = 'sales_state'
-
-
 
 
 class SysRecStates(models.Model):
@@ -474,6 +487,11 @@ class Tasks(models.Model):
     fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat', blank=True, null=True)
     custom_fields = models.JSONField(blank=True, null=True)
     fk_clearing_type = models.ForeignKey(ClearingType, models.DO_NOTHING, db_column='fk_clearing_type', blank=True, null=True)
+    fk_revenue_type = models.ForeignKey(RevenueType, models.DO_NOTHING, db_column='fk_revenue_type', blank=True, null=True)
+    invoice_position_nr = models.IntegerField(blank=True, null=True)
+    changed_on = models.DateTimeField(blank=True, null=True)
+    changed_by = models.CharField(max_length=200, blank=True, null=True)
+    history = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -500,11 +518,11 @@ class Templates(models.Model):
     fk_vat = models.ForeignKey('Vat', models.DO_NOTHING, db_column='fk_vat', blank=True, null=True)
     fk_template_type = models.ForeignKey(TemplateTypes, models.DO_NOTHING, db_column='fk_template_type', blank=True, null=True)
     template_title = models.CharField(max_length=50)
+    fk_revenue_type = models.ForeignKey(RevenueType, models.DO_NOTHING, db_column='fk_revenue_type', blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'templates'
-
 
 
 class Units(models.Model):
@@ -521,8 +539,8 @@ class Vat(models.Model):
     id_vat = models.AutoField(primary_key=True)
     vat = models.DecimalField(max_digits=3, decimal_places=3)
     vat_title = models.CharField(max_length=50)
-    netto = models.BooleanField()
+    netto = models.BooleanField(blank=True, null=True)
+
     class Meta:
         managed = False
         db_table = 'vat'
-
