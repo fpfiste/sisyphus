@@ -5,6 +5,7 @@ FROM python:3.11-bullseye
 RUN apt-get update && apt-get install cron -y 
 
 COPY ./requirements.txt /
+COPY ./jobs /
 
 RUN pip3 install -r /requirements.txt
 
