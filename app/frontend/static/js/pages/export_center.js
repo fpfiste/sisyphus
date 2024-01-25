@@ -7,10 +7,10 @@ jQuery.fn.setUp = function(page_config, fields) {
     ).done((files)=> {
         console.log(files)
 
-        $.each(files['data'], (key, value)=>{
-
-           let file_ending = value.split('.').at(-1)
-           let file_name = value.split('/').at(-1)
+        $.each(files, (key, value)=>{
+            console.log(key)
+           let file_ending = key.split('.').at(-1)
+           let file_name = key.split('/').at(-1)
 
            let image_url = '/static/img/txt.png'
            if (file_ending == 'csv') {
@@ -22,12 +22,14 @@ jQuery.fn.setUp = function(page_config, fields) {
            }
 
            let card = ''
-           card += '<div class="file-wrapper card" style="width: 10%; height: 200px; margin: 5px;" data-file-path="'+value+'">'
+           card += '<div class="file-wrapper card" style="width: 10%; height: 250px; margin: 5px;" data-file-path="'+key+'">'
 
-           card += '<div class="card-body">'
+           card += '<div class="card-body" style="text-align:center;">'
            card += '<img class="card-img-top" src="'+image_url+'" style="display:block; margin:auto; width: 75%; max-width: 100px;>'
            card += '<p class="card-text"></p>'
-           card += '<h5 class="card-title" style="text-align:center;">'+file_name+'</h5>'
+           card += '<h3 class="card-title" style="text-align:center;">'+file_name+'</h3>'
+           card += '<p class="card-title">Size: ' +value.file_size+'KB</p>'
+           card += '<p class="card-title">'+value.last_update+'</p>'
 
            card += '</div></div>'
 
