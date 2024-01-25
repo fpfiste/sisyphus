@@ -33,11 +33,15 @@ def send_config(request):
 def list_media(request):
     files = sorted(glob.glob(settings.MEDIA_ROOT + '/*'))
 
-    files = ['/media' + f.split('/media')[-1] for f in files]
+    data = dict()
+    for file in files:
+        stats = os.stat(file)
+        key = '/media' + file.split('/media')[-1]
+        last_update = dt.datetime.fromtimestamp(stats.st_mtime)
+        data[key] = {'file_size': stats.st_size / 1000, 'last_update' : last_update.strftime('%d.%m.%Y %H:%M:%S') }
 
-    data = {
-        'data': files
-    }
+
+
     return JsonResponse(data)
 
 
