@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install cron nano -y
 
 COPY ./requirements.txt /
 COPY ./jobs /
+COPY ./entrypoint.sh /
 
 RUN pip3 install -r /requirements.txt
 
@@ -19,4 +20,4 @@ RUN chmod 0644 /etc/cron.d/cronjobs
 RUN crontab /etc/cron.d/cronjobs
 
 # Creating entry point for cron 
-ENTRYPOINT ["cron", "-f"]
+ENTRYPOINT ["./entrypoint.sh"]
