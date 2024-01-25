@@ -2,7 +2,7 @@
 FROM python:3.11-bullseye
 
 # Updating packages and installing cron
-RUN apt-get update && apt-get install cron -y 
+RUN apt-get update && apt-get install cron nano -y
 
 COPY ./requirements.txt /
 COPY ./jobs /
