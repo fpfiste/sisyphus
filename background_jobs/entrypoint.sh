@@ -1,3 +1,3 @@
-printenv | grep -v "no_proxy" >> /etc/environment
+printenv | grep -v "no_proxy" >> /.env
 
 cron -f
