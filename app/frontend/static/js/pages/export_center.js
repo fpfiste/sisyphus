@@ -17,7 +17,7 @@ jQuery.fn.setUp = function(page_config, fields) {
             image_url = '/static/img/csv.png'
            } else if  (file_ending == 'pdf') {
             image_url = '/static/img/pdf.png'
-           } else if (file_ending == 'xls') {
+           } else if ((file_ending == 'xls') | (file_ending == 'xlsx')) {
            image_url = '/static/img/xls.png'
            }
 
@@ -25,7 +25,7 @@ jQuery.fn.setUp = function(page_config, fields) {
            card += '<div class="file-wrapper card" style="width: 10%; height: 200px; margin: 5px;" data-file-path="'+value+'">'
 
            card += '<div class="card-body">'
-           card += '<img class="card-img-top" src="'+image_url+'">'
+           card += '<img class="card-img-top" src="'+image_url+'" style="display:block; margin:auto; width: 75%; max-width: 100px;>'
            card += '<p class="card-text"></p>'
            card += '<h5 class="card-title" style="text-align:center;">'+file_name+'</h5>'
 

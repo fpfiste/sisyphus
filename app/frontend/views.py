@@ -31,7 +31,7 @@ def send_config(request):
 
 @login_required()
 def list_media(request):
-    files = glob.glob(settings.MEDIA_ROOT + '/*')
+    files = sorted(glob.glob(settings.MEDIA_ROOT + '/*'))
 
     files = ['/media' + f.split('/media')[-1] for f in files]
 
