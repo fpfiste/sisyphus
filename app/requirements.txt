@@ -16,3 +16,4 @@ django-filter
 azure-ai-formrecognizer
 cryptography
 django-session-timeout
+python-stdnum

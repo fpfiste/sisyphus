@@ -1,6 +1,9 @@
 from reportlab.lib import colors, pagesizes
 from reportlab.pdfgen import canvas
 
+from stdnum.iso7064 import mod_97_10
+from stdnum.iso11649 import format
+
 from .document import Document
 import os
 import tempfile
@@ -71,11 +74,28 @@ class Invoice(Document):
             self.net_total = self.sub_total_2 - self.vat_absoulte
 
 
+    def calc_qr_reference(self):
+
+        for i in range(0, 100):
+            number = str(self.customer['id']) + '0' + str(self.document_id)
+            check_digit = str(i).zfill(2)
+            try:
+                test_ref = number + 'RF' + check_digit
+                mod_97_10.validate(test_ref)
+
+                return format('RF' + check_digit + number)
+            except Exception as e:
+                continue
+
+
+
+
 
     def qr_bill(self):
 
         debtor = {
             'name': self.customer['name'],
+            'street': self.customer['address'],
             'pcode': self.customer['pcode'],
             'city': self.customer['city'],
             'country': self.customer['country']
@@ -83,22 +103,29 @@ class Invoice(Document):
         }
         creditor = {
                 'name' : self.company['name'],
+                'street': self.company['address'],
                 'pcode': self.company['pcode'],
                 'city': self.company['city'],
                 'country': self.company['country']
 
         }
 
+        reference = self.calc_qr_reference()
 
-        print(self.total)
+
+
+        print(reference)
         bill = QRBill(
             account= self.account,
             creditor=creditor,
             currency=self.currency,
+            reference_number= reference,
+            additional_information= f'Rechung: {self.document_id}\n Kunde: {self.customer["id"]} ',
             amount= str(self.total),
             language= self.language,
             debtor= debtor
         )
+
 
 
 
