@@ -1,5 +1,7 @@
 import io
 import os
+import textwrap
+
 from reportlab.lib import pagesizes, colors
 from reportlab.lib.units import cm, mm
 from reportlab.lib.utils import ImageReader
@@ -111,11 +113,17 @@ class Document():
     def draw_address_block(self):
         self.setFont("Helvetica", 6)
         self.c.drawString(self.x * cm, self.y * cm, f'{self.company["name"]}, {self.company["address"]}, {self.company["pcode"]}-{self.company["city"]}')
-        self.setFont("Helvetica", 11)
+        self.setFont("Helvetica", 10)
 
         self.y += 0.5
-        self.c.drawString(self.x * cm, self.y * cm, self.customer['name'])
-        self.y += 0.5
+        wrapper = textwrap.TextWrapper(width=35)
+
+        for line in self.customer["name"].split('\n'):
+            sublines = wrapper.wrap(text=line)
+            for line in sublines:
+                self.c.drawString(self.x * cm, self.y * cm, f'{line}')
+                self.increase_y(0.5)
+
         self.c.drawString(self.x * cm, self.y * cm, self.customer['address'])
         self.y += 0.5
         self.c.drawString(self.x * cm, self.y * cm, f'{self.customer["pcode"]} {self.customer["city"]}')
