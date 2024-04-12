@@ -104,7 +104,7 @@ jQuery.fn.setUp = function(page_config, fields) {
           create_form.reset()
           update_form.reset()
           table.build();
-          $('#loading_screen_wrapper').hide();
+          //$('#loading_screen_wrapper').hide();
     }
 
     $( "#btn_add" ).on( "click", function() {
@@ -144,7 +144,7 @@ jQuery.fn.setUp = function(page_config, fields) {
 
               })
 
-              $('#loading_screen_wrapper').hide();
+              //$('#loading_screen_wrapper').hide();
            },
            error: function(error){
             console.log(error)
