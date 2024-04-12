@@ -36,6 +36,7 @@ from .components.docparser.ms_form_recognizer import FormRecognizer
 
 class CustomModelViewSet(viewsets.ModelViewSet):
 
+
     def get_serializer_class(self):
 
         if self.action == "list":
@@ -53,10 +54,16 @@ class CustomModelViewSet(viewsets.ModelViewSet):
         """
         self.serializer_class.Meta.depth = 1
 
+
+        model = self.serializer_class.Meta.model
+
+
+
         sort = '-pk'
 
+
         params = self.request.query_params.dict()
-        print(params)
+
 
         if params.get('LIMIT'):
             page_size = int(params.pop('LIMIT'))
@@ -66,13 +73,12 @@ class CustomModelViewSet(viewsets.ModelViewSet):
                 page = 1
         else:
             page =1
-            page_size = 50
+            page_size = 500
 
         if params.get('SORT') not in (None,'' ):
             sort = params.pop('SORT')
 
         params = [[key ,value] for key, value in params.items() if value != '' and key not in ['csrfmiddlewaretoken']]
-
 
 
         page_start = (int(page) - 1) * page_size
@@ -94,14 +100,10 @@ class CustomModelViewSet(viewsets.ModelViewSet):
 
         params = dict(params)
 
-
-
-
-
-
-
-        data = self.queryset.filter(**params).order_by(sort)[page_start:page_end]
-        #data = self.queryset.filter(id_company__gte=0).order_by('-pk')
+        if self.action == "list":
+            data = model.objects.filter(**params).order_by(sort)[page_start:page_end]
+        else:
+            data = model.objects.filter(**params).order_by(sort)
 
         self.serializer_class.Meta.depth = 0
 
@@ -128,7 +130,7 @@ class CustomModelViewSet(viewsets.ModelViewSet):
                     page = int(params.pop('PAGE'))
             else:
                 page = 1
-                page_size = 50
+                page_size = 100
 
 
 
