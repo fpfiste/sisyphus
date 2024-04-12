@@ -59,7 +59,7 @@ class BootstrapDataTable{
 
       draw_header() {
 
-        let header = '<thead style="position:sticky; top:0; background:white; height: 5%">'
+        let header = '<thead style="position:sticky; top:0; background:white; height: 5%; z-index:1">'
 
         $.each(this.fields,(key,value) => {
                 header += '<th>'+value.title[this.language]+'</th>'
@@ -106,17 +106,26 @@ class BootstrapDataTable{
          return html
       }
 
+      draw_loading_gif() {
+        let html = '<div id="loading_screen_wrapper" style="position:absolute">'
+		html += '<div id="loading_screen">'
+		html += '<img id="spinner" src="/static/img/sisyphus_animation.gif" class="img-fluid">'
+		html += '</div></div>'
+
+		return html
+      }
 
 
       build_grid() {
             $(this.container).empty();
             let header = this.draw_header()
             let footer = this.draw_footer()
+            let loading_gif = this.draw_loading_gif()
             //* draw the grid of the new table object
 
             //let page_size_select = '<select class="form-select"><option selected value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option></select>'
             let pagination = this.draw_pagination()
-            let table_grid = '<div id="table_container" style="overflow:scroll; white-space:nowrap; height:95%;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'" style="height:100%;">'+header+'<tbody></tbody>'+footer+'</table>';
+            let table_grid = '<div id="table_container" style="overflow:scroll; white-space:nowrap; height:95%;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'" style="height:100%;">'+header+'<tbody style="position:relative"></tbody>'+footer+'</table>'+ loading_gif;
             $(this.container).append(table_grid);
 
       }
@@ -169,6 +178,7 @@ class BootstrapDataTable{
       }
 
       build(callback){
+            $('#loading_screen_wrapper').show();
             let url = this.ajax_url + '?LIMIT=' + this.page_size + '&PAGE=' + this.page+ '&'  + this.query_params
         $.when(
 
@@ -180,10 +190,12 @@ class BootstrapDataTable{
             this.build_grid();
             this.populate();
             this.draw_event_handlers();
+            $('#loading_screen_wrapper').hide();
             }
         ).done(callback).catch((error)=> {
             console.log(error)
         })
+        //
 
 
 

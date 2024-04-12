@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    $('#loading_screen_wrapper').show();
+    //$('#loading_screen_wrapper').show();
     let page = window.location.pathname;
     let page_config;
     let fields;
@@ -26,7 +26,7 @@ $(document).ready(function(){
                 $('#' + value).remove();
 
             })
-            $('#loading_screen_wrapper').hide();
+            //$('#loading_screen_wrapper').hide();
           }
     });
 
