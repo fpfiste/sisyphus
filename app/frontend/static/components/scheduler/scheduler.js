@@ -168,6 +168,16 @@ class Scheduler{
         return footer
       }
 
+      _draw_loading_gif() {
+
+
+        let html = '<div id="loading_screen_wrapper" style="position:absolute">'
+		html += '<div id="loading_screen">'
+		html += '<img id="spinner" src="/static/img/sisyphus_animation.gif" class="img-fluid">'
+		html += '</div></div>'
+
+		return html
+      }
 
       _build_grid() {
           $(this.container).empty();
@@ -175,11 +185,15 @@ class Scheduler{
           let header = this._draw_header();
           let body = this._draw_body();
           let footer = this._draw_footer();
+          let gif = this._draw_loading_gif()
 
             //* draw the grid of the new table object
-          let table_grid = input_section+'<div id="scheduler_container" style="overflow:scroll; min-height:95%; height:95%;"><table id="schedule_table" class="table" style="height:100%">'+header+body+footer+'</table></div>';
+          let table_grid = input_section+'<div id="scheduler_container" style="overflow:scroll; min-height:95%; height:95%; position:relative;">'+gif+'<table id="schedule_table" class="table" style="height:100%">'+header+body+footer+'</table></div>';
           $(this.container).append(table_grid);
 
+          $("#loading_screen_wrapper").prependTo("#scheduler_container");
+          let loading_screen_width = $('#scheduler_container').width()
+          $('#loading_screen_wrapper').css('width', loading_screen_width)
 
 
       }
@@ -848,6 +862,9 @@ class Scheduler{
 
 
       build(){
+
+        $('#schedule_container').append(this._draw_loading_gif())
+        $('#loading_screen_wrapper').show();
         $.when(
             this._ajax_call(this.employee_url, 'GET'),
             this._ajax_call(this.employee_type_url, 'GET'),
@@ -865,6 +882,7 @@ class Scheduler{
             this._build_grid();
             this._populate();
             this._create_event_handlers();
+            $('#loading_screen_wrapper').hide();
         }
 
 

@@ -55,11 +55,28 @@ class CustomModelViewSet(viewsets.ModelViewSet):
 
         sort = '-pk'
 
-        if self.request.query_params.get('SORT') not in (None,'' ):
-            sort = self.request.query_params.get('SORT')
+        params = self.request.query_params.dict()
+        print(params)
 
-        params = [[key ,value] for key, value in self.request.query_params.items() if value != '' and key not in ['csrfmiddlewaretoken', 'LIMIT', 'PAGE', 'SORT']]
+        if params.get('LIMIT'):
+            page_size = int(params.pop('LIMIT'))
+            if params.get('PAGE'):
+                page = int(params.pop('PAGE'))
+            else:
+                page = 1
+        else:
+            page =1
+            page_size = 50
 
+        if params.get('SORT') not in (None,'' ):
+            sort = params.pop('SORT')
+
+        params = [[key ,value] for key, value in params.items() if value != '' and key not in ['csrfmiddlewaretoken']]
+
+
+
+        page_start = (int(page) - 1) * page_size
+        page_end = page * page_size
 
         for i, param in enumerate(params):
             if param[1][0] == '*' and param[1][-1] == '*':
@@ -83,7 +100,7 @@ class CustomModelViewSet(viewsets.ModelViewSet):
 
 
 
-        data = self.queryset.filter(**params).order_by(sort)
+        data = self.queryset.filter(**params).order_by(sort)[page_start:page_end]
         #data = self.queryset.filter(id_company__gte=0).order_by('-pk')
 
         self.serializer_class.Meta.depth = 0
@@ -101,33 +118,30 @@ class CustomModelViewSet(viewsets.ModelViewSet):
             self.queryset = self.get_queryset()
 
             params = self.request.query_params.dict()
-            page_size = 10
-            page = 1
 
 
 
-            srl = self.get_serializer_class()(self.queryset, many=True)
 
             if params.get('LIMIT'):
                 page_size = int(params.pop('LIMIT'))
                 if params.get('PAGE'):
                     page = int(params.pop('PAGE'))
-                else:
-                    page = 1
-
-                page_start = (int(page) - 1) * page_size
-                page_end = page * page_size
-                data = srl.data[page_start:page_end]
             else:
-                data = srl.data
+                page = 1
+                page_size = 50
 
-            num_pages = len(srl.data) // page_size + 1
+
+
+            print(len(self.queryset))
+
+            num_pages = len(self.queryset) // page_size + 1
+            srl = self.get_serializer_class()(self.queryset, many=True)
 
             data = {
                 'page_size':page_size,
                 'page':page,
                 'num_pages': num_pages,
-                'data' : data
+                'data' : srl.data
 
             }
 
@@ -1195,14 +1209,7 @@ class TaskViewSet(CustomModelViewSet):
                     task.fk_task_state = TaskStates.objects.get(id_task_state=3)
                     task.save()
 
-        queryset = Tasks.objects.all()
-
-        params = dict([(key,value) for key, value in self.request.query_params.items() if value != '' and key not in ['csrfmiddlewaretoken' , 'invoice_text', 'LIMIT', 'PAGE']])
-
-
-
-        data = queryset.filter(**params).order_by('-pk')
-
+        data = super().get_queryset()
         return data
 
     def create(self, request):
