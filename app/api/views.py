@@ -61,7 +61,6 @@ class CustomModelViewSet(viewsets.ModelViewSet):
 
         sort = '-pk'
 
-
         params = self.request.query_params.dict()
 
 
@@ -80,6 +79,8 @@ class CustomModelViewSet(viewsets.ModelViewSet):
 
         params = [[key ,value] for key, value in params.items() if value != '' and key not in ['csrfmiddlewaretoken']]
 
+        page_start = (int(page) - 1) * page_size
+        page_end = page * page_size
 
         page_start = (int(page) - 1) * page_size
         page_end = page * page_size
@@ -100,10 +101,12 @@ class CustomModelViewSet(viewsets.ModelViewSet):
 
         params = dict(params)
 
+
         if self.action == "list":
             data = model.objects.filter(**params).order_by(sort)[page_start:page_end]
         else:
             data = model.objects.filter(**params).order_by(sort)
+
 
         self.serializer_class.Meta.depth = 0
 
@@ -130,7 +133,9 @@ class CustomModelViewSet(viewsets.ModelViewSet):
                     page = int(params.pop('PAGE'))
             else:
                 page = 1
+
                 page_size = 100
+
 
 
 
