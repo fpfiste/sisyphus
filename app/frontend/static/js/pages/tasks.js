@@ -88,7 +88,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     // add evetn listeners
     $( "#btn_filter" ).on( "click", function() {
       let query_params = $('#filter_form').serialize();
-      table.query_params = '?' + query_params
+      table.query_params = query_params
       table.build();
     });
 
