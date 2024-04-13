@@ -122,10 +122,9 @@ class BootstrapDataTable{
             let footer = this.draw_footer()
             let loading_gif = this.draw_loading_gif()
             //* draw the grid of the new table object
-
             //let page_size_select = '<select class="form-select"><option selected value="10">10</option><option value="20">20</option><option value="50">50</option><option value="100">100</option></select>'
             let pagination = this.draw_pagination()
-            let table_grid = '<div id="table_container" style="overflow:scroll; white-space:nowrap; height:95%;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'" style="height:100%;">'+header+'<tbody style="position:relative"></tbody>'+footer+'</table>'+ loading_gif;
+            let table_grid = '<div id="table_container" style="overflow:scroll; white-space:nowrap;"><table class="table table-striped table-hover table-bordered table-lg" id="'+this.id+'" style="height:100%;">'+header+'<tbody style="position:relative"></tbody>'+footer+'</table>'+ loading_gif;
             $(this.container).append(table_grid);
 
       }
@@ -136,6 +135,8 @@ class BootstrapDataTable{
         //* load the data to populate the table
 
         $('#id_page_size').val(this.page_size)
+
+
 
         //* loop all the rows in this.data object and add it to the table
         $.each(this.data,(key,element) => {
@@ -175,6 +176,12 @@ class BootstrapDataTable{
             $('#'+this.id + ' tbody').append(row);
         });
 
+        let container_height = $('#overview-table').height()
+        let table_height = $('#' + this.id).height()
+
+
+        let height = (container_height > table_height) ? table_height : container_height
+        $('#table_container').css('height', height)
       }
 
       build(callback){
