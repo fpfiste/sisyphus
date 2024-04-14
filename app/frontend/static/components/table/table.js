@@ -176,12 +176,13 @@ class BootstrapDataTable{
             $('#'+this.id + ' tbody').append(row);
         });
 
-        let container_height = $('#overview-table').height()
+        console.log(this.id)
+        let container_height = $('#' + this.id).parent().parent().height()
         let table_height = $('#' + this.id).height()
 
 
         let height = (container_height > table_height) ? table_height : container_height
-        $('#table_container').css('height', height)
+        $('#' + this.id).parent().css('height', height)
       }
 
       build(callback){
