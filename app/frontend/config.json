@@ -270,8 +270,12 @@
           "display_type": "text",
           "input_type": "text_input",
           "max_length": 20
-
-
+        },
+        "invoice_receiver": {
+          "title": {"en": "Invoice Receiver", "ch": "Rechnungsempfänger"},
+          "display_type": "text",
+          "input_type": "text_input",
+          "max_length": 200
         },
         "is_customer": {
           "title": {"en": "Customer", "ch": "Kunde"},
@@ -744,9 +748,9 @@
       "required_permissions" : ["api.add_companies", "api.view_companies", "api.change_companies", "api.delete_companies"],
       "table_fields" : ["id_company",  "company_internal_alias" ,"company_street", "company_zipcode", "company_city", "fk_country",  "is_customer", "is_supplier", "is_subcontractor"],
       "filter_form_fields" : ["id_company","company_internal_alias","company_name", "company_zipcode","company_city", "fk_country", "is_customer", "is_supplier", "is_subcontractor", "fk_sys_rec_status" ],
-      "create_form_fields" : ["company_internal_alias","company_name", "company_street","company_zipcode", "company_city", "fk_country", "company_email", "fk_sys_rec_status", "is_customer", "is_supplier", "is_subcontractor" , "custom_fields"],
+      "create_form_fields" : ["company_internal_alias","company_name", "company_street","company_zipcode", "company_city", "fk_country", "company_email","invoice_receiver", "fk_sys_rec_status", "is_customer", "is_supplier", "is_subcontractor" , "custom_fields"],
       "create_form_fields_required" : ["company_internal_alias","company_name", "company_street","company_zipcode", "company_city", "fk_country", "fk_sys_rec_status", "is_customer", "is_supplier", "is_subcontractor"],
-      "update_form_fields" : ["id_company","company_internal_alias","company_name", "company_street","company_zipcode", "company_city", "fk_country", "fk_sys_rec_status", "is_customer", "is_supplier", "is_subcontractor" , "custom_fields"],
+      "update_form_fields" : ["id_company","company_internal_alias","company_name", "company_street","company_zipcode", "company_city", "fk_country","invoice_receiver", "fk_sys_rec_status", "is_customer", "is_supplier", "is_subcontractor" , "custom_fields"],
       "update_form_fields_required" : ["id_company","company_internal_alias","company_name", "company_street","company_zipcode", "company_city", "fk_country", "company_email", "fk_sys_rec_status", "is_customer", "is_supplier", "is_subcontractor"],
       "update_form_fields_disabled" : ["id_company"],
       "remove_buttons" : ["btn_delete", "btn_close_task" , "btn_print"]

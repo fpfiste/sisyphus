@@ -75,14 +75,15 @@ class Document():
             'logo_y' : float(logo_y)  if logo_y != ' ' else 0
         }
 
-    def set_customer(self,  id, name, address, pcode, city, country):
+    def set_customer(self,  id, name, address, pcode, city, country, invoice_receiver=''):
         self.customer = {
             'id' : id,
             'name': name,
             'address' : address,
             'pcode' : pcode,
             'city' : city,
-            'country' : country
+            'country' : country,
+            'invoice_receiver': invoice_receiver
         }
 
     def set_company(self, name, address, pcode, city, country, agent, email, phone, vat_number):
@@ -124,6 +125,9 @@ class Document():
                 self.c.drawString(self.x * cm, self.y * cm, f'{line}')
                 self.increase_y(0.5)
 
+        if self.customer['invoice_receiver'] not in ('', None):
+            self.c.drawString(self.x * cm, self.y * cm, self.customer['invoice_receiver'])
+            self.y += 0.5
         self.c.drawString(self.x * cm, self.y * cm, self.customer['address'])
         self.y += 0.5
         self.c.drawString(self.x * cm, self.y * cm, f'{self.customer["pcode"]} {self.customer["city"]}')
