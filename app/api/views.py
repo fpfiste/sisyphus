@@ -621,7 +621,8 @@ class ReceivablesViewSet(CustomModelViewSet):
                 customer = project.fk_customer
 
                 doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
-                                 customer.company_city, customer.fk_country.country_code)
+                                 customer.company_city, customer.fk_country.country_code, customer.invoice_receiver)
+
 
 
 
@@ -716,6 +717,7 @@ class ReceivablesViewSet(CustomModelViewSet):
                 cancellation.fk_invoice = instance
                 #
 
+
                 cancellation.save()
                 instance.save()
                 sales.update(fk_invoice=None, fk_sales_status=1)
@@ -744,7 +746,7 @@ class ReceivablesViewSet(CustomModelViewSet):
                              )
 
                 doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
-                                 customer.company_city, customer.fk_country.country_code)
+                                 customer.company_city, customer.fk_country.country_code, customer.invoice_receiver)
 
 
 
@@ -809,7 +811,7 @@ class ReceivablesViewSet(CustomModelViewSet):
 
             doc.set_customer(customer.id_company, customer.company_name, customer.company_street,
                              customer.company_zipcode,
-                             customer.company_city, customer.fk_country.country_code)
+                             customer.company_city, customer.fk_country.country_code, customer.invoice_receiver)
 
 
 
@@ -849,7 +851,7 @@ class ReceivablesViewSet(CustomModelViewSet):
 
 
             doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
-                             customer.company_city, customer.fk_country.country_code)
+                             customer.company_city, customer.fk_country.country_code, customer.invoice_receiver)
 
 
             company = Companies.objects.get(id_company=0)

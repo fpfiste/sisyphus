@@ -175,6 +175,7 @@ class Companies(models.Model):
     is_own_company = models.BooleanField(blank=True, null=True)
     vat_number = models.CharField(max_length=100, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
+    invoice_receiver = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
         managed = False

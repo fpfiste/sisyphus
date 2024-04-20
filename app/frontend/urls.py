@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 
-
 urlpatterns = [
     path('', views.render_page, name='index'),
     path('_config', views.send_config, name='config'),

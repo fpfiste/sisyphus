@@ -229,9 +229,12 @@ class BootstrapDataTable{
                         } else if (value === false){
                             value = 0;
                         }
+
+                        let field =
+                        console.log(key +': '+value)
                         if (value != null & typeof(value) === 'object') {
                             value = JSON.stringify(value);
-                        } else if (value == null) {
+                        } else if ((value == null) & ($('#update_form #'+ key).hasClass('jsonfield'))) {
                             value = JSON.stringify({});
                         }
                         $('#update_form #'+ key).val(value).trigger('change');
