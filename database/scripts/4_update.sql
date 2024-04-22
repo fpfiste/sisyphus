@@ -30,6 +30,9 @@ alter table public.sales
 add column if not exists fk_revenue_type int REFERENCES public.revenue_type(id_revenue_type),
 add column if not exists invoice_position_nr int;
 
+alter table public.companies
+add column if not exists invoice_receiver varchar(200);
+
 alter table public.tasks
 add column if not exists fk_revenue_type int REFERENCES public.revenue_type(id_revenue_type),
 add column if not exists invoice_position_nr int;
