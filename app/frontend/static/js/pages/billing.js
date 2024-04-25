@@ -31,16 +31,16 @@ jQuery.fn.setUp = function(page_config, fields) {
        sales_table_fields[value] = fields[value];
     })
 
-    let sales_table = new BootstrapDataTable({
-                        container:'#sales_billing',
-                        id: 'sales_billing_table',
-                        fields: sales_table_fields,
-                        ajax_url: '/api/sales/',
-                        query_params: 'fk_sales_status=1&fk_clearing_type=2',
-                        pk_field: 'id_sale',
+    let table = new BootstrapDataTable({
+                        container:'#billing_table_container',
+                        id: 'billing_table',
+                        //fields: sales_table_fields,
+                        //ajax_url: '/api/sales/',
+                        //query_params: 'fk_sales_status=1&fk_clearing_type=2',
+                        //pk_field: 'id_sale',
                         language: lang_cookie,
                     })
-    sales_table.build();
+    //sales_table.build();
 
     // TASK TABLE INSTANCE
     let task_table_fields = {};
@@ -50,7 +50,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     })
 
     let task_table = new BootstrapDataTable({
-                        container:'#task_billing',
+                        container:'#billing_table',
                         id: "task_billing_table",
                         fields: task_table_fields,
                         ajax_url: '/api/tasks/',
@@ -59,58 +59,78 @@ jQuery.fn.setUp = function(page_config, fields) {
                         pk_field: 'id_task',
                         language: lang_cookie,
                     })
-    task_table.build();
+
+    waitForEl('#select_transaction_type', function() {
+        $('#select_transaction_type').on('change', function() {
+            let type = $(this).val()
+
+            $('#billing_table_container').empty()
+
+            let project = 'fk_project=' + $('#fk_project').val();
+            let vat = '&fk_vat=' + $('#fk_vat').val();
+            let currency = '&fk_currency='+ $('#fk_currency').val();
+            let revenue_type = '&fk_revenue_type='+ $('#fk_revenue_type').val();
+
+
+            if ($(this).val() == '0'){
+                        table.fields = task_table_fields
+                        table.ajax_url = '/api/tasks/'
+                        table.query_params =project+ vat+currency+ revenue_type + '&fk_task_state=4&fk_clearing_type=2'
+                        table.filter_params ='fk_task_state=4&fk_clearing_type=2'
+                        table.pk_field = 'id_task'
+                        table.transaction_type = type
+                        table.build()
+
+            } else if ($(this).val() == '1'){
+                        table.fields = sales_table_fields
+                        table.ajax_url = '/api/sales/'
+                        table.query_params = project+ vat+currency+ revenue_type + '&fk_sales_status=1&fk_clearing_type=2'
+                        table.filter_params = 'fk_sales_status=1&fk_clearing_type=2'
+                        table.pk_field ='id_sale'
+                        table.transaction_type = type
+                        table.build()
+
+            }
+
+
+
+            console.log('Transaction Type: ' + table.transaction_type)
+
+        });
+     });
+
 
     let change = function() {
-        let sales = []
-        $('#sales_billing_table tbody td:first-child input:checked').each(function(){
+        let positions = []
+        $('#billing_table tbody td:first-child input:checked').each(function(){
             let selected = $(this)[0].checked
             if (selected){
-                sales.push($(this).parent().parent().attr('data-row-pk'))
+                positions.push($(this).parent().parent().attr('data-row-pk'))
             }
 
         })
 
-        let tasks = []
-        $('#task_billing_table tbody td:first-child input:checked').each(function(){
-            let selected = $(this)[0].checked
-            if (selected){
-                tasks.push($(this).parent().parent().attr('data-row-pk'))
-            }
-
-        })
 
           let query_params = $('#create_form').serialize();
 
-          let project = '&fk_project=' + $('#fk_project').val();
+          console.log('Params: ' + query_params)
+          let project = 'fk_project=' + $('#fk_project').val();
           let vat = '&fk_vat=' + $('#fk_vat').val();
           let currency = '&fk_currency='+ $('#fk_currency').val();
           let revenue_type = '&fk_revenue_type='+ $('#fk_revenue_type').val();
 
-          sales_table.query_params = project+ vat+currency+ revenue_type+ '&fk_sales_status=1&fk_clearing_type=2'
-          console.log(sales_table.query_params)
-          task_table.query_params = project+ vat+currency+revenue_type+ '&fk_task_state=4&fk_clearing_type=2'
-          sales_table.build(function(){
-            $('#sales_billing_table tbody tr').each(function(){
+          table.query_params = project+ vat+currency+ revenue_type + '&' + table.filter_params
+          console.log(table.query_params)
+          table.build(function(){
+            $('#billing_table tbody tr').each(function(){
             current_pk = $(this).attr('data-row-pk')
-            if (sales.includes(current_pk)) {
+            if (positions.includes(current_pk)) {
                 console.log($(this).find('input'))
                 $(this).find('input:checkbox').prop('checked', true)
             }
 
           })
           });
-          task_table.build(function(){
-            $('#task_billing_table tbody tr').each(function(){
-            current_pk = $(this).attr('data-row-pk')
-            if (tasks.includes(current_pk)) {
-                console.log($(this).find('input'))
-                $(this).find('input:checkbox').prop('checked', true)
-            }
-
-          })
-          });
-
 
     }
 
@@ -132,12 +152,11 @@ jQuery.fn.setUp = function(page_config, fields) {
 
 
     $( "#btn_reset" ).on( "click", function() {
-        $('#filter_form').trigger("reset");
-        $('#btn_filter').click();
-        sales_table.query_params = '?fk_sales_status=2&fk_clearing_type=2'
-        sales_table.build()
-        task_table.query_params = '?fk_task_state=4&fk_clearing_type=2'
-        task_table.build()
+        $('#create_form').trigger("reset");
+        //$('#btn_filter').click();
+        $('#select_transaction_type').val("")
+        $('#billing_table_container').empty()
+
     });
 
 
@@ -153,38 +172,34 @@ jQuery.fn.setUp = function(page_config, fields) {
 
         let form_data = create_form.serialize();
 
-        let sales = []
-        $('#sales_billing_table tbody td:first-child input:checked').each(function(){
+        let positions = []
+        $('#billing_table tbody td:first-child input:checked').each(function(){
             let selected = $(this)[0].checked
             if (selected){
-                sales.push($(this).parent().parent().attr('data-row-pk'))
+                positions.push($(this).parent().parent().attr('data-row-pk'))
             }
 
         })
 
-        let tasks = []
-        $('#task_billing_table tbody td:first-child input:checked').each(function(){
-            let selected = $(this)[0].checked
-            if (selected){
-                tasks.push($(this).parent().parent().attr('data-row-pk'))
-            }
 
-        })
 
-        console.log(tasks)
+        console.log(positions)
 
-        if ((tasks.length == 0) && (sales.length == 0)){
+        if (positions.length == 0){
             $('#loading_screen_wrapper').hide();
             $('input:checkbox').css('outline', '1px solid red')
-            let valid = false
+            valid = false
         } else {
             $('input:checkbox').css('outline', '1px solid green')
         }
 
+        console.log('Valid ' + valid)
         if (valid == false) {
+            console.log('return')
             return
         }
 
+        console.log('not return')
         let data = {
             'fk_project': $('#fk_project').val(),
             'fk_vat': $('#fk_vat').val(),
@@ -192,8 +207,8 @@ jQuery.fn.setUp = function(page_config, fields) {
             'invoice_text' : $('#invoice_text').val(),
             'fk_invoice_terms': $('#fk_invoice_terms').val(),
             'discount' : $('#discount').val(),
-            'sales' : sales,
-            'tasks' : tasks,
+            'positions' : positions,
+            'position_type' : table.transaction_type,
         }
 
 
@@ -206,12 +221,11 @@ jQuery.fn.setUp = function(page_config, fields) {
 
            success: function(response) {
                 console.log(response)
-                $('#loading_screen_wrapper').toggle();
-                var doc = window.open(response['file_url'], '_blank');
-                location.reload();
-                doc.focus();
                 $('#loading_screen_wrapper').hide();
-
+                $('#nextStepModal').modal('show');
+                create_form.reset();
+                $('#select_transaction_type').val("")
+                $('#billing_table_container').empty();
            },
            error: function(error){
             console.log(error)
@@ -219,6 +233,7 @@ jQuery.fn.setUp = function(page_config, fields) {
             location.reload();
            }
         });
+
 
     })
 

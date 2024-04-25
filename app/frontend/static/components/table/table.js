@@ -10,7 +10,6 @@ class BootstrapDataTable{
           this.ajax_url = ajax_url;
           this.query_params = query_params
           this.language = language;
-          this.build_grid()
           this.max_pages;
           this.page_size = 50;
           this.page = 1
