@@ -77,7 +77,7 @@ jQuery.fn.setUp = function(page_config, fields) {
 
 
     $('#btn_print').on('click', function() {
-        $('#loading_screen_wrapper').show();
+        //$('#loading_screen_wrapper').show();
         let pk = $('#update_form #id_invoice').val();
 
         let url = page_config['ajax_url'] + pk + '/pdf'
@@ -88,9 +88,12 @@ jQuery.fn.setUp = function(page_config, fields) {
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            success: function(response) {
            console.log(response)
-                var doc = window.open(response['file_url'], '_blank');
-                doc.focus();
-                $('#loading_screen_wrapper').hide();
+                $('body').append('<a id="invoice_download_link" href="'+response['file_url']+'" download></a>')
+                $('#invoice_download_link')[0].click()
+                $('#invoice_download_link').remove();
+                //var doc = window.open(response['file_url'], '_blank');
+                //doc.focus();
+                //$('#loading_screen_wrapper').hide();
            },
            error: function(error){
            console.log(error)

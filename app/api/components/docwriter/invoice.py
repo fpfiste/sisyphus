@@ -57,20 +57,20 @@ class Invoice(Document):
         self.positions.append(position)
 
         if self.vat_netto:
-            self.sub_total_1 += round(2*(amount * unit_price), 1) / 2
-            self.discount_absolute = round(2*(self.sub_total_1 * self.discount), 1) / 2
-            self.sub_total_2 = round(2*(self.sub_total_1 - self.discount_absolute), 1) / 2
-            self.vat_absoulte = round(2*(self.sub_total_2 * self.vat), 1) / 2
+            self.sub_total_1 += amount * unit_price
+            self.discount_absolute = self.sub_total_1 * self.discount
+            self.sub_total_2 = self.sub_total_1 - self.discount_absolute
+            self.vat_absoulte = self.sub_total_2 * self.vat
             self.sub_total_3 = self.sub_total_2 + self.vat_absoulte
             self.total = self.sub_total_3
             self.net_total = self.sub_total_2
 
         else:
-            self.sub_total_1 += round(2*(amount * unit_price), 1) / 2
-            self.discount_absolute = round(2*(self.sub_total_1 * self.discount), 1) / 2
+            self.sub_total_1 += amount * unit_price
+            self.discount_absolute = self.sub_total_1 * self.discount
             self.sub_total_2 = self.sub_total_1 - self.discount_absolute
             self.total = self.sub_total_2
-            self.vat_absoulte = round(2*(self.sub_total_2 / (1 + self.vat) * self.vat), 1) / 2
+            self.vat_absoulte = self.sub_total_2 / (1 + self.vat) * self.vat
             self.net_total = self.sub_total_2 - self.vat_absoulte
 
 
@@ -114,17 +114,18 @@ class Invoice(Document):
 
 
 
-        print(reference)
+        print(f"{self.total:,.2f}")
         bill = QRBill(
             account= self.account,
             creditor=creditor,
             currency=self.currency,
             reference_number= reference,
             additional_information= f'Rechung: {self.document_id}\n Kunde: {self.customer["id"]} ',
-            amount= str(self.total),
+            amount= f"{self.total:.2f}",
             language= self.language,
             debtor= debtor
         )
+
 
 
 

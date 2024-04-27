@@ -561,122 +561,79 @@ class ReceivablesViewSet(CustomModelViewSet):
     @transaction.atomic
     def create(self, request):
         try:
-            sales = []
-            tasks = []
+            positions = []
             request.data._mutable = True
 
+            print(request.data)
 
+            position_type = request.data.pop('position_type')[0]
+            print(f'Position Type' , type(position_type))
 
-            if 'sales[]' in request.data and len(request.data['sales[]']) > 0:
-                sales = Sales.objects.filter(id_sale__in=request.data.pop('sales[]')).order_by('sale_date')
-            if 'tasks[]' in request.data and len(request.data['tasks[]']) > 0:
-                tasks = Tasks.objects.filter(id_task__in=request.data.pop('tasks[]')).order_by('task_date_from')
+            if 'positions[]' in request.data and len(request.data['positions[]']) > 0:
+                if position_type == "0":
+                    positions = Tasks.objects.filter(id_task__in=request.data.pop('positions[]')).order_by('task_date_from')
+                    print('Tasks')
+                elif position_type == "1":
+                    positions = Sales.objects.filter(id_sale__in=request.data.pop('positions[]')).order_by('sale_date')
+                    print('Sales')
 
-            if len(sales) == 0 and len(tasks) == 0:
-                return Response({'message':'Can not create an invoice without tasks or sales to bill.'}, status=status.HTTP_400_BAD_REQUEST)
+            print(positions)
 
             request.data['fk_invoice_state'] = 1
             request.data['invoice_date'] = dt.date.today().strftime('%Y-%m-%d')
             request.data['discount'] = float(request.data['discount']) / 100 if request.data['discount'] != "" else 0.00
 
             with transaction.atomic():
-                serializer = ReceivablesSerializer(data=request.data)
+                 serializer = ReceivablesSerializer(data=request.data)
 
-                if not serializer.is_valid():
-                    return Response({'message': 'Something is wrong with your input'},
-                                    status=status.HTTP_400_BAD_REQUEST)
+                 if not serializer.is_valid():
+                     return Response({'message': 'Something is wrong with your input'}, status=status.HTTP_400_BAD_REQUEST)
 
+                 serializer.save()
 
-
-
-                serializer.save()
-
-                for sale in sales:
-                    sale.fk_sales_status = SalesState.objects.get(id_sales_state=2)
-                    sale.fk_invoice = serializer.instance
-                    sale.save()
-
-                for task in tasks:
-                    task.fk_task_state = TaskStates.objects.get(id_task_state=5)
-                    task.fk_invoice = serializer.instance
-                    task.save()
-
-                invoice = serializer.instance
-                vat = Vat.objects.get(id_vat=request.data['fk_vat'])
-                currency = Currencies.objects.get(id_currency=request.data['fk_currency'])
-                terms = InvoiceTerms.objects.get(id_invoice_term=request.data['fk_invoice_terms'])
-                project = Projects.objects.get(id_project=request.data['fk_project'])
+                 total = 0
+                 if position_type == '0':
+                     for pos in positions:
+                        pos.fk_task_state = TaskStates.objects.get(id_task_state=5)
+                        pos.fk_invoice = serializer.instance
+                        pos.save()
+                        total += pos.amount * pos.unit_price
+                 elif position_type == '1':
+                    for pos in positions:
+                        pos.fk_sales_status = SalesState.objects.get(id_sales_state=2)
+                        pos.fk_invoice = serializer.instance
+                        pos.save()
+                        total += pos.amount * pos.unit_price
 
 
 
-                doc = Invoice(invoice.pk,  invoice.invoice_date, invoice.invoice_text, vat.vat, vat.netto, currency.currency_abbreviation, currency.currency_account_nr, terms.due_days, language='de',output_path=settings.TMP_FOLDER, discount=invoice.discount)
+                 invoice = serializer.instance
+                 vat = Vat.objects.get(id_vat=request.data['fk_vat'])
+                 currency = Currencies.objects.get(id_currency=request.data['fk_currency'])
+                 terms = InvoiceTerms.objects.get(id_invoice_term=request.data['fk_invoice_terms'])
+                 project = Projects.objects.get(id_project=request.data['fk_project'])
 
-                doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
-                             logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
-                             logo_height=Config.objects.get(config_key='doc_logo_height').value_string,
-                             logo_x=Config.objects.get(config_key='doc_logo_x_offset').value_string,
-                             logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
-                             )
-
-                customer = project.fk_customer
-
-                doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
-                                 customer.company_city, customer.fk_country.country_code, customer.invoice_receiver)
-
+                 if vat.netto == True:
+                     net_total = total
+                     brut_total = total  * (1 + vat.vat)
+                 else:
+                     net_total = total  / (1 + vat.vat)
+                     brut_total = total
 
 
-
-                company = Companies.objects.get(id_company=0)
-                doc.set_company(name=company.company_name, address=company.company_street,
-                                pcode=company.company_zipcode, city=company.company_city,
-                                country=company.fk_country.country_code, email=company.company_email,
-                                vat_number=company.vat_number, agent=request.user, phone=company.phone_number)
-
-                for task in tasks:
-                    doc.add_position(
-                        position_id=task.id_task,
-                        date = task.task_date_to.strftime('%d.%m.%Y'),
-                        reference_text=task.customer_reference,
-                        description=task.description,
-                        unit=task.fk_unit.unit,
-                        amount=task.amount,
-                        unit_price=task.unit_price,
-                        pos_type='T'
-                    )
+                 invoice.net_total = net_total
+                 invoice.total = brut_total
+                 invoice.fk_vat = vat
+                 invoice.fk_currency = currency
+                 invoice.fk_project = project
+                 invoice.save()
 
 
-
-
-
-                for sale in sales:
-                    doc.add_position(
-                        position_id=sale.id_sale,
-                        date = sale.sale_date.strftime('%d.%m.%Y'),
-                        reference_text=sale.customer_reference,
-                        description=sale.description,
-                        unit=sale.fk_unit.unit,
-                        amount=sale.amount,
-                        unit_price=sale.unit_price,
-                        pos_type='S'
-                    )
-
-
-
-
-                net_total, total = doc.draw()
-
-                invoice.net_total = net_total
-                invoice.total = total
-                invoice.fk_vat = vat
-                invoice.fk_currency = currency
-                invoice.fk_project = project
-                invoice.save()
-                url = '/static/tmp/' + os.path.basename(doc.file_name)
-
-                return Response({'file_url': url}, status=status.HTTP_200_OK)
+            return Response({}, status=status.HTTP_200_OK)
         except ValueError as v:
             print(v)
             print(traceback.format_exc())
+
 
             return Response({'message': str(v)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
@@ -762,11 +719,6 @@ class ReceivablesViewSet(CustomModelViewSet):
                 url = '/static/tmp/' + os.path.basename(doc.file_name)
 
                 return Response({'file_url': url}, status=status.HTTP_200_OK)
-
-
-
-
-
 
 
             return Response(serializer.data)

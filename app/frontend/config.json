@@ -580,6 +580,12 @@
           "max_length": 200
 
         },
+        "select_transaction_type": {
+          "title": {"en": "Transaction type", "ch": "Transaktionsart"},
+          "display_type": "select",
+          "input_type": "select",
+          "options": {"0": {"en": "Task", "ch": "Aufträge"}, "1": {"en":  "Sales", "ch":  "Verkäufe"}}
+        },
         "select_position": {
           "title": {"en": "Choose", "ch": "Wählen"},
           "display_type": "action_checkbox",
@@ -892,7 +898,7 @@
       "table_id" : "tasks_table",
       "pk" : "id_invoice",
       "required_permissions" : ["api.add_receivables", "api.view_tasks", "api.view_sales"],
-      "create_form_fields" : ["fk_project", "fk_vat", "fk_currency", "fk_invoice_terms", "fk_revenue_type","discount", "invoice_text"],
+      "create_form_fields" : ["select_transaction_type" ,"fk_revenue_type", "fk_project", "fk_vat", "fk_currency", "fk_invoice_terms","discount", "invoice_text"],
       "create_form_fields_required" : ["fk_project", "fk_vat", "fk_currency", "fk_invoice_terms","fk_revenue_type"],
       "sales_table_fields" : ["select_position", "id_sale", "fk_project", "description", "amount", "fk_unit", "unit_price", "fk_currency", "fk_vat", "fk_clearing_type"],
       "task_table_fields" : ["select_position","id_task", "fk_project", "description", "amount", "fk_unit", "unit_price", "fk_currency", "fk_vat", "fk_clearing_type"]
