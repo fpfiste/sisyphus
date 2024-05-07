@@ -778,8 +778,18 @@ class ReceivablesViewSet(CustomModelViewSet):
             tasks = Tasks.objects.filter(fk_invoice=invoice).order_by('task_date_from')
             sales = Sales.objects.filter(fk_invoice=invoice).order_by('sale_date')
 
-            positions = list(chain(tasks, sales))
-
+            if customer.fk_country.country_code == 'CH' and currency.qr_iban != None:
+                print_qr_bill = True
+                account = currency.qr_iban
+                print_qr_ref = True
+            elif customer.fk_country.country_code == 'CH':
+                print_qr_bill = True
+                account = currency.currency_account_nr
+                print_qr_ref = False
+            else:
+                print_qr_bill = False
+                account = currency.currency_account_nr
+                print_qr_ref = False
 
             doc = Invoice(invoice.pk,
                           invoice.invoice_date,
@@ -787,11 +797,14 @@ class ReceivablesViewSet(CustomModelViewSet):
                           vat.vat,
                           vat.netto,
                           currency.currency_abbreviation,
-                          currency.currency_account_nr,
+                          account,
                           terms.due_days,
                           language='de',
                           output_path=settings.TMP_FOLDER,
-                          discount=invoice.discount)
+                          discount=invoice.discount,
+                          qr_bill=print_qr_bill,
+                          qr_ref=print_qr_ref
+            )
 
             doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
                          logo_width=Config.objects.get(config_key='doc_logo_width').value_string,

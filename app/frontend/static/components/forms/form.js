@@ -351,7 +351,7 @@ class BootstrapForm{
 
             let table = $(target).siblings('table')
             $(table).find('tbody').empty();
-
+            console.log($(event.target).val())
             let json = JSON.parse($(event.target).val());
             let html = ''
 
