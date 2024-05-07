@@ -3,7 +3,7 @@ from reportlab.pdfgen import canvas
 
 from stdnum.iso7064 import mod_97_10
 from stdnum.iso11649 import format
-
+from stdnum.ch import esr
 from .document import Document
 import os
 import tempfile
@@ -20,7 +20,7 @@ import textwrap
 
 
 class Invoice(Document):
-    def __init__(self,invoice_id:int, invoice_date:str, invoice_text:str, vat:float, vat_netto:bool, currency:str, account:str, due_days:int, output_path:str, discount=0, language='de'):
+    def __init__(self,invoice_id:int, invoice_date:str, invoice_text:str, vat:float, vat_netto:bool, currency:str, account:str, due_days:int, output_path:str, discount=0, language='de', qr_bill:bool = True, qr_ref:bool=True):
         self.page_size = pagesizes.A4
 
         super().__init__(invoice_id, 'invoice', language=language, output_path=output_path)
@@ -39,6 +39,8 @@ class Invoice(Document):
         self.max_pages = 1
         self.footer_size = 4
         self.sub_total_1 = 0
+        self.print_qr_bill = qr_bill
+        self.print_qr_ref = qr_ref
 
 
     def add_position(self, position_id: int, date:str,reference_text:str, description:str, unit:str, amount:float, unit_price:float, pos_type = ''):
@@ -76,16 +78,16 @@ class Invoice(Document):
 
     def calc_qr_reference(self):
 
-        for i in range(0, 100):
-            number = str(self.customer['id']) + '0' + str(self.document_id)
-            check_digit = str(i).zfill(2)
-            try:
-                test_ref = number + 'RF' + check_digit
-                mod_97_10.validate(test_ref)
 
-                return format('RF' + check_digit + number)
-            except Exception as e:
-                continue
+        number = (str(self.customer['id']) + '0' + str(self.document_id)).zfill(26)
+        check_digit = esr.calc_check_digit(number)
+
+        ref = number + check_digit
+        print(ref)
+        print(esr.is_valid(ref))
+
+        return ref
+
 
 
 
@@ -110,7 +112,10 @@ class Invoice(Document):
 
         }
 
-        reference = self.calc_qr_reference()
+        if self.print_qr_ref:
+            reference = self.calc_qr_reference()
+        else:
+            reference = None
 
 
 
@@ -189,10 +194,12 @@ class Invoice(Document):
     def draw_footer(self):
         self.setFont("Helvetica", 8)
         self.c.line(1.5 * cm, self.y * cm, 19.5 * cm, self.y * cm)
-        self.y += 1
+        self.y += 0.5
         self.c.drawString(self.x * cm, self.y * cm, f"IBAN: {self.account}")
-
-
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm, f"Währung: {self.currency}")
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm, f"Zahlungsfrist: {self.due_days} Tage")
 
     def draw_position(self, position):
         self.increase_y(0.5)
@@ -326,16 +333,20 @@ class Invoice(Document):
 
         last_line = ((self.page_height / cm ) - 13)
 
-        if self.y >=last_line:
-            self.c.showPage()
-        qrcode = self.qr_bill()
-        self.c.translate(10, 800)
-        self.c.scale(1, -1)
-        page = PdfReader(qrcode, decompress=False).pages[0]
+        if self.print_qr_bill:
+            if self.y >=last_line:
+                self.c.showPage()
+            qrcode = self.qr_bill()
+            self.c.translate(10, 800)
+            self.c.scale(1, -1)
+            page = PdfReader(qrcode, decompress=False).pages[0]
 
-        p = pagexobj(PageMerge().add(page).render())
+            p = pagexobj(PageMerge().add(page).render())
 
-        self.c.doForm(makerl(self.c, p))
+            self.c.doForm(makerl(self.c, p))
+        else:
+            self.y = ((self.page_height / cm ) - self.footer_size) + 0.5
+            self.draw_footer()
 
         self.c.save()
 
@@ -379,3 +390,10 @@ if __name__ == '__main__':
 
 
     doc.draw()
+
+if __name__ == '__main__':
+
+    customer_nr = '123'
+    invoice_nr = '64654'
+
+    print((customer_nr + invoice_nr).zfill(26))

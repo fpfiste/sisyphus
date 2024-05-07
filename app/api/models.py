@@ -210,6 +210,7 @@ class Currencies(models.Model):
     currency = models.CharField(max_length=50)
     currency_abbreviation = models.CharField(max_length=3)
     currency_account_nr = models.CharField(max_length=50)
+    qr_iban = models.CharField(max_length=50)
 
     class Meta:
         managed = False

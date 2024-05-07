@@ -60,6 +60,7 @@ update public.tasks
 set fk_revenue_type = @div_revenue_id
 where fk_revenue_type is null;
 
+ALTER TABLE public.currencies ADD qr_iban varchar NULL;
 
 end
 $do$
