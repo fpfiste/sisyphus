@@ -431,7 +431,7 @@ class Sales(models.Model):
     invoice_position_nr = models.IntegerField(blank=True, null=True)
     changed_on = models.DateTimeField(blank=True, null=True)
     changed_by = models.CharField(max_length=200, blank=True, null=True)
-    history = models.JSONField(blank=True, null=True)
+    #history = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -493,7 +493,7 @@ class Tasks(models.Model):
     invoice_position_nr = models.IntegerField(blank=True, null=True)
     changed_on = models.DateTimeField(blank=True, null=True)
     changed_by = models.CharField(max_length=200, blank=True, null=True)
-    history = models.JSONField(blank=True, null=True)
+    #history = models.JSONField(blank=True, null=True)
 
     class Meta:
         managed = False
