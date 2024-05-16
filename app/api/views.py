@@ -787,7 +787,7 @@ class ReceivablesViewSet(CustomModelViewSet):
                 account = currency.currency_account_nr
                 print_qr_ref = False
             else:
-                print_qr_bill = False
+                print_qr_bill = True
                 account = currency.currency_account_nr
                 print_qr_ref = False
 
