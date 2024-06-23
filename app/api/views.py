@@ -678,7 +678,8 @@ class ReceivablesViewSet(CustomModelViewSet):
                 cancellation.save()
                 instance.save()
                 sales.update(fk_invoice=None, fk_sales_status=1)
-                tasks.update(fk_invoice=None, fk_task_state=3)
+                tasks.update(fk_invoice=None, fk_task_state=4)
+
 
                 doc = InvoiceCancellationDoc(
                     cancellation.pk,
@@ -694,6 +695,7 @@ class ReceivablesViewSet(CustomModelViewSet):
                     instance.fk_currency.currency_abbreviation
 
                 )
+
 
                 doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
                              logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
@@ -726,6 +728,109 @@ class ReceivablesViewSet(CustomModelViewSet):
             print(traceback.format_exc())
             return Response({'message': 'Unknown error'}, status=status.HTTP_403_FORBIDDEN)
 
+
+    @action(detail=False, methods=['POST'])
+    def pdf_preview(self, request):
+        positions = []
+        request.data._mutable = True
+
+        print(request.data)
+
+
+        position_type = request.data.pop('position_type')[0]
+        print(f'Position Type', type(position_type))
+
+        if 'positions[]' in request.data and len(request.data['positions[]']) > 0:
+            if position_type == "0":
+                tasks = Tasks.objects.filter(id_task__in=request.data.pop('positions[]')).order_by('task_date_from')
+                sales = []
+                print('Tasks')
+            elif position_type == "1":
+                sales = Sales.objects.filter(id_sale__in=request.data.pop('positions[]')).order_by('sale_date')
+                tasks = []
+                print('Sales')
+
+        print(positions)
+
+        request.data['fk_invoice_state'] = 1
+        request.data['invoice_date'] = dt.date.today().strftime('%Y-%m-%d')
+        request.data['discount'] = float(request.data['discount']) / 100 if request.data['discount'] != "" else 0.00
+
+        vat = Vat.objects.get(id_vat=request.data['fk_vat'])
+        currency = Currencies.objects.get(id_currency=request.data['fk_currency'])
+        project = Projects.objects.get(id_project=request.data['fk_project'])
+        customer = project.fk_customer
+        if customer.fk_country.country_code == 'CH' and currency.qr_iban != None:
+            print_qr_bill = True
+            account = currency.qr_iban
+            print_qr_ref = True
+        elif customer.fk_country.country_code == 'CH':
+            print_qr_bill = True
+            account = currency.currency_account_nr
+            print_qr_ref = False
+        else:
+            print_qr_bill = True
+            account = currency.currency_account_nr
+            print_qr_ref = False
+
+        doc = Invoice('VORSCHAU',
+                      dt.date.today(),
+                      request.data['invoice_text'],
+                      vat.vat,
+                      vat.netto,
+                      currency.currency_abbreviation,
+                      account,
+                      30,
+                      language='de',
+                      output_path=settings.TMP_FOLDER,
+                      discount=0,
+                      qr_bill=print_qr_bill,
+                      qr_ref=print_qr_ref
+                      )
+        doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
+                     logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
+                     logo_height=Config.objects.get(config_key='doc_logo_height').value_string,
+                     logo_x=Config.objects.get(config_key='doc_logo_x_offset').value_string,
+                     logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
+                     )
+
+        doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
+                         customer.company_city, customer.fk_country.country_code, customer.invoice_receiver)
+
+        company = Companies.objects.get(id_company=0)
+        doc.set_company(name=company.company_name, address=company.company_street, pcode=company.company_zipcode,
+                        city=company.company_city, country=company.fk_country.country_code,
+                        email=company.company_email, vat_number=company.vat_number, agent=request.user,
+                        phone=company.phone_number)
+
+        for task in tasks:
+            doc.add_position(
+                position_id=task.id_task,
+                date=task.task_date_to.strftime('%d.%m.%Y'),
+                reference_text=task.customer_reference,
+                description=task.description,
+                unit=task.fk_unit.unit,
+                amount=task.amount,
+                unit_price=task.unit_price,
+                pos_type='T'
+            )
+
+        for sale in sales:
+            doc.add_position(
+                position_id=sale.id_sale,
+                date=sale.sale_date.strftime('%d.%m.%Y'),
+                reference_text=sale.customer_reference,
+                description=sale.description,
+                unit=sale.fk_unit.unit,
+                amount=sale.amount,
+                unit_price=sale.unit_price,
+                pos_type='S'
+            )
+        doc.draw()
+
+        url = '/static/tmp/' + os.path.basename(doc.file_name)
+
+        return Response({'file_url': url}, status=status.HTTP_200_OK)
     @action(detail=True, methods=['GET'])
     def pdf(self, request, pk):
 
@@ -1236,7 +1341,8 @@ class TaskViewSet(CustomModelViewSet):
 
 
 
-        if task.fk_task_state.id_task_state < 4:
+        if task.fk_task_state.id_task_state < 5:
+
             if (date_from != '') and (date_to != '') and (time_from != '') and (time_to != '') and (employee != ''):
                 request.data['fk_task_state'] = "2"
 
@@ -1244,8 +1350,20 @@ class TaskViewSet(CustomModelViewSet):
                 current_ts = dt.datetime.now()
 
                 if end_ts < current_ts:
+                    if (request.data['id_task'] not in ('', None) and \
+                            request.data['fk_project'] not in ('', None) and \
+                            request.data['description'] not in ('', None) and \
+                            request.data['amount'] not in ('', None) and \
+                            request.data['unit_price'] not in ('', None) and \
+                            request.data['fk_currency'] not in ('', None) and \
+                            request.data['fk_employee_1'] not in ('', None) and \
+                            request.data['fk_unit'] not in ('', None) and \
+                            request.data['fk_vat'] not in ('', None) and \
+                            request.data['fk_clearing_type'] not in ('', None)):
+                        request.data['fk_task_state'] = "4"
+                    else:
+                        request.data['fk_task_state'] = "3"
 
-                    request.data['fk_task_state'] = "3"
             else:
                 request.data['fk_task_state'] = "1"
 

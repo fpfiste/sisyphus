@@ -108,7 +108,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     }
 
     $( "#btn_add" ).on( "click", function() {
-        $('#loading_screen_wrapper').show();
+        //$('#loading_screen_wrapper').show();
         let url = page_config['ajax_url']
         create_form.submit(url, callback)
     });
@@ -116,7 +116,7 @@ jQuery.fn.setUp = function(page_config, fields) {
 
 
     $( "#btn_save" ).on( "click", function() {
-        $('#loading_screen_wrapper').show();
+        //$('#loading_screen_wrapper').show();
         update_form.set_required({fields: page_config['update_form_fields_required']})
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = page_config['ajax_url'] +pk + '/'
@@ -125,7 +125,7 @@ jQuery.fn.setUp = function(page_config, fields) {
 
     waitForEl('#task_template', function() {
         $( "#task_template" ).on( "change", function() {
-        $('#loading_screen_wrapper').show();
+        //$('#loading_screen_wrapper').show();
 
         let template_id = $(this).val();
 
@@ -156,7 +156,7 @@ jQuery.fn.setUp = function(page_config, fields) {
 
 
     $('#btn_close_task').on('click', function() {
-        $('#loading_screen_wrapper').show();
+        //$('#loading_screen_wrapper').show();
         update_form.set_required({fields:page_config['close_form_fields_required']})
         console.log(update_form.required)
         let pk = $('#update_form #' + page_config['pk']).val()
@@ -165,7 +165,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     })
 
     $('#btn_delete').on('click', function() {
-        $('#loading_screen_wrapper').show();
+        //$('#loading_screen_wrapper').show();
         update_form.required = ['id_task']
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/tasks/' + pk + '/'
@@ -183,7 +183,7 @@ jQuery.fn.setUp = function(page_config, fields) {
     })
 
     $('#btn_print').on('click', function() {
-        $('#loading_screen_wrapper').show();
+        //$('#loading_screen_wrapper').show();
         let pk = $('#update_form #' + page_config['pk']).val()
         let url = '/api/tasks/' + pk + '/pdf/'
         $.ajax({
@@ -213,7 +213,7 @@ jQuery.fn.setUp = function(page_config, fields) {
         let task_status = $('#update_form #fk_task_state').val()
         console.log(task_status)
         if (
-            (task_status == "4") ||
+            //(task_status == "4") ||
             (task_status == "5") ||
             (task_status == "6") ||
             (task_status == "-1")

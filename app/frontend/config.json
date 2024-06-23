@@ -2,6 +2,7 @@
 
 {
   "translations": {
+    "titles": {
         "home_greeting" : {"en": "Hi", "ch": "Hallo"},
         "home_ongoing_tasks" : {"en" :  "Ongoing Tasks", "ch":  "Laufende Aufträge"},
         "home_news" : {"en" :  "Messages", "ch":  "Nachrichten"},
@@ -33,19 +34,7 @@
         "home_task_lane_title" : {"en": "Tasks", "ch": "Aufträge"},
         "home_sales_lane_title" : {"en": "Sales", "ch": "Verkäufe"},
         "home_receivables_lane_title" : {"en": "Receivables", "ch": "Debitoren"},
-        "btn_create_" : {"en": "Add", "ch": "Hinzufügen"},
-        "btn_add_" : {"en": "Add", "ch": "Hinzufügen"},
-        "btn_reset_" : {"en": "Reset", "ch": "Zurücksetzen"},
-        "btn_print_" : {"en": "Print", "ch": "Drucken"},
-        "btn_download_" : {"en": "Download", "ch": "Herunterladen"},
-        "btn_filter_" : {"en": "Fitler", "ch": "Filtern"},
-        "btn_print_schedule_" : {"en": "Export Schedule", "ch": "Kalender drucken"},
-        "btn_print_deliverynotes_" : {"en": "Export Delivery Notes", "ch": "Lieferscheine drucken"},
-        "btn_quit_create_" : {"en": "Quit", "ch": "Verlassen"},
-        "btn_quit_update_" : {"en": "Quit", "ch": "Verlassen"},
-        "btn_save_" : {"en": "Save", "ch": "Speichern"},
-        "btn_delete_" : {"en": "Delete", "ch": "Löschen"},
-        "btn_close_task_" : {"en": "Close Task", "ch": "Abschliessen"},
+
         "modal_add_title": {"en": "Create", "ch": "Hinzufügen"},
         "modal_update_title": {"en": "Update", "ch": "Aktualisieren"},
         "scheduler_employee_label": {"en": "Employees" ,"ch":  "Mitarbeiter"},
@@ -53,6 +42,23 @@
         "scheduler_subcontractor_label": {"en": "Subcontractor" ,"ch":  "Subunternehmer"},
         "scheduler_open_task_label": {"en": "Open" ,"ch":  "Offene"},
         "scheduler_employee_type_label": {"en": "Employee Types" ,"ch":  "Mitarbeiter Typ"}
+      },
+    "buttons": {
+        "btn_create" : {"en": "Add", "ch": "Hinzufügen"},
+        "btn_add" : {"en": "Add", "ch": "Hinzufügen"},
+        "btn_reset" : {"en": "Reset", "ch": "Zurücksetzen"},
+        "btn_print" : {"en": "Print", "ch": "Drucken"},
+        "btn_download" : {"en": "Download", "ch": "Herunterladen"},
+        "btn_filter" : {"en": "Fitler", "ch": "Filtern"},
+        "btn_print_schedule" : {"en": "Export Schedule", "ch": "Kalender drucken"},
+        "btn_print_deliverynotes" : {"en": "Export Delivery Notes", "ch": "Lieferscheine drucken"},
+        "btn_quit_create" : {"en": "Quit", "ch": "Verlassen"},
+        "btn_quit_update" : {"en": "Quit", "ch": "Verlassen"},
+        "btn_save" : {"en": "Save", "ch": "Speichern"},
+        "btn_delete" : {"en": "Delete", "ch": "Löschen"},
+        "btn_close_task" : {"en": "Close Task", "ch": "Abschliessen"},
+        "btn_preview" : {"en": "Preview", "ch": "Vorschau"}
+    }
   },
 
   "fields" : {
@@ -850,7 +856,8 @@
       "update_form_fields" : ["id_task", "task_date_from", "task_time_from", "task_date_to", "task_time_to", "fk_task_state","amount", "fk_unit", "description", "internal_info","customer_reference", "fk_project", "fk_employee_1", "fk_employee_2", "fk_asset_1", "fk_asset_2", "unit_price", "fk_currency", "fk_vat","fk_clearing_type", "fk_revenue_type","fk_invoice","custom_fields"],
       "update_form_fields_required" :  ["id_task","fk_project", "description"],
       "close_form_fields_required" :  ["id_task","fk_project", "description", "amount", "unit_price", "fk_currency", "fk_employee_1", "fk_unit", "fk_vat", "fk_clearing_type","fk_revenue_type", "task_date_from", "task_date_to", "task_time_from", "task_time_to"],
-      "update_form_fields_disabled" : ["id_task", "fk_task_state", "fk_invoice"]
+      "update_form_fields_disabled" : ["id_task", "fk_task_state", "fk_invoice"],
+      "remove_buttons": ["btn_close_task"]
 
 
 

@@ -191,6 +191,8 @@ class Invoice(Document):
         self.c.line(1.5 * cm, self.y * cm, 19.5 * cm, self.y * cm)
         self.increase_y(0.5)
 
+
+
     def draw_footer(self):
         self.setFont("Helvetica", 8)
         self.c.line(1.5 * cm, self.y * cm, 19.5 * cm, self.y * cm)

@@ -111,6 +111,7 @@ class Document():
             self.c.scale(1, -1)
 
 
+
     def draw_address_block(self):
         self.setFont("Helvetica", 6)
         self.c.drawString(self.x * cm, self.y * cm, f'{self.company["name"]}, {self.company["address"]}, {self.company["pcode"]}-{self.company["city"]}')
