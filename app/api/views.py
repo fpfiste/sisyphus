@@ -761,15 +761,15 @@ class ReceivablesViewSet(CustomModelViewSet):
         project = Projects.objects.get(id_project=request.data['fk_project'])
         customer = project.fk_customer
         if customer.fk_country.country_code == 'CH' and currency.qr_iban != None:
-            print_qr_bill = True
+            print_qr_bill = False
             account = currency.qr_iban
-            print_qr_ref = True
+            print_qr_ref = False
         elif customer.fk_country.country_code == 'CH':
-            print_qr_bill = True
+            print_qr_bill = False
             account = currency.currency_account_nr
             print_qr_ref = False
         else:
-            print_qr_bill = True
+            print_qr_bill = False
             account = currency.currency_account_nr
             print_qr_ref = False
 
