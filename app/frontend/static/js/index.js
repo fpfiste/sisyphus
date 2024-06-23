@@ -12,10 +12,12 @@ $(document).ready(function(){
             let lang_cookie = Cookies.get('sisyphus_language');
             page_config = response['pages'][page]
             fields = response['fields']
-            $.each(response['translations'], (key, value)=> {
+            $.each(response['translations']['titles'], (key, value)=> {
                 $('#' + key).text(value[lang_cookie])
             })
-
+            $.each(response['translations']['buttons'], (key, value)=> {
+                $('#' + key).prop('title', value[lang_cookie])
+            })
             let page_title = response['pages'][page]['title'][lang_cookie]
             $('#page_title').text(page_title);
             document.title = page_title;

@@ -236,6 +236,74 @@ jQuery.fn.setUp = function(page_config, fields) {
 
 
     })
+    $('#btn_preview').on('click', function() {
+        //$('#loading_screen_wrapper').show();
+        create_form.validate()
 
+        let valid = true
+        if (create_form.is_valid == false) {
+            //$('#loading_screen_wrapper').hide();
+            valid = false
+        }
+
+        let form_data = create_form.serialize();
+
+        let positions = []
+        $('#billing_table tbody td:first-child input:checked').each(function(){
+            let selected = $(this)[0].checked
+            if (selected){
+                positions.push($(this).parent().parent().attr('data-row-pk'))
+            }
+
+        })
+
+        if (positions.length == 0){
+            //$('#loading_screen_wrapper').hide();
+            $('input:checkbox').css('outline', '1px solid red')
+            valid = false
+        } else {
+            $('input:checkbox').css('outline', '1px solid green')
+        }
+
+        console.log('Valid ' + valid)
+        if (valid == false) {
+            console.log('return')
+            return
+        }
+
+        console.log('not return')
+        let data = {
+            'fk_project': $('#fk_project').val(),
+            'fk_vat': $('#fk_vat').val(),
+            'fk_currency': $('#fk_currency').val(),
+            'invoice_text' : $('#invoice_text').val(),
+            'fk_invoice_terms': $('#fk_invoice_terms').val(),
+            'discount' : $('#discount').val(),
+            'positions' : positions,
+            'position_type' : table.transaction_type,
+        }
+
+
+
+        $.ajax({
+           url: '/api/receivables/pdf_preview/',
+           type: 'POST',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           data:data,
+
+           success: function(response) {
+                var doc = window.open(response['file_url'], '_blank');
+                doc.focus();
+                //$('#loading_screen_wrapper').hide();
+           },
+           error: function(error){
+            console.log(error)
+            alert(error['responseJSON']['message'])
+            location.reload();
+           }
+        });
+
+
+    })
 }
 
