@@ -337,9 +337,8 @@ class BootstrapForm{
            headers: {'X-CSRFToken': Cookies.get('csrftoken')},
            data:array,
            success: callback,
-           error: function(error){
-            console.log(error);
-            alert(error)
+           error: function(request, status, error){
+            console.log(request);
             location.reload();
            }
         });

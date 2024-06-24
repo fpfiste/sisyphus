@@ -721,6 +721,30 @@
           "api_endpoint": "/api/revenue-type",
           "pk_field": "id_revenue_type",
           "display_field": "revenue_type"
+        },
+        "email_to":  {
+          "title": {"en": "To", "ch": "An"},
+          "display_type": "text",
+          "input_type": "text_input",
+          "max_length": 50
+        },
+        "email_cc":  {
+          "title": {"en": "cc", "ch": "cc"},
+          "display_type": "text",
+          "input_type": "text_input",
+          "max_length": 50
+        },
+        "email_subject":  {
+          "title": {"en": "Subject", "ch": "Betreff"},
+          "display_type": "text",
+          "input_type": "text_input",
+          "max_length": 50
+        },
+        "email_text": {
+          "title": {"en": "Text", "ch": "text"},
+          "display_type": "text",
+          "input_type": "textarea",
+          "max_length": 200
         }
   },
 
@@ -893,7 +917,8 @@
       "filter_form_fields" : ["id_invoice", "invoice_date", "fk_project", "fk_invoice_state","fk_invoice_terms","fk_currency","net_total", "discount", "total", "fk_invoice_terms", "fk_vat"],
       "update_form_fields" : ["id_invoice", "invoice_date", "fk_project", "fk_invoice_state","fk_invoice_terms","fk_currency","net_total", "discount", "total", "fk_invoice_terms", "fk_vat"],
       "update_form_fields_disabled" :["id_invoice", "invoice_date", "fk_project", "fk_invoice_state","fk_invoice_terms","fk_currency","net_total", "discount", "total", "fk_invoice_terms", "fk_vat"],
-      "remove_buttons" : ["btn_save"]
+      "send_form_fields" : ["email_to", "email_subject", "email_text"],
+      "send_form_fields_required" : ["email_to", "email_subject", "email_text"]
 
 
 },

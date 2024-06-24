@@ -395,6 +395,7 @@ class Receivables(models.Model):
     fk_currency = models.ForeignKey(Currencies, models.DO_NOTHING, db_column='fk_currency')
     fk_project = models.ForeignKey(Projects, models.DO_NOTHING, db_column='fk_project')
     discount = models.DecimalField(max_digits=3, decimal_places=3, blank=True, null=True)
+    invoice_date = models.DateField()
 
     class Meta:
         managed = False
