@@ -207,7 +207,7 @@ jQuery.fn.setUp = function(page_config, fields) {
            success: function(response) {
                 console.log(response)
 
-                $('#send_form #email_to').val(response['data'][0]['fk_customer']['company_email'])
+                $('#send_form #email_to').val(response['data'][0]['fk_customer']['company_invoice_email'])
            },
            error: function(error){
             console.log(error)

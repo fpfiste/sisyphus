@@ -146,7 +146,7 @@ class BootstrapForm{
       textarea({id, title, placeholder, required, disabled, max_length}) {
             let html = '<div class="form-group">'
             html += '<label for="'+id+'">'+title+'</label>'
-            html += '<textarea id="'+id+'" name="'+id+'" style="width:100%; display:block;" ' + placeholder + ' '  + required+' ' + disabled +'  maxlength="'+max_length+'"></textarea>'
+            html += '<textarea id="'+id+'" name="'+id+'" style="width:100%; min-height: 200px; display:block;" ' + placeholder + ' '  + required+' ' + disabled +'  maxlength="'+max_length+'"></textarea>'
             html += '</div>'
            return html
       }

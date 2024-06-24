@@ -364,11 +364,9 @@ class CompanyViewSet(CustomModelViewSet):
                             'project_name' : request.data['company_internal_alias'] + ' - Default',
                             'start_date' : dt.datetime.now().strftime('%Y-%m-%d'),
                             'end_date' : '9999-12-31',
-                            'fk_sys_rec_status' : 1
+                            'fk_sys_rec_status' : 1,
+                            'custom_fields': {}
                     }
-
-
-
 
 
 
@@ -972,6 +970,7 @@ class ReceivablesViewSet(CustomModelViewSet):
             url = self.draw_cancellation(pk, request.user)
         else:
             url = self.draw_invoice(pk, request.user)
+            invoice.fk_invoice_state = InvoiceStates.objects.get(id_invoice_state=2)
 
         return Response({'file_url': url}, status=status.HTTP_200_OK)
 
@@ -1010,7 +1009,7 @@ class ReceivablesViewSet(CustomModelViewSet):
                     msg.attach(attach)
                 server.send_message(msg)
             invoice.fk_invoice_state = InvoiceStates.objects.get(id_invoice_state=2)
-            invoice.invoi = InvoiceStates.objects.get(id_invoice_state=2)
+
             invoice.save()
             return Response({}, status=status.HTTP_200_OK)
         else:
