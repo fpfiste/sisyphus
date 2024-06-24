@@ -63,6 +63,24 @@ jQuery.fn.setUp = function(page_config, fields) {
 
     update_form.build();
 
+
+    let send_form_fields = {};
+
+    $.each(page_config['send_form_fields'], (key,value)=>{
+       send_form_fields[value] = fields[value];
+    })
+
+    let send_form = new BootstrapForm({
+            container: '#send_form_container',
+            id: 'send_form',
+            ajax_url: page_config['ajax_url'],
+            validation:false,
+            fields: send_form_fields,
+            language: lang_cookie,
+            method:'POST'
+    })
+
+    send_form.build();
         // add evetn listeners
     $( "#btn_filter" ).on( "click", function() {
       let query_params = $('#filter_form').serialize();
@@ -167,8 +185,57 @@ jQuery.fn.setUp = function(page_config, fields) {
             $('#btn_delete').prop('disabled', true)
             $('#btn_close_task').prop('disabled', true)
             $('#btn_save').prop('disabled', true)
-
+            $('#btn_open_send').prop('disabled', true)
+        } else {
+            $('#btn_delete').prop('disabled', false)
+            $('#btn_close_task').prop('disabled', false)
+            $('#btn_save').prop('disabled', true)
+            $('#btn_open_send').prop('disabled', false)
         }
+
+    })
+
+    $('#send_modal').on('show.bs.modal', function() {
+        send_form.reset();
+
+        let project_id = $('#update_form #fk_project').val();
+
+        $.ajax({
+           url: '/api/projects/?id_project=' + project_id,
+           type: 'GET',
+           headers: {'X-CSRFToken': Cookies.get('csrftoken')},
+           success: function(response) {
+                console.log(response)
+
+                $('#send_form #email_to').val(response['data'][0]['fk_customer']['company_invoice_email'])
+           },
+           error: function(error){
+            console.log(error)
+           }
+        });
+
+        $('#send_form #email_subject').val('Rechnung: ' + $('#update_form #id_invoice').val())
+
+
+        let mail_template = `Geschätzter Kunde
+
+Gerne senden wir Ihnen die Rechnung `+$('#update_form #id_invoice').val()+` im Anhang zu.
+
+Dies ist eine automatische Nachricht. Bitte antworten Sie nicht auf diese E-Mail.
+
+Bei Fragen entnehmen Sie die Kontaktangaben bitte direkt der Rechnung.
+
+Vielen Dank!
+`
+        $('#send_form #email_text').val(mail_template)
+        console.log(lang_cookie)
+
+    })
+    $('#btn_send').on('click', function() {
+        let pk = $('#update_form #' + page_config['pk']).val()
+        let url = '/api/receivables/' + pk + '/send/'
+        send_form.submit(url, callback);
+        location.reload()
 
     })
 

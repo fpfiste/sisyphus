@@ -167,6 +167,7 @@ class Companies(models.Model):
     company_city = models.CharField(max_length=50)
     company_internal_alias = models.CharField(unique=True, max_length=50)
     company_email = models.CharField(max_length=50, blank=True, null=True)
+    company_invoice_email = models.CharField(max_length=50, blank=True, null=True)
     is_customer = models.BooleanField(blank=True, null=True)
     is_supplier = models.BooleanField(blank=True, null=True)
     is_subcontractor = models.BooleanField(blank=True, null=True)
@@ -395,6 +396,7 @@ class Receivables(models.Model):
     fk_currency = models.ForeignKey(Currencies, models.DO_NOTHING, db_column='fk_currency')
     fk_project = models.ForeignKey(Projects, models.DO_NOTHING, db_column='fk_project')
     discount = models.DecimalField(max_digits=3, decimal_places=3, blank=True, null=True)
+    invoice_date = models.DateField()
 
     class Meta:
         managed = False

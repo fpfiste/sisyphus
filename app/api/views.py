@@ -30,7 +30,10 @@ from .components.levensteindistance import Levenshtein
 from .serializers import *
 import datetime as dt
 from .components.docparser.ms_form_recognizer import FormRecognizer
-
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
 
 
 
@@ -361,11 +364,9 @@ class CompanyViewSet(CustomModelViewSet):
                             'project_name' : request.data['company_internal_alias'] + ' - Default',
                             'start_date' : dt.datetime.now().strftime('%Y-%m-%d'),
                             'end_date' : '9999-12-31',
-                            'fk_sys_rec_status' : 1
+                            'fk_sys_rec_status' : 1,
+                            'custom_fields': {}
                     }
-
-
-
 
 
 
@@ -831,133 +832,190 @@ class ReceivablesViewSet(CustomModelViewSet):
         url = '/static/tmp/' + os.path.basename(doc.file_name)
 
         return Response({'file_url': url}, status=status.HTTP_200_OK)
-    @action(detail=True, methods=['GET'])
-    def pdf(self, request, pk):
 
+    def draw_invoice(self, invoice_id, user):
+        invoice = Receivables.objects.get(id_invoice=invoice_id)
+        vat = invoice.fk_vat
+        currency = invoice.fk_currency
+        terms = invoice.fk_invoice_terms
+        customer = invoice.fk_project.fk_customer
+
+        tasks = Tasks.objects.filter(fk_invoice=invoice).order_by('task_date_from')
+        sales = Sales.objects.filter(fk_invoice=invoice).order_by('sale_date')
+
+        if customer.fk_country.country_code == 'CH' and currency.qr_iban != None:
+            print_qr_bill = True
+            account = currency.qr_iban
+            print_qr_ref = True
+        elif customer.fk_country.country_code == 'CH':
+            print_qr_bill = True
+            account = currency.currency_account_nr
+            print_qr_ref = False
+        else:
+            print_qr_bill = True
+            account = currency.currency_account_nr
+            print_qr_ref = False
+
+        doc = Invoice(invoice.pk,
+                      invoice.invoice_date,
+                      invoice.invoice_text,
+                      vat.vat,
+                      vat.netto,
+                      currency.currency_abbreviation,
+                      account,
+                      terms.due_days,
+                      language='de',
+                      output_path=settings.TMP_FOLDER,
+                      discount=invoice.discount,
+                      qr_bill=print_qr_bill,
+                      qr_ref=print_qr_ref
+                      )
+
+        doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
+                     logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
+                     logo_height=Config.objects.get(config_key='doc_logo_height').value_string,
+                     logo_x=Config.objects.get(config_key='doc_logo_x_offset').value_string,
+                     logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
+                     )
+
+        doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
+                         customer.company_city, customer.fk_country.country_code, customer.invoice_receiver)
+
+        company = Companies.objects.get(id_company=0)
+        doc.set_company(name=company.company_name, address=company.company_street, pcode=company.company_zipcode,
+                        city=company.company_city, country=company.fk_country.country_code,
+                        email=company.company_email, vat_number=company.vat_number, agent=user,
+                        phone=company.phone_number)
+
+        for task in tasks:
+            doc.add_position(
+                position_id=task.id_task,
+                date=task.task_date_to.strftime('%d.%m.%Y'),
+                reference_text=task.customer_reference,
+                description=task.description,
+                unit=task.fk_unit.unit,
+                amount=task.amount,
+                unit_price=task.unit_price,
+                pos_type='T'
+            )
+
+        for sale in sales:
+            doc.add_position(
+                position_id=sale.id_sale,
+                date=sale.sale_date.strftime('%d.%m.%Y'),
+                reference_text=sale.customer_reference,
+                description=sale.description,
+                unit=sale.fk_unit.unit,
+                amount=sale.amount,
+                unit_price=sale.unit_price,
+                pos_type='S'
+            )
+        doc.draw()
+
+        url = '/static/tmp/' + os.path.basename(doc.file_name)
+
+        return url
+
+    def draw_cancellation(self, pk, user):
         invoice = Receivables.objects.get(id_invoice=pk)
         vat = invoice.fk_vat
         currency = invoice.fk_currency
         terms = invoice.fk_invoice_terms
         customer = invoice.fk_project.fk_customer
 
-        if invoice.fk_invoice_state.id_invoice_state == 4:
-            cancellation = Cancellations.objects.get(fk_invoice=invoice)
-            doc = InvoiceCancellationDoc(
-                cancellation.pk,
-                cancellation.cancellation_date,
-                cancellation.cancellation_time,
-                cancellation.cancellation_reason,
-                settings.TMP_FOLDER,
-                invoice.pk,
-                invoice.invoice_date,
-                invoice.fk_invoice_terms.term_title,
-                invoice.fk_vat.vat,
-                invoice.total,
-                currency.currency_abbreviation
-            )
+        cancellation = Cancellations.objects.get(fk_invoice=invoice)
+        doc = InvoiceCancellationDoc(
+            cancellation.pk,
+            cancellation.cancellation_date,
+            cancellation.cancellation_time,
+            cancellation.cancellation_reason,
+            settings.TMP_FOLDER,
+            invoice.pk,
+            invoice.invoice_date,
+            invoice.fk_invoice_terms.term_title,
+            invoice.fk_vat.vat,
+            invoice.total,
+            currency.currency_abbreviation
+        )
 
-            doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
-                         logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
-                         logo_height=Config.objects.get(config_key='doc_logo_height').value_string,
-                         logo_x=Config.objects.get(config_key='doc_logo_x_offset').value_string,
-                         logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
-                         )
+        doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
+                     logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
+                     logo_height=Config.objects.get(config_key='doc_logo_height').value_string,
+                     logo_x=Config.objects.get(config_key='doc_logo_x_offset').value_string,
+                     logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
+                     )
 
+        doc.set_customer(customer.id_company, customer.company_name, customer.company_street,
+                         customer.company_zipcode,
+                         customer.company_city, customer.fk_country.country_code, customer.invoice_receiver)
 
+        company = Companies.objects.get(id_company=0)
+        doc.set_company(name=company.company_name, address=company.company_street, pcode=company.company_zipcode,
+                        city=company.company_city, country=company.fk_country.country_code,
+                        email=company.company_email, vat_number=company.vat_number, agent=user,
+                        phone=company.phone_number)
 
-
-            doc.set_customer(customer.id_company, customer.company_name, customer.company_street,
-                             customer.company_zipcode,
-                             customer.company_city, customer.fk_country.country_code, customer.invoice_receiver)
-
-
-
-            company = Companies.objects.get(id_company=0)
-            doc.set_company(name=company.company_name, address=company.company_street, pcode=company.company_zipcode,
-                            city=company.company_city, country=company.fk_country.country_code,
-                            email=company.company_email, vat_number=company.vat_number, agent=request.user,
-                            phone=company.phone_number)
-
-            doc.draw()
-        else:
-            tasks = Tasks.objects.filter(fk_invoice=invoice).order_by('task_date_from')
-            sales = Sales.objects.filter(fk_invoice=invoice).order_by('sale_date')
-
-            if customer.fk_country.country_code == 'CH' and currency.qr_iban != None:
-                print_qr_bill = True
-                account = currency.qr_iban
-                print_qr_ref = True
-            elif customer.fk_country.country_code == 'CH':
-                print_qr_bill = True
-                account = currency.currency_account_nr
-                print_qr_ref = False
-            else:
-                print_qr_bill = True
-                account = currency.currency_account_nr
-                print_qr_ref = False
-
-            doc = Invoice(invoice.pk,
-                          invoice.invoice_date,
-                          invoice.invoice_text,
-                          vat.vat,
-                          vat.netto,
-                          currency.currency_abbreviation,
-                          account,
-                          terms.due_days,
-                          language='de',
-                          output_path=settings.TMP_FOLDER,
-                          discount=invoice.discount,
-                          qr_bill=print_qr_bill,
-                          qr_ref=print_qr_ref
-            )
-
-            doc.set_logo(logo=Config.objects.get(config_key='doc_logo').value_bytes,
-                         logo_width=Config.objects.get(config_key='doc_logo_width').value_string,
-                         logo_height=Config.objects.get(config_key='doc_logo_height').value_string,
-                         logo_x=Config.objects.get(config_key='doc_logo_x_offset').value_string,
-                         logo_y=Config.objects.get(config_key='doc_logo_y_offset').value_string
-                         )
-
-
-
-            doc.set_customer(customer.id_company, customer.company_name, customer.company_street, customer.company_zipcode,
-                             customer.company_city, customer.fk_country.country_code, customer.invoice_receiver)
-
-
-            company = Companies.objects.get(id_company=0)
-            doc.set_company(name=company.company_name, address=company.company_street, pcode=company.company_zipcode,
-                            city=company.company_city, country=company.fk_country.country_code,
-                            email=company.company_email, vat_number=company.vat_number, agent=request.user,
-                            phone=company.phone_number)
-
-            for task in tasks:
-                doc.add_position(
-                    position_id=task.id_task,
-                    date=task.task_date_to.strftime('%d.%m.%Y'),
-                    reference_text=task.customer_reference,
-                    description=task.description,
-                    unit=task.fk_unit.unit,
-                    amount=task.amount,
-                    unit_price=task.unit_price,
-                    pos_type='T'
-                )
-
-            for sale in sales:
-                doc.add_position(
-                    position_id=sale.id_sale,
-                    date=sale.sale_date.strftime('%d.%m.%Y'),
-                    reference_text=sale.customer_reference,
-                    description=sale.description,
-                    unit=sale.fk_unit.unit,
-                    amount=sale.amount,
-                    unit_price=sale.unit_price,
-                    pos_type='S'
-                )
-            doc.draw()
-
+        doc.draw()
         url = '/static/tmp/' + os.path.basename(doc.file_name)
+        return url
+
+
+    @action(detail=True, methods=['GET'])
+    def pdf(self, request, pk):
+
+        invoice = Receivables.objects.get(id_invoice=pk)
+
+
+        if invoice.fk_invoice_state.id_invoice_state == 4:
+            url = self.draw_cancellation(pk, request.user)
+        else:
+            url = self.draw_invoice(pk, request.user)
+            invoice.fk_invoice_state = InvoiceStates.objects.get(id_invoice_state=2)
 
         return Response({'file_url': url}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['POST'])
+    def send(self, request, pk):
+        print(request.data)
+        print(request.user.email)
+
+
+        invoice = Receivables.objects.get(id_invoice=pk)
+        if invoice.fk_invoice_state.id_invoice_state <= 2:
+            url = self.draw_invoice(pk, request.user)
+
+
+
+            file_path = os.path.join(settings.TMP_FOLDER, os.path.basename(url))
+            with smtplib.SMTP_SSL(settings.SMTP_EMAIL_HOST, settings.SMTP_EMAIL_PORT) as server:
+                server.login(settings.SMTP_EMAIL_ADDRESS, settings.SMTP_EMAIL_PASSWORD)
+
+                msg = MIMEMultipart()
+
+                message = request.data['email_text']
+                msg['Subject'] = request.data['email_subject']
+                msg['From'] = settings.SMTP_EMAIL_ADDRESS
+                msg['To'] = request.data['email_to']
+                msg['CC'] = request.user.email
+
+
+                # Insert the text to the msg going by e-mail
+                msg.attach(MIMEText(message, "plain"))
+
+                with open(file_path, "rb") as f:
+                    # attach = email.mime.application.MIMEApplication(f.read(),_subtype="pdf")
+                    attach = MIMEApplication(f.read(), _subtype="pdf")
+                    attach.add_header('Content-Disposition', 'attachment', filename=os.path.basename(file_path))
+                    msg.attach(attach)
+                server.send_message(msg)
+            invoice.fk_invoice_state = InvoiceStates.objects.get(id_invoice_state=2)
+
+            invoice.save()
+            return Response({}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Invoice already booked / cancelled'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
     @action(detail=True, methods=['PUT'])
     def close(self, request,pk):
