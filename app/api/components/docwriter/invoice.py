@@ -20,7 +20,7 @@ import textwrap
 
 
 class Invoice(Document):
-    def __init__(self,invoice_id:int, invoice_date:str, invoice_text:str, vat:float, vat_netto:bool, currency:str, account:str, due_days:int, output_path:str, discount=0, language='de', qr_bill:bool = True, qr_ref:bool=True):
+    def __init__(self,invoice_id:int, invoice_date:str, invoice_text:str, vat:float, vat_netto:bool, currency:str, account:str, due_days:int, output_path:str, bic_swift:str, discount=0, language='de', qr_bill:bool = True, qr_ref:bool=True):
         self.page_size = pagesizes.A4
 
         super().__init__(invoice_id, 'invoice', language=language, output_path=output_path)
@@ -41,6 +41,7 @@ class Invoice(Document):
         self.sub_total_1 = 0
         self.print_qr_bill = qr_bill
         self.print_qr_ref = qr_ref
+        self.bic_swift = bic_swift
 
 
     def add_position(self, position_id: int, date:str,reference_text:str, description:str, unit:str, amount:float, unit_price:float, pos_type = ''):
@@ -202,6 +203,8 @@ class Invoice(Document):
         self.c.drawString(self.x * cm, self.y * cm, f"Währung: {self.currency}")
         self.y += 0.5
         self.c.drawString(self.x * cm, self.y * cm, f"Zahlungsfrist: {self.due_days} Tage")
+        self.y += 0.5
+        self.c.drawString(self.x * cm, self.y * cm, f"BIC / SWIFT: {self.bic_swift}")
 
     def draw_position(self, position):
         self.increase_y(0.5)
@@ -331,13 +334,15 @@ class Invoice(Document):
 
         self.draw_totals()
 
+        self.y = ((self.page_height / cm) - self.footer_size)
+        self.draw_footer()
 
 
         last_line = ((self.page_height / cm ) - 13)
 
         if self.print_qr_bill:
-            if self.y >=last_line:
-                self.c.showPage()
+
+            self.c.showPage()
             qrcode = self.qr_bill()
             self.c.translate(10, 800)
             self.c.scale(1, -1)
@@ -346,9 +351,6 @@ class Invoice(Document):
             p = pagexobj(PageMerge().add(page).render())
 
             self.c.doForm(makerl(self.c, p))
-        else:
-            self.y = ((self.page_height / cm ) - self.footer_size) + 0.5
-            self.draw_footer()
 
         self.c.save()
 
